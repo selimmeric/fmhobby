@@ -1,0 +1,4 @@
+--device DARMSTM "stm32f10x.o" "test.o" "delay.o" "sys.o" "usart.o" "led.o" "key.o" "wdg.o" "timer.o" "ili93xx.o" "rtc.o" "wkup.o" "adc.o" "dma.o" "24cxx.o" "myiic.o" "spi.o" "flash.o" "24l01.o" "mmc_sd.o" "remote.o" "ds18b20.o" "mouse.o" "ps2.o" "touch.o" "fat.o" "fontupd.o" "text.o" "untogb.o" "jpegdecode.o" "sysfile.o" "ptgame.o" "gui.o" "picviewer.o" "cursor.o" "touchplay.o" "mouseplay.o" "timeplay.o" "ebookplay.o" "usbplay.o" "remoteplay.o" "wirelessplay.o" "usb_core.o" "usb_init.o" "usb_int.o" "usb_mem.o" "usb_regs.o" "hw_config.o" "mass_mal.o" "memory.o" "scsi_data.o" "stm32f10x_it.o" "usb_bot.o" "usb_desc.o" "usb_endp.o" "usb_istr.o" "usb_prop.o" "usb_pwr.o" "usb_scsi.o" --strict --scatter "TEST.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\TEST.map" -o "TEST.axf"

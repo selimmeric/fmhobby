@@ -1,0 +1,77 @@
+*** Creating Trace Output File 'TEST.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '"stm32f10x.o"'
+### List of Objects: adding '"test.o"'
+### List of Objects: adding '"delay.o"'
+### List of Objects: adding '"sys.o"'
+### List of Objects: adding '"usart.o"'
+### List of Objects: adding '"led.o"'
+### List of Objects: adding '"key.o"'
+### List of Objects: adding '"wdg.o"'
+### List of Objects: adding '"timer.o"'
+### List of Objects: adding '"ili93xx.o"'
+### List of Objects: adding '"rtc.o"'
+### List of Objects: adding '"wkup.o"'
+### List of Objects: adding '"adc.o"'
+### List of Objects: adding '"dma.o"'
+### List of Objects: adding '"24cxx.o"'
+### List of Objects: adding '"myiic.o"'
+### List of Objects: adding '"spi.o"'
+### List of Objects: adding '"flash.o"'
+### List of Objects: adding '"24l01.o"'
+### List of Objects: adding '"mmc_sd.o"'
+### List of Objects: adding '"remote.o"'
+### List of Objects: adding '"ds18b20.o"'
+### List of Objects: adding '"mouse.o"'
+### List of Objects: adding '"ps2.o"'
+### List of Objects: adding '"touch.o"'
+### List of Objects: adding '"fat.o"'
+### List of Objects: adding '"fontupd.o"'
+### List of Objects: adding '"text.o"'
+### List of Objects: adding '"untogb.o"'
+### List of Objects: adding '"jpegdecode.o"'
+### List of Objects: adding '"sysfile.o"'
+### List of Objects: adding '"ptgame.o"'
+### List of Objects: adding '"gui.o"'
+### List of Objects: adding '"picviewer.o"'
+### List of Objects: adding '"cursor.o"'
+### List of Objects: adding '"touchplay.o"'
+### List of Objects: adding '"mouseplay.o"'
+### List of Objects: adding '"timeplay.o"'
+### List of Objects: adding '"ebookplay.o"'
+### List of Objects: adding '"usbplay.o"'
+### List of Objects: adding '"remoteplay.o"'
+### List of Objects: adding '"wirelessplay.o"'
+### List of Objects: adding '"usb_core.o"'
+### List of Objects: adding '"usb_init.o"'
+### List of Objects: adding '"usb_int.o"'
+### List of Objects: adding '"usb_mem.o"'
+### List of Objects: adding '"usb_regs.o"'
+### List of Objects: adding '"hw_config.o"'
+### List of Objects: adding '"mass_mal.o"'
+### List of Objects: adding '"memory.o"'
+### List of Objects: adding '"scsi_data.o"'
+### List of Objects: adding '"stm32f10x_it.o"'
+### List of Objects: adding '"usb_bot.o"'
+### List of Objects: adding '"usb_desc.o"'
+### List of Objects: adding '"usb_endp.o"'
+### List of Objects: adding '"usb_istr.o"'
+### List of Objects: adding '"usb_prop.o"'
+### List of Objects: adding '"usb_pwr.o"'
+### List of Objects: adding '"usb_scsi.o"'
+### ADS-LD Command completed:
+--device DARMSTM "stm32f10x.o" "test.o" "delay.o" "sys.o" "usart.o" "led.o" "key.o" "wdg.o" "timer.o" "ili93xx.o" "rtc.o" "wkup.o" "adc.o" "dma.o" "24cxx.o" "myiic.o" "spi.o" "flash.o" "24l01.o" "mmc_sd.o" "remote.o" "ds18b20.o" "mouse.o" "ps2.o" "touch.o" "fat.o" "fontupd.o" "text.o" "untogb.o" "jpegdecode.o" "sysfile.o" "ptgame.o" "gui.o" "picviewer.o" "cursor.o" "touchplay.o" "mouseplay.o" "timeplay.o" "ebookplay.o" "usbplay.o" "remoteplay.o" "wirelessplay.o" "usb_core.o" "usb_init.o" "usb_int.o" "usb_mem.o" "usb_regs.o" "hw_config.o" "mass_mal.o" "memory.o" "scsi_data.o" "stm32f10x_it.o" "usb_bot.o" "usb_desc.o" "usb_endp.o" "usb_istr.o" "usb_prop.o" "usb_pwr.o" "usb_scsi.o" --strict --scatter "TEST.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\TEST.map" -o "TEST.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: 'TEST.axf'
+### ADS-LD Command File: 'TEST.lnp'
+### Checking for dirty Components...
+### Creating CmdFile 'TEST.lnp', Handle=0x00000254
+### Writing '.lnp' file
+### ADS-LD Command file 'TEST.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.

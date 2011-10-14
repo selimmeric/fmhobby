@@ -1,0 +1,14 @@
+_system_1s: CODE, 454 0 109
+_UVL: CODE, 1026 0 16
+_system_output: CODE, 59 0 253
+___ftpack: CODE, 563 0 109
+_main: CODE, 767 0 80
+___lwtoft: CODE, 954 0 26
+_system_process: CODE, 672 0 95
+_LED_RGB: CODE, 1003 0 23
+_FS_RD: CODE, 918 0 36
+_isr: CODE, 4 0 53
+_Buzzer: CODE, 980 0 23
+_RFID_RD: CODE, 312 0 142
+___ftge: CODE, 847 0 71
+Total: 1036

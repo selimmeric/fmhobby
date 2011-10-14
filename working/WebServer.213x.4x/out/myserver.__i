@@ -1,0 +1,1 @@
+-c --device DARMP -g -O0 --apcs=interwork -I "C:\Keil\ARM\INC\Philips" -o ".\out\myserver.o" --omf_browse ".\out\myserver.crf" --depend ".\out\myserver.d" "myServer.c"
