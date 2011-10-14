@@ -7,3 +7,417 @@ C:\working\nRF24LE1\NRF24LE1·¢Éä°´¼ü°å-FM\nRF24LE1.uvproj
 Project File Date:  02/11/2011
 
 <h2>Output:</h2>
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(87): warning C206: 'read_rows_ex': missing function-prototype
+MAIN.C(186): error C231: 'read_rows_ex': redefinition
+MAIN.C(188): error C231: 'read_rows_ex': redefinition
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    KEY_SCAN/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=21 const=0 code=1403
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 4 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    KEY_SCAN/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=25 const=0 code=1444
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 4 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    KEY_SCAN/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=25 const=0 code=1455
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 4 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(69): warning C280: 'tCnt': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    KEY_SCAN/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=25 const=0 code=1435
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 5 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(69): warning C280: 'tCnt': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    KEY_SCAN/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=25 const=0 code=1437
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 5 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(69): warning C280: 'tCnt': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    KEY_SCAN/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=25 const=0 code=1437
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 5 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(69): warning C280: 'tCnt': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    KEY_SCAN/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=25 const=0 code=1437
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 5 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(69): warning C280: 'tCnt': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    KEY_SCAN/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=27 const=0 code=1483
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 5 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(69): warning C280: 'tCnt': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    KEY_SCAN/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=27 const=0 code=1464
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 5 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(69): warning C280: 'tCnt': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    KEY_SCAN/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=27 const=0 code=1474
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 5 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(69): warning C280: 'tCnt': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    KEY_SCAN/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=27 const=0 code=1484
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 5 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(69): warning C280: 'tCnt': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    KEY_SCAN/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=27 const=0 code=1494
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 5 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(69): warning C280: 'tCnt': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    KEY_SCAN/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=27 const=0 code=1484
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 5 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(70): warning C280: 'tCnt': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    KEY_SCAN/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=31 const=0 code=1484
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 5 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(70): warning C280: 'tCnt': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    KEY_SCAN/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=31 const=0 code=1483
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 5 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(90): warning C275: expression with possibly no effect
+MAIN.C(70): warning C280: 'tCnt': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    KEY_SCAN/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=32 const=0 code=1586
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 6 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(90): warning C275: expression with possibly no effect
+MAIN.C(70): warning C280: 'tCnt': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    KEY_SCAN/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=32 const=0 code=1580
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 6 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(86): error C213: left side of asn-op not an lvalue
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(86): error C213: left side of asn-op not an lvalue
+MAIN.C(511): error C141: syntax error near '>'
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(90): warning C275: expression with possibly no effect
+MAIN.C(70): warning C280: 'tCnt': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    KEY_SCAN/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=36 const=0 code=1635
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 6 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(90): warning C275: expression with possibly no effect
+MAIN.C(70): warning C280: 'tCnt': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    KEY_SCAN/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=36 const=0 code=1611
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 6 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(90): warning C275: expression with possibly no effect
+MAIN.C(70): warning C280: 'tCnt': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    KEY_SCAN/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=36 const=0 code=1628
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 6 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(91): warning C275: expression with possibly no effect
+MAIN.C(70): warning C280: 'tCnt': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    KEY_SCAN/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=36 const=0 code=1628
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 6 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(91): warning C275: expression with possibly no effect
+MAIN.C(70): warning C280: 'tCnt': unreferenced local variable
+MAIN.C(335): error C202: 'tKeyDet': undefined identifier
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(90): warning C275: expression with possibly no effect
+MAIN.C(334): error C202: 'tKeyDet': undefined identifier
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(90): warning C275: expression with possibly no effect
+MAIN.C(345): warning C206: 'key_scan': missing function-prototype
+MAIN.C(346): error C202: 'key_flag': undefined identifier
+MAIN.C(350): error C202: 'key_flag': undefined identifier
+MAIN.C(358): error C202: 'key_flag': undefined identifier
+MAIN.C(362): error C202: 'key_flag': undefined identifier
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(90): warning C275: expression with possibly no effect
+MAIN.C(345): error C202: 'key_flag': undefined identifier
+MAIN.C(349): error C202: 'key_flag': undefined identifier
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(91): warning C275: expression with possibly no effect
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    RTC2_INIT/MAIN
+Program Size: data=30.0 xdata=32 const=0 code=1050
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 4 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(90): error C202: 'mScanKey': undefined identifier
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(90): warning C275: expression with possibly no effect
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+Program Size: data=30.0 xdata=28 const=0 code=1014
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 3 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling Main.c...
+MAIN.C(1): warning C500: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
+MAIN.C(89): warning C275: expression with possibly no effect
+linking...
+*** WARNING L16: UNCALLED FUNCTION, IGNORED FOR OVERLAY PROCESS
+    NAME:    TX_MODE/MAIN
+Program Size: data=30.0 xdata=28 const=0 code=1014
+creating hex file from "nRF24LE1"...
+"nRF24LE1" - 0 Error(s), 3 Warning(s).
