@@ -1,0 +1,169 @@
+### uVision2 Project, (C) Keil Software
+### Do not modify !
+
+Target (Target 1), 0x0004 // Tools: 'ARM-ADS'
+
+Group (Source Group 1)
+Group (USER)
+Group (SYSTEM)
+Group (HARDWARE)
+Group (FAT)
+Group (TEXT)
+Group (JPEG)
+Group (SYSFILE)
+Group (PTGAME)
+Group (GUI)
+Group (USB)
+Group (USBCFG)
+
+File 1,2,<.\STM32F10x.s><STM32F10x.s>
+File 2,1,<.\test.c><test.c>
+File 3,1,<..\SYSTEM\delay\delay.c><delay.c>
+File 3,1,<..\SYSTEM\sys\sys.c><sys.c>
+File 3,1,<..\SYSTEM\usart\usart.c><usart.c>
+File 4,1,<..\HARDWARE\LED\led.c><led.c>
+File 4,1,<..\HARDWARE\KEY\key.c><key.c>
+File 4,1,<..\HARDWARE\WDG\wdg.c><wdg.c>
+File 4,1,<..\HARDWARE\TIMER\timer.c><timer.c>
+File 4,1,<..\HARDWARE\LCD\ILI93xx.c><ILI93xx.c>
+File 4,1,<..\HARDWARE\RTC\rtc.c><rtc.c>
+File 4,1,<..\HARDWARE\WKUP\wkup.c><wkup.c>
+File 4,1,<..\HARDWARE\ADC\adc.c><adc.c>
+File 4,1,<..\HARDWARE\DMA\dma.c><dma.c>
+File 4,1,<..\HARDWARE\24CXX\24cxx.c><24cxx.c>
+File 4,1,<..\HARDWARE\24CXX\myiic.c><myiic.c>
+File 4,1,<..\HARDWARE\SPI\spi.c><spi.c>
+File 4,1,<..\HARDWARE\FLASH\flash.c><flash.c>
+File 4,1,<..\HARDWARE\NRF24L01\24l01.c><24l01.c>
+File 4,1,<..\HARDWARE\SD\MMC_SD.C><MMC_SD.C>
+File 4,1,<..\HARDWARE\REMOTE\remote.c><remote.c>
+File 4,1,<..\HARDWARE\DS18B20\ds18b20.c><ds18b20.c>
+File 4,1,<..\HARDWARE\PS2\mouse.c><mouse.c>
+File 4,1,<..\HARDWARE\PS2\ps2.c><ps2.c>
+File 4,1,<..\HARDWARE\TOUCH\touch.c><touch.c>
+File 5,1,<..\FAT\FAT.C><FAT.C>
+File 6,1,<..\TEXT\fontupd.c><fontupd.c>
+File 6,1,<..\TEXT\text.c><text.c>
+File 6,1,<..\TEXT\untogb.c><untogb.c>
+File 7,1,<..\JPEG\jpegdecode.c><jpegdecode.c>
+File 8,1,<..\SYSFILE\sysfile.c><sysfile.c>
+File 9,1,<..\PTGAME\ptgame.c><ptgame.c>
+File 10,1,<..\GUI\gui.c><gui.c>
+File 10,1,<..\GUI\picviewer.c><picviewer.c>
+File 10,1,<..\GUI\CURSOR\cursor.c><cursor.c>
+File 10,1,<..\GUI\touchplay.c><touchplay.c>
+File 10,1,<..\GUI\mouseplay.c><mouseplay.c>
+File 10,1,<..\GUI\timeplay.c><timeplay.c>
+File 10,1,<..\GUI\ebookplay.c><ebookplay.c>
+File 10,1,<..\GUI\usbplay.c><usbplay.c>
+File 10,1,<..\GUI\remoteplay.c><remoteplay.c>
+File 10,1,<..\GUI\wirelessplay.c><wirelessplay.c>
+File 11,1,<..\USB\LIB\usb_core.c><usb_core.c>
+File 11,1,<..\USB\LIB\usb_init.c><usb_init.c>
+File 11,1,<..\USB\LIB\usb_int.c><usb_int.c>
+File 11,1,<..\USB\LIB\usb_mem.c><usb_mem.c>
+File 11,1,<..\USB\LIB\usb_regs.c><usb_regs.c>
+File 12,1,<..\USB\CONFIG\hw_config.c><hw_config.c>
+File 12,1,<..\USB\CONFIG\mass_mal.c><mass_mal.c>
+File 12,1,<..\USB\CONFIG\memory.c><memory.c>
+File 12,1,<..\USB\CONFIG\scsi_data.c><scsi_data.c>
+File 12,1,<..\USB\CONFIG\stm32f10x_it.c><stm32f10x_it.c>
+File 12,1,<..\USB\CONFIG\usb_bot.c><usb_bot.c>
+File 12,1,<..\USB\CONFIG\usb_desc.c><usb_desc.c>
+File 12,1,<..\USB\CONFIG\usb_endp.c><usb_endp.c>
+File 12,1,<..\USB\CONFIG\usb_istr.c><usb_istr.c>
+File 12,1,<..\USB\CONFIG\usb_prop.c><usb_prop.c>
+File 12,1,<..\USB\CONFIG\usb_pwr.c><usb_pwr.c>
+File 12,1,<..\USB\CONFIG\usb_scsi.c><usb_scsi.c>
+
+
+Options 1,0,0  // Target 'Target 1'
+ Device (STM32F103RB)
+ Vendor (STMicroelectronics)
+ Cpu (IRAM(0x20000000-0x20004FFF) IROM(0x8000000-0x801FFFF) CLOCK(8000000) CPUTYPE("Cortex-M3"))
+ FlashUt ()
+ StupF ("STARTUP\ST\STM32F10x.s" ("STM32 Startup Code"))
+ FlashDR (UL2CM3(-O14 -S0 -C0 -N00("ARM Cortex-M3") -D00(1BA00477) -L00(4) -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F10x_128 -FS08000000 -FL020000))
+ DevID (4231)
+ Rgf (stm32f10x_lib.h)
+ Mem ()
+ C ()
+ A ()
+ RL ()
+ OH ()
+ DBC_IFX ()
+ DBC_CMS ()
+ DBC_AMS ()
+ DBC_LMS ()
+ UseEnv=0
+ EnvBin ()
+ EnvInc ()
+ EnvLib ()
+ EnvReg (ST\STM32F10x\)
+ OrgReg (ST\STM32F10x\)
+ TgStat=16
+ OutDir (.\)
+ OutName (TEST)
+ GenApp=1
+ GenLib=0
+ GenHex=1
+ Debug=1
+ Browse=1
+ LstDir (.\)
+ HexSel=1
+ MG32K=0
+ TGMORE=0
+ RunUsr 0 0 <>
+ RunUsr 1 0 <>
+ BrunUsr 0 0 <>
+ BrunUsr 1 0 <>
+ CrunUsr 0 0 <>
+ CrunUsr 1 0 <>
+ SVCSID <>
+ GLFLAGS=1790
+ ADSFLGA { 243,31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ACPUTYP ("Cortex-M3")
+ RVDEV ()
+ ADSTFLGA { 0,12,0,2,99,0,0,66,0,0,0,0,0,0,0,0,0,0,0,0 }
+ OCMADSOCM { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ OCMADSIRAM { 0,0,0,0,32,0,80,0,0 }
+ OCMADSIROM { 1,0,0,0,8,0,0,2,0 }
+ OCMADSXRAM { 0,0,0,0,0,0,0,0,0 }
+ OCR_RVCT { 1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,8,0,0,2,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,0,80,0,0,0,0,0,0,0,0,0,0,0 }
+ RV_STAVEC ()
+ ADSCCFLG { 5,32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCMISC ()
+ ADSCDEFN ()
+ ADSCUDEF ()
+ ADSCINCD (..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HARDWARE\LED;..\HARDWARE\KEY;..\HARDWARE\EXTI;..\HARDWARE\WDG;..\HARDWARE\TIMER;..\HARDWARE\OLED;..\HARDWARE\LCD;..\HARDWARE\RTC;..\HARDWARE\WKUP;..\HARDWARE\ADC;..\HARDWARE\DMA;..\HARDWARE\24CXX;..\HARDWARE\FLASH;..\HARDWARE\SPI;..\HARDWARE\TOUCH;..\HARDWARE\NRF24L01;..\HARDWARE\SD;..\HARDWARE\REMOTE;..\HARDWARE\DS18B20;..\HARDWARE\PS2;..\TEXT;..\FAT;..\SYSFILE;..\JPEG;..\GUI;..\PTGAME;..\GUI\CURSOR;..\USB\CONFIG;..\USB\LIB)
+ ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSAMISC ()
+ ADSADEFN ()
+ ADSAUDEF ()
+ ADSAINCD ()
+ PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=1
+ AlwaysBuild=0
+ GenAsm=0
+ AsmAsm=0
+ PublicsOnly=0
+ StopCode=3
+ CustArgs ()
+ LibMods ()
+ ADSLDFG { 17,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSLDTA (0x08000000)
+ ADSLDDA (0x20000000)
+ ADSLDSC ()
+ ADSLDIB ()
+ ADSLDIC ()
+ ADSLDMC ()
+ ADSLDIF ()
+ ADSLDDW ()
+  OPTDL (SARMCM3.DLL)()(DARMSTM.DLL)(-pSTM32F103RB)(SARMCM3.DLL)()(TARMSTM.DLL)(-pSTM32F103RB)
+  OPTDBG 48125,7,()()()()()()()()()() (Segger\JL2CM3.dll)()()()
+ FLASH1 { 9,0,0,0,1,0,0,0,5,16,0,0,0,0,0,0,0,0,0,0 }
+ FLASH2 (Segger\JL2CM3.dll)
+ FLASH3 ("" ())
+ FLASH4 ()
+EndOpt
+

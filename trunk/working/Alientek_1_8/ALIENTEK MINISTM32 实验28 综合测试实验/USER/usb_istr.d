@@ -1,0 +1,9 @@
+usb_istr.o: ..\USB\CONFIG\usb_istr.c
+usb_istr.o: ..\USB\LIB\usb_type.h
+usb_istr.o: ..\USB\CONFIG\usb_conf.h
+usb_istr.o: ..\USB\LIB\usb_regs.h
+usb_istr.o: ..\USB\CONFIG\usb_pwr.h
+usb_istr.o: ..\USB\LIB\usb_core.h
+usb_istr.o: ..\USB\CONFIG\usb_istr.h
+usb_istr.o: ..\USB\LIB\usb_init.h
+usb_istr.o: ..\USB\LIB\usb_int.h

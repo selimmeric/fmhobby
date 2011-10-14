@@ -1,0 +1,4 @@
+--device DARMSTM "stm32f10x.o" "test.o" "mytest.o" "cbuffer.o" "delay.o" "sys.o" "usart.o" "led.o" "key.o" "exti.o" "wdg.o" "timer.o" "ili93xx.o" "24cxx.o" "myiic.o" --nodebug --strict --scatter "ZuVo_MCU_Tester.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\ZuVo_MCU_Tester.map" -o "ZuVo_MCU_Tester.axf"

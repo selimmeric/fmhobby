@@ -1,0 +1,24 @@
+*** Creating Trace Output File '.\out\WebServer.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '".\out\startup.o"'
+### List of Objects: adding '".\out\webserver.o"'
+### List of Objects: adding '".\out\enc28j60.o"'
+### List of Objects: adding '".\out\ip_arp_udp_tcp.o"'
+### List of Objects: adding '".\out\myserver.o"'
+### List of Objects: adding '".\out\utility.o"'
+### ADS-LD Command completed:
+--device DARMP ".\out\startup.o" ".\out\webserver.o" ".\out\enc28j60.o" ".\out\ip_arp_udp_tcp.o" ".\out\myserver.o" ".\out\utility.o" --strict --scatter ".\out\WebServer.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\out\WebServer.map" -o ".\out\WebServer.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: '.\out\WebServer.axf'
+### ADS-LD Command File: '.\out\WebServer.lnp'
+### Checking for dirty Components...
+### Creating CmdFile '.\out\WebServer.lnp', Handle=0x000002F8
+### Writing '.lnp' file
+### ADS-LD Command file '.\out\WebServer.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.
