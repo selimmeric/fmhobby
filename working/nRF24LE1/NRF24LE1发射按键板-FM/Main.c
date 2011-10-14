@@ -17,10 +17,10 @@
 #define TX_PLOAD_WIDTH  20  					// 数据包长度为20 bytes
 uint8_t const TX_ADDRESS[TX_ADR_WIDTH]  = {0x34,0x56,0x78,0x90,0x12}; // 定义RF收发地址
 uint8_t data id_buf[TX_PLOAD_WIDTH]={0x01,0xe2,0x00,0x00,0x00,0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
-uint8_t bdata sta;
-sbit	RX_DR	=sta^6;
-sbit	TX_DS	=sta^5;
-sbit	MAX_RT	=sta^4;
+uint8_t bdata mRFstatus;
+sbit	RX_DR	=mRFstatus^6;
+sbit	TX_DS	=mRFstatus^5;
+sbit	MAX_RT	=mRFstatus^4;
 //============================================
 #define P0_SLEEP_STATE      0x13
 #define P1_SLEEP_STATE      0x1C
@@ -263,7 +263,7 @@ void rf_init(void)
 **************************************************/
 void RF_IRQ(void) interrupt INTERRUPT_RFIRQ
 {
-	sta=SPI_Read(STATUS);								// 读出状态值
+	mRFstatus=SPI_Read(STATUS);								// 读出状态值
 	SPI_RW_Reg(WRITE_REG+STATUS,0x70);					// 清除所有中断标志 
 }
 
@@ -291,7 +291,6 @@ ET0 = 1;                      /* Enable Timer 0 Interrupts */
 TR0 = 1;                      /* Start Timer 0 Running */
 EA = 1;                       /* Global Interrupt Enable */
 
-// 	EA=1;                                       // 允许中断	 
 												
 	while (1)
 	{
@@ -310,9 +309,6 @@ EA = 1;                       /* Global Interrupt Enable */
 			{
 				LED0 = !LED0;			
 			}
-
-
-					
 		}
 	}
 
@@ -324,12 +320,12 @@ EA = 1;                       /* Global Interrupt Enable */
 		  tCnt ^=01;
 		  LED0 = tCnt;
 		  key_flag=0;
-		  sta = 0;
+		  mRFstatus = 0;
 		  TX_Mode();								// 发射数据
 		  while (!(TX_DS|MAX_RT));				// 等待发射结束
 		  SPI_RW_Reg(FLUSH_TX,0);	
 	      SPI_RW_Reg(WRITE_REG+STATUS,0xFF);
-		  sta = 0;
+		  mRFstatus = 0;
 		  delay(100);
 		}
 	}
