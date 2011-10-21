@@ -17,10 +17,10 @@
 #define TX_PLOAD_WIDTH  20  					// 数据包长度为20 bytes
 uint8_t const TX_ADDRESS[TX_ADR_WIDTH]  = {0x34,0x56,0x78,0x90,0x12}; // 定义RF收发地址
 uint8_t data id_buf[TX_PLOAD_WIDTH]={0x01,0xe2,0x00,0x00,0x00,0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
-uint8_t bdata mRFstatus;
-sbit	RX_DR	=mRFstatus^6;
-sbit	TX_DS	=mRFstatus^5;
-sbit	MAX_RT	=mRFstatus^4;
+uint8_t bdata sta;
+sbit	RX_DR	=sta^6;
+sbit	TX_DS	=sta^5;
+sbit	MAX_RT	=sta^4;
 //============================================
 #define P0_SLEEP_STATE      0x13
 #define P1_SLEEP_STATE      0x1C
@@ -58,82 +58,10 @@ sbit	MAX_RT	=mRFstatus^4;
 #define COL3_CLR()    do { COL3=0; COL3_PDIR |= (1<<COL3_PIN); }while(0)
 
 
-static unsigned char mTFlag=0;
-static unsigned char mFlag1S=0;
-uint32_t mKeyMatrix[2];
+
+
+uint8_t temp=0;
 unsigned char key_flag=0;
-
-static uint8_t read_rows_ex(void);
-
-void timer0_ISR (void) interrupt 1
-{
-	static unsigned char tCnt1S=0;
-	static unsigned char tKey[4];
-	unsigned char i;
-
-	// 16MHz/12 = 0.75uS
-	// 16bits counter 0.75uS * 65536 = 49.152mS
-
-	// 13bits counter 0.75uS * 8 * 1024 = 6.144mS
-	// 6.144mS * 8 = 49.152mS
-
-	tCnt1S ++;
-	if (tCnt1S >=17)
-	{
-		mFlag1S = 1;		// Set Timer Flag 100mS	
-		tCnt1S = 0;
-		mKeyMatrix[1]=mKeyMatrix[0];
-		mKeyMatrix[0] = 0;
-		for (i=0; i<=3; i++)
-		{
-			mKeyMatrix[0] << 5;
-			mKeyMatrix[0] += tKey[i];
-		}		
-	}
-
-	if (1)
-	{
-	// Scan KeyMatrix
-	switch (tCnt1S)
-	{
-		case 0:
-			tKey[0] = 0;
-			tKey[1] = 0;
-			tKey[2] = 0;
-			tKey[3] = 0;
-			COL2_SET(); 
-			break;
-		case 1:
-			tKey[0] =  read_rows_ex();
-		    COL2_CLR();
-			COL3_SET();			 
-			break;
-		case 2:
-			tKey[1] =  read_rows_ex();
-		    COL3_CLR();
-			COL0_SET();			 
-			break;
-		case 3:
-			tKey[2] =  read_rows_ex();
-		    COL0_CLR();
-			COL1_SET();			 
-			break;
-		case 4:
-			tKey[3] =  read_rows_ex();
- 		    COL1_CLR();
-			break;		
-		default:
-
-			COL0_CLR();
-			COL1_CLR();
-			COL2_CLR();
-			COL3_CLR();
-			break;	
-	}
-	}	
-}
-
-
 /**************************************************
 功能：延时
 **************************************************/
@@ -174,13 +102,178 @@ void keyinit(void)
  // P1CON = 0x75;
  
 }
-
-static uint8_t read_rows_ex(void)
+/*void key(void)
+{
+  P0=0;
+  P1=0;
+  P0DIR = 0xc0;
+  P1DIR = 0x43;
+  COL0=1;
+  P1=0;
+  COL0=1;
+  P1=0;
+  COL0=1;
+  P1=0;
+}*/
+static uint8_t read_rows(void)
 {
   return  (uint8_t)(ROW0 | ((uint8_t)ROW1 << 1) | ((uint8_t)ROW2 << 2) | ((uint8_t)ROW3 << 3) | ((uint8_t)ROW4 << 4));
 }
+void key_scan(void)
+{
+    uint8_t i;
+	//uint8_t temp1;
+    id_buf[0]=0x01;
+	id_buf[1]=0x00;
+	id_buf[2]=0x00;
+	id_buf[3]=0x00;
+	id_buf[4]=0x00;
+	id_buf[5]=0x02;
+	for(i=6;i<14;i++)
+	{
+	  id_buf[i]=0x00;
+	}
+    COL2_SET();         //扫描第一行
+	temp = read_rows();
+	delay(500);
+	if(temp==0x01)		  // key 1
+	 {
+	   key_flag=1;
+	   id_buf[8]=0x1e;
+	   delay(500);
+	 }
+	if(temp==0x02)		  //key 2
+	 {
+	   key_flag=1;
+	   id_buf[8]=0x1f;
+	   delay(500);
+	 }
+	if(temp==0x04)		 //key 3
+	 {
+	   key_flag=1;
+	   id_buf[8]=0x20;
+	   delay(500);
+	 }
+	if(temp==0x08)		 //key 4
+	 {
+	   key_flag=1;
+	   id_buf[8]=0x21;
+	   delay(500);
+	 }
+	if(temp==0x10)		 //key 5
+	 {
+	   key_flag=1;
+	   id_buf[8]=0x22;
+	   delay(500);
+	 }
+    COL2_CLR();
 
+	COL3_SET();			 //扫描第二行
+	temp = read_rows();
+	delay(500);
+	if(temp==0x01)		  // key 6
+	 {							
+	   key_flag=1;
+	   id_buf[8]=0x23;
+	   delay(500);
+	 }
+	if(temp==0x02)		  //key 7
+	 {
+	   key_flag=1;
+	   id_buf[8]=0x24;
+	   delay(500);
+	 }
+	if(temp==0x04)		 //key 8
+	 {
+	   key_flag=1;
+	   id_buf[8]=0x25;
+	   delay(500);
+	 }
+	if(temp==0x08)		 //key 9
+	 {
+	   key_flag=1;
+	   id_buf[8]=0x26;
+	   delay(500);
+	 }
+	if(temp==0x10)		 //key 0
+	 {
+	   key_flag=1;
+	   id_buf[8]=0x27;
+	   delay(500);
+	 }
+   COL3_CLR();
+   
+   COL0_SET();            //扫描第三行
+   temp = read_rows();
+   delay(500);
+	if(temp==0x01)		  // key mute
+	 {							
+	   key_flag=1;
+	   id_buf[1]=0xe2;
+	   delay(500);
+	 }
+	if(temp==0x02)		  //key close
+	 {
+	   key_flag=1;
+	   id_buf[3]=0x02;
+	   delay(500);
+	 }
+	if(temp==0x04)		 //key stop
+	 {
+	   key_flag=1;
+	   id_buf[1]=0xB7;
+	   delay(500);
+	 }
+	if(temp==0x08)		 //key up
+	 {
+	   key_flag=1;
+	   id_buf[1]=0xB6;
+	   delay(500);
+	 }
+	if(temp==0x10)		 //key play
+	 {
+	   key_flag=1;
+	   id_buf[1]=0xCD;
+	   delay(500);
+	 }
+   COL0_CLR();
 
+   COL1_SET() ;       //扫描第四行
+   	temp = read_rows();
+	delay(500);
+	if(temp==0x01)		  // key dowm
+	 {							
+	   key_flag=1;
+	   id_buf[1]=0xb5;
+	   delay(500);
+	 }
+	if(temp==0x02)		  //key vol+
+	 {
+	   key_flag=1;
+	   id_buf[1]=0xe9;
+	   delay(500);
+	 }
+	if(temp==0x04)		 //key vol-
+	 {
+	   key_flag=1;
+	   id_buf[1]=0xea;
+	   delay(500);
+	 }
+	if(temp==0x08)		 //key ch+
+	 {
+	   key_flag=1;
+	   id_buf[1]=0x9c;
+	   delay(500);
+	 }
+	if(temp==0x10)		 //key ch-
+	 {
+	   key_flag=1;
+	   id_buf[1]=0x9d;
+	   delay(500);
+	 }
+   COL1_CLR();
+
+}
 
 /**************************************************
 功能：硬件SPI读写
@@ -265,11 +358,28 @@ void rf_init(void)
 **************************************************/
 void RF_IRQ(void) interrupt INTERRUPT_RFIRQ
 {
-	mRFstatus=SPI_Read(STATUS);								// 读出状态值
+	sta=SPI_Read(STATUS);								// 读出状态值
 	SPI_RW_Reg(WRITE_REG+STATUS,0x70);					// 清除所有中断标志 
 }
 
-             				
+/**************************************************
+功能：RTC2初始化
+**************************************************/
+void rtc2_init(void)
+{
+	CLKLFCTRL=0x01;									   	// 使用RC 32KHz时钟
+	RTC2CMP0=0xff;										// 定时2秒
+	RTC2CMP1=0xff;
+	RTC2CON=0x06;										// 比较模式
+	WUIRQ=1;											// 允许TICK中断
+}
+/**************************************************
+功能：RTC2中断服务程序
+**************************************************/
+void RTC2_IRQ(void) interrupt INTERRUPT_TICK 
+{
+//	LED2=!LED2;										   	
+}              				
  
 /**************************************************
 功能：主程序
@@ -277,86 +387,34 @@ void RF_IRQ(void) interrupt INTERRUPT_RFIRQ
 void main(void)
 {
     
-	static unsigned char tCnt=0;
-	uint32_t tKeyMatrix;
+	static char tCnt=0;
+    delay(1000);
+//	key();
 	rf_init();									// RF初始化
 	keyinit();                            
+  	EA=1;                                       // 允许中断	 
+	rtc2_init();
+												// RTC2初始化
 
-/*--------------------------------------
-Set Timer0 for 16-bit timer mode.  The
-timer counts to 65535, overflows, and
-generates an interrupt.
-
-Set the Timer0 Run control bit.
---------------------------------------*/
-TMOD = (TMOD & 0xF0) | 0x00;  /* Set T/C0 Mode 13bit timer mode*/
-ET0 = 1;                      /* Enable Timer 0 Interrupts */
-TR0 = 1;                      /* Start Timer 0 Running */
-EA = 1;                       /* Global Interrupt Enable */
-
-												
-	while (1)
+	LED0 = 1;
+	LED1 = 0;
+	while(1)
 	{
-
-		if (mFlag1S==1)				// 100mS flag
-		{
-			tCnt ++; 					
-			mFlag1S = 0;
-			if (tCnt>=5)
-			{ 
-				tCnt = 0;
-				LED1 = !LED1;
-//				LED1 = 0;
-			}
-
-			if (mKeyMatrix[0] != mKeyMatrix[1])	
-			{
-				LED0 = !LED0;		
-				if (mKeyMatrix[0]!=0x00)
-				{
-					tKeyMatrix = mKeyMatrix[0];	
-					tKeyMatrix &= 0x07;
-					id_buf[8] = 0x1e;
-					id_buf[8] += tKeyMatrix;
-
-//	   				id_buf[8]=0x26;	
-				}
-				else
-				{
-	   				id_buf[8]=0x00;	
-				}
-
-//				LED0 = 0;
-				mRFstatus = 0;
-				TX_Mode();								// 发射数据
-				while (!(TX_DS|MAX_RT));				// 等待发射结束
-				SPI_RW_Reg(FLUSH_TX,0);	
-			    SPI_RW_Reg(WRITE_REG+STATUS,0xFF);
-				mRFstatus = 0;
-
-			}
-			else
-			{
-	   			id_buf[8]=0x00;	
-			}
-		}
-	}
-
-
- 	while(0)
-	{
+	    key_scan();
 	    if(key_flag)
 		{
 		  tCnt ^=01;
 		  LED0 = tCnt;
 		  key_flag=0;
-		  mRFstatus = 0;
+		  sta = 0;
 		  TX_Mode();								// 发射数据
 		  while (!(TX_DS|MAX_RT));				// 等待发射结束
-		  SPI_RW_Reg(FLUSH_TX,0);	
-	      SPI_RW_Reg(WRITE_REG+STATUS,0xFF);
-		  mRFstatus = 0;
+		 SPI_RW_Reg(FLUSH_TX,0);	
+	     SPI_RW_Reg(WRITE_REG+STATUS,0xFF);
+		  sta = 0;
 		  delay(100);
 		}
 	}
 }              				
+
+

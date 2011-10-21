@@ -1,4 +1,4 @@
-C51 COMPILER V9.00   MAIN                                                                  10/14/2011 18:08:16 PAGE 1   
+C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:30:25 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
@@ -63,7 +63,7 @@ line level    source
   51          #define COL1_SET()    do { COL1_PDIR &= ~(1<<COL1_PIN); COL1=1; }while(0)
   52          #define COL2_SET()    do { COL2_PDIR &= ~(1<<COL2_PIN); COL2=1; }while(0)
   53          #define COL3_SET()    do { COL3_PDIR &= ~(1<<COL3_PIN); COL3=1; }while(0)
-C51 COMPILER V9.00   MAIN                                                                  10/14/2011 18:08:16 PAGE 2   
+C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:30:25 PAGE 2   
 
   54          
   55          #define COL0_CLR()    do { COL0=0; COL0_PDIR |= (1<<COL0_PIN); }while(0)
@@ -106,258 +106,290 @@ line level    source
   91   3                      }               
   92   2              }
   93   1      
-  94   1              // Scan KeyMatrix
-  95   1              switch (tCnt1S)
-  96   1              {
-  97   2                      case 0:
-  98   2                              tKey[0] = 0;
-  99   2                              tKey[1] = 0;
- 100   2                              tKey[2] = 0;
- 101   2                              tKey[3] = 0;
- 102   2                              COL2_SET(); 
- 103   2                              break;
- 104   2                      case 1:
- 105   2                              tKey[0] =  read_rows_ex();
- 106   2                          COL2_CLR();
- 107   2                              COL3_SET();                      
- 108   2                              break;
- 109   2                      case 2:
- 110   2                              tKey[1] =  read_rows_ex();
- 111   2                          COL3_CLR();
- 112   2                              COL0_SET();                      
- 113   2                              break;
- 114   2                      case 3:
-C51 COMPILER V9.00   MAIN                                                                  10/14/2011 18:08:16 PAGE 3   
+  94   1              if (1)
+  95   1              {
+  96   2              // Scan KeyMatrix
+  97   2              switch (tCnt1S)
+  98   2              {
+  99   3                      case 0:
+ 100   3                              tKey[0] = 0;
+ 101   3                              tKey[1] = 0;
+ 102   3                              tKey[2] = 0;
+ 103   3                              tKey[3] = 0;
+ 104   3                              COL2_SET(); 
+ 105   3                              break;
+ 106   3                      case 1:
+ 107   3                              tKey[0] =  read_rows_ex();
+ 108   3                          COL2_CLR();
+ 109   3                              COL3_SET();                      
+ 110   3                              break;
+ 111   3                      case 2:
+ 112   3                              tKey[1] =  read_rows_ex();
+ 113   3                          COL3_CLR();
+ 114   3                              COL0_SET();                      
+C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:30:25 PAGE 3   
 
- 115   2                              tKey[2] =  read_rows_ex();
- 116   2                          COL0_CLR();
- 117   2                              COL1_SET();                      
- 118   2                              break;
- 119   2                      case 4:
- 120   2                              tKey[3] =  read_rows_ex();
- 121   2                          COL1_CLR();
- 122   2                              break;          
- 123   2                      default:
- 124   2      
- 125   2                              COL0_CLR();
- 126   2                              COL1_CLR();
- 127   2                              COL2_CLR();
- 128   2                              COL3_CLR();
- 129   2                              break;  
- 130   2              }
- 131   1                      
- 132   1      }
- 133          
- 134          
- 135          /**************************************************
- 136          功能：延时
- 137          **************************************************/
- 138          void delay(uint16_t x)
- 139          {
- 140   1          uint16_t i,j;
- 141   1          i=0;
- 142   1          for(i=0;i<x;i++)
- 143   1          {
- 144   2             j=108;
- 145   2                 ;
- 146   2             while(j--);
- 147   2          }
- 148   1      }
- 149          //============================================
- 150          void keyinit(void)
- 151          {
- 152   1        P0=0;
- 153   1        P1=0;
- 154   1      //P0DIR=0xec;   //  
- 155   1        P0DIR=0xc0;   //  0b11000000
- 156   1        P1DIR=0x43;   //  0b01000011
- 157   1       // P0CON = 0x70;
- 158   1       // P0CON = 0x71;
- 159   1       // P0CON = 0x72;
- 160   1       // P0CON = 0x73;
- 161   1       // P0CON = 0x74;
- 162   1       // P0CON = 0x75;
- 163   1        P1CON = 0x31;         // P1.1 - Dig in.buf w/ pull down res
- 164   1        P1CON = 0x30;         // P1.0 - Dig in.buf w/ pull down res
- 165   1        P1CON = 0x36;         // P1.6 - Dig in.buf w/ pull down res
- 166   1      
- 167   1        P0CON = 0x37;         // P0.7 - Dig in.buf w/ pull down res
- 168   1        P0CON = 0x36;         // P0.6 - Dig in.buf w/ pull down res
- 169   1       // P1CON = 0x72;
- 170   1       // P1CON = 0x73;
- 171   1       // P1CON = 0x74;
- 172   1       // P1CON = 0x75;
- 173   1       
- 174   1      }
- 175          
- 176          static uint8_t read_rows_ex(void)
-C51 COMPILER V9.00   MAIN                                                                  10/14/2011 18:08:16 PAGE 4   
+ 115   3                              break;
+ 116   3                      case 3:
+ 117   3                              tKey[2] =  read_rows_ex();
+ 118   3                          COL0_CLR();
+ 119   3                              COL1_SET();                      
+ 120   3                              break;
+ 121   3                      case 4:
+ 122   3                              tKey[3] =  read_rows_ex();
+ 123   3                          COL1_CLR();
+ 124   3                              break;          
+ 125   3                      default:
+ 126   3      
+ 127   3                              COL0_CLR();
+ 128   3                              COL1_CLR();
+ 129   3                              COL2_CLR();
+ 130   3                              COL3_CLR();
+ 131   3                              break;  
+ 132   3              }
+ 133   2              }       
+ 134   1      }
+ 135          
+ 136          
+ 137          /**************************************************
+ 138          功能：延时
+ 139          **************************************************/
+ 140          void delay(uint16_t x)
+ 141          {
+ 142   1          uint16_t i,j;
+ 143   1          i=0;
+ 144   1          for(i=0;i<x;i++)
+ 145   1          {
+ 146   2             j=108;
+ 147   2                 ;
+ 148   2             while(j--);
+ 149   2          }
+ 150   1      }
+ 151          //============================================
+ 152          void keyinit(void)
+ 153          {
+ 154   1        P0=0;
+ 155   1        P1=0;
+ 156   1      //P0DIR=0xec;   //  
+ 157   1        P0DIR=0xc0;   //  0b11000000
+ 158   1        P1DIR=0x43;   //  0b01000011
+ 159   1       // P0CON = 0x70;
+ 160   1       // P0CON = 0x71;
+ 161   1       // P0CON = 0x72;
+ 162   1       // P0CON = 0x73;
+ 163   1       // P0CON = 0x74;
+ 164   1       // P0CON = 0x75;
+ 165   1        P1CON = 0x31;         // P1.1 - Dig in.buf w/ pull down res
+ 166   1        P1CON = 0x30;         // P1.0 - Dig in.buf w/ pull down res
+ 167   1        P1CON = 0x36;         // P1.6 - Dig in.buf w/ pull down res
+ 168   1      
+ 169   1        P0CON = 0x37;         // P0.7 - Dig in.buf w/ pull down res
+ 170   1        P0CON = 0x36;         // P0.6 - Dig in.buf w/ pull down res
+ 171   1       // P1CON = 0x72;
+ 172   1       // P1CON = 0x73;
+ 173   1       // P1CON = 0x74;
+ 174   1       // P1CON = 0x75;
+ 175   1       
+ 176   1      }
+C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:30:25 PAGE 4   
 
- 177          {
- 178   1        return  (uint8_t)(ROW0 | ((uint8_t)ROW1 << 1) | ((uint8_t)ROW2 << 2) | ((uint8_t)ROW3 << 3) | ((uint8_t)
+ 177          
+ 178          static uint8_t read_rows_ex(void)
+ 179          {
+ 180   1        return  (uint8_t)(ROW0 | ((uint8_t)ROW1 << 1) | ((uint8_t)ROW2 << 2) | ((uint8_t)ROW3 << 3) | ((uint8_t)
              -ROW4 << 4));
- 179   1      }
- 180          
- 181          
+ 181   1      }
  182          
- 183          /**************************************************
- 184          功能：硬件SPI读写
- 185          **************************************************/
- 186          uint8_t SPI_RW(uint8_t value)
- 187          {
- 188   1        SPIRDAT = value;                                                                                     
- 189   1        while(!(SPIRSTAT & 0x02));                                    // 等待SPI传输完成
- 190   1        return SPIRDAT;                                               // 返回读出值
- 191   1      }
- 192          /**************************************************
- 193          功能：写RF寄存器，读RF状态值
- 194          **************************************************/
- 195          uint8_t SPI_RW_Reg(uint8_t reg, uint8_t value)
- 196          {
- 197   1              uint8_t status;
- 198   1              RFCSN = 0;                      
- 199   1              status = SPI_RW(reg);                                           // 选择RF寄存器
- 200   1              SPI_RW(value);                                                  // 写入数据
- 201   1              RFCSN = 1;                      
- 202   1              return(status);                                                 // 返回RF状态值
- 203   1      }
- 204          /**************************************************
- 205          功能：读RF寄存器
- 206          **************************************************/
- 207          uint8_t SPI_Read(uint8_t reg)
- 208          {
- 209   1              uint8_t reg_val;
- 210   1              RFCSN = 0;                                      
- 211   1              SPI_RW(reg);                                                    // 选择RF寄存器
- 212   1              reg_val = SPI_RW(0);                                            // 读出数据
- 213   1              RFCSN = 1;                                      
- 214   1              return(reg_val);                                                // 返回RF状态值
- 215   1      }
- 216          /**************************************************
- 217          功能：把缓冲区的多字节数据写到RF寄存器
- 218          **************************************************/
- 219          uint8_t SPI_Write_Buf(uint8_t reg, uint8_t *pBuf, uint8_t bytes)
- 220          {
- 221   1              uint8_t status,byte_ctr;
- 222   1              RFCSN = 0;                              
- 223   1              status = SPI_RW(reg);                                           // 选择RF寄存器
- 224   1              for(byte_ctr=0; byte_ctr<bytes; byte_ctr++) // 连接写入数据
- 225   1              SPI_RW(*pBuf++);
- 226   1              RFCSN = 1;                                      
- 227   1              return(status);                                                 // 返回RF状态值
- 228   1      }
- 229          /**************************************************
- 230          功能：设置为掉电模式
- 231          **************************************************/
- 232          /**************************************************
- 233          功能：设置为发射模式
- 234          **************************************************/
- 235          void TX_Mode(void)
- 236          {
- 237   1              SPI_RW_Reg(WRITE_REG + CONFIG, 0x0e);                           // 上电, CRC为2 bytes,接收模式,允许RX_DR产生中断
-C51 COMPILER V9.00   MAIN                                                                  10/14/2011 18:08:16 PAGE 5   
+ 183          
+ 184          
+ 185          /**************************************************
+ 186          功能：硬件SPI读写
+ 187          **************************************************/
+ 188          uint8_t SPI_RW(uint8_t value)
+ 189          {
+ 190   1        SPIRDAT = value;                                                                                     
+ 191   1        while(!(SPIRSTAT & 0x02));                                    // 等待SPI传输完成
+ 192   1        return SPIRDAT;                                               // 返回读出值
+ 193   1      }
+ 194          /**************************************************
+ 195          功能：写RF寄存器，读RF状态值
+ 196          **************************************************/
+ 197          uint8_t SPI_RW_Reg(uint8_t reg, uint8_t value)
+ 198          {
+ 199   1              uint8_t status;
+ 200   1              RFCSN = 0;                      
+ 201   1              status = SPI_RW(reg);                                           // 选择RF寄存器
+ 202   1              SPI_RW(value);                                                  // 写入数据
+ 203   1              RFCSN = 1;                      
+ 204   1              return(status);                                                 // 返回RF状态值
+ 205   1      }
+ 206          /**************************************************
+ 207          功能：读RF寄存器
+ 208          **************************************************/
+ 209          uint8_t SPI_Read(uint8_t reg)
+ 210          {
+ 211   1              uint8_t reg_val;
+ 212   1              RFCSN = 0;                                      
+ 213   1              SPI_RW(reg);                                                    // 选择RF寄存器
+ 214   1              reg_val = SPI_RW(0);                                            // 读出数据
+ 215   1              RFCSN = 1;                                      
+ 216   1              return(reg_val);                                                // 返回RF状态值
+ 217   1      }
+ 218          /**************************************************
+ 219          功能：把缓冲区的多字节数据写到RF寄存器
+ 220          **************************************************/
+ 221          uint8_t SPI_Write_Buf(uint8_t reg, uint8_t *pBuf, uint8_t bytes)
+ 222          {
+ 223   1              uint8_t status,byte_ctr;
+ 224   1              RFCSN = 0;                              
+ 225   1              status = SPI_RW(reg);                                           // 选择RF寄存器
+ 226   1              for(byte_ctr=0; byte_ctr<bytes; byte_ctr++) // 连接写入数据
+ 227   1              SPI_RW(*pBuf++);
+ 228   1              RFCSN = 1;                                      
+ 229   1              return(status);                                                 // 返回RF状态值
+ 230   1      }
+ 231          /**************************************************
+ 232          功能：设置为掉电模式
+ 233          **************************************************/
+ 234          /**************************************************
+ 235          功能：设置为发射模式
+ 236          **************************************************/
+ 237          void TX_Mode(void)
+C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:30:25 PAGE 5   
 
- 238   1              SPI_Write_Buf(WR_TX_PLOAD, id_buf, TX_PLOAD_WIDTH); // 写数据到FIFO
- 239   1              RFCE=1;                                                                                         // 启动发射
- 240   1              delay(100);                                                                                     // 发射脉冲
- 241   1              RFCE=0;                                                                                         
- 242   1      }
- 243          /**************************************************
- 244          功能：RF初始化
- 245          **************************************************/
- 246          void rf_init(void)
- 247          {
- 248   1              RFCE = 0;                                               // RF关闭
- 249   1              RFCKEN = 1;                                             // 启动RF时钟
- 250   1              RF = 1;                                                 // 允许RF中断
- 251   1              delay(1000);
- 252   1              SPI_Write_Buf(WRITE_REG + TX_ADDR, TX_ADDRESS, TX_ADR_WIDTH);           // 设置发射地址长度
- 253   1              SPI_Write_Buf(WRITE_REG + RX_ADDR_P0, TX_ADDRESS, TX_ADR_WIDTH);        // 设置接收地址长度
- 254   1              SPI_RW_Reg(WRITE_REG + EN_AA, 0x01);                            // 启动自动应答功能
- 255   1              SPI_RW_Reg(WRITE_REG + EN_RXADDR, 0x01);                        // PIPE0接收数据
- 256   1              SPI_RW_Reg(WRITE_REG + SETUP_RETR, 0x1a);                       // 自动重传10次
- 257   1              SPI_RW_Reg(WRITE_REG + RF_CH, 40);                              // RF频率2440MHz
- 258   1              SPI_RW_Reg(WRITE_REG + RF_SETUP, 0x0f);                         // 发射功率0dBm, 传输速率2Mbps,
- 259   1              SPI_RW_Reg(WRITE_REG + RX_PW_P0, TX_PLOAD_WIDTH);       // PIPE0 接收数据包长度                 
- 260   1      }
- 261          /**************************************************
- 262          功能：RF中断服务程序
- 263          **************************************************/
- 264          void RF_IRQ(void) interrupt INTERRUPT_RFIRQ
- 265          {
- 266   1              mRFstatus=SPI_Read(STATUS);                                                             // 读出状态值
- 267   1              SPI_RW_Reg(WRITE_REG+STATUS,0x70);                                      // 清除所有中断标志 
- 268   1      }
- 269          
- 270                                                  
- 271           
- 272          /**************************************************
- 273          功能：主程序
- 274          **************************************************/
- 275          void main(void)
- 276          {
- 277   1          
- 278   1              static unsigned char tCnt=0;
- 279   1              rf_init();                                                                      // RF初始化
- 280   1              keyinit();                            
- 281   1      
- 282   1      /*--------------------------------------
- 283   1      Set Timer0 for 16-bit timer mode.  The
- 284   1      timer counts to 65535, overflows, and
- 285   1      generates an interrupt.
- 286   1      
- 287   1      Set the Timer0 Run control bit.
- 288   1      --------------------------------------*/
- 289   1      TMOD = (TMOD & 0xF0) | 0x00;  /* Set T/C0 Mode 13bit timer mode*/
- 290   1      ET0 = 1;                      /* Enable Timer 0 Interrupts */
- 291   1      TR0 = 1;                      /* Start Timer 0 Running */
- 292   1      EA = 1;                       /* Global Interrupt Enable */
- 293   1      
- 294   1                                                                                                      
- 295   1              while (1)
- 296   1              {
- 297   2      
- 298   2                      if (mFlag1S==1)                         // 100mS flag
- 299   2                      {
-C51 COMPILER V9.00   MAIN                                                                  10/14/2011 18:08:16 PAGE 6   
+ 238          {
+ 239   1              SPI_RW_Reg(WRITE_REG + CONFIG, 0x0e);                           // 上电, CRC为2 bytes,接收模式,允许RX_DR产生中断
+ 240   1              SPI_Write_Buf(WR_TX_PLOAD, id_buf, TX_PLOAD_WIDTH); // 写数据到FIFO
+ 241   1              RFCE=1;                                                                                         // 启动发射
+ 242   1              delay(100);                                                                                     // 发射脉冲
+ 243   1              RFCE=0;                                                                                         
+ 244   1      }
+ 245          /**************************************************
+ 246          功能：RF初始化
+ 247          **************************************************/
+ 248          void rf_init(void)
+ 249          {
+ 250   1              RFCE = 0;                                               // RF关闭
+ 251   1              RFCKEN = 1;                                             // 启动RF时钟
+ 252   1              RF = 1;                                                 // 允许RF中断
+ 253   1              delay(1000);
+ 254   1              SPI_Write_Buf(WRITE_REG + TX_ADDR, TX_ADDRESS, TX_ADR_WIDTH);           // 设置发射地址长度
+ 255   1              SPI_Write_Buf(WRITE_REG + RX_ADDR_P0, TX_ADDRESS, TX_ADR_WIDTH);        // 设置接收地址长度
+ 256   1              SPI_RW_Reg(WRITE_REG + EN_AA, 0x01);                            // 启动自动应答功能
+ 257   1              SPI_RW_Reg(WRITE_REG + EN_RXADDR, 0x01);                        // PIPE0接收数据
+ 258   1              SPI_RW_Reg(WRITE_REG + SETUP_RETR, 0x1a);                       // 自动重传10次
+ 259   1              SPI_RW_Reg(WRITE_REG + RF_CH, 40);                              // RF频率2440MHz
+ 260   1              SPI_RW_Reg(WRITE_REG + RF_SETUP, 0x0f);                         // 发射功率0dBm, 传输速率2Mbps,
+ 261   1              SPI_RW_Reg(WRITE_REG + RX_PW_P0, TX_PLOAD_WIDTH);       // PIPE0 接收数据包长度                 
+ 262   1      }
+ 263          /**************************************************
+ 264          功能：RF中断服务程序
+ 265          **************************************************/
+ 266          void RF_IRQ(void) interrupt INTERRUPT_RFIRQ
+ 267          {
+ 268   1              mRFstatus=SPI_Read(STATUS);                                                             // 读出状态值
+ 269   1              SPI_RW_Reg(WRITE_REG+STATUS,0x70);                                      // 清除所有中断标志 
+ 270   1      }
+ 271          
+ 272                                                  
+ 273           
+ 274          /**************************************************
+ 275          功能：主程序
+ 276          **************************************************/
+ 277          void main(void)
+ 278          {
+ 279   1          
+ 280   1              static unsigned char tCnt=0;
+ 281   1              uint32_t tKeyMatrix;
+ 282   1              rf_init();                                                                      // RF初始化
+ 283   1              keyinit();                            
+ 284   1      
+ 285   1      /*--------------------------------------
+ 286   1      Set Timer0 for 16-bit timer mode.  The
+ 287   1      timer counts to 65535, overflows, and
+ 288   1      generates an interrupt.
+ 289   1      
+ 290   1      Set the Timer0 Run control bit.
+ 291   1      --------------------------------------*/
+ 292   1      TMOD = (TMOD & 0xF0) | 0x00;  /* Set T/C0 Mode 13bit timer mode*/
+ 293   1      ET0 = 1;                      /* Enable Timer 0 Interrupts */
+ 294   1      TR0 = 1;                      /* Start Timer 0 Running */
+ 295   1      EA = 1;                       /* Global Interrupt Enable */
+ 296   1      
+ 297   1                                                                                                      
+ 298   1              while (1)
+ 299   1              {
+C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:30:25 PAGE 6   
 
- 300   3                              tCnt ++;                                        
- 301   3                              mFlag1S = 0;
- 302   3                              if (tCnt>=5)
- 303   3                              { 
- 304   4                                      tCnt = 0;
- 305   4                                      LED1 = !LED1;
- 306   4                              }
- 307   3      
- 308   3                              if (mKeyMatrix[0] != mKeyMatrix[1])     
- 309   3                              {
- 310   4                                      LED0 = !LED0;                   
- 311   4                              }
- 312   3                      }
- 313   2              }
- 314   1      
- 315   1      
- 316   1              while(0)
- 317   1              {
- 318   2                  if(key_flag)
- 319   2                      {
- 320   3                        tCnt ^=01;
- 321   3                        LED0 = tCnt;
- 322   3                        key_flag=0;
- 323   3                        mRFstatus = 0;
- 324   3                        TX_Mode();                                                            // 发射数据
- 325   3                        while (!(TX_DS|MAX_RT));                              // 等待发射结束
- 326   3                        SPI_RW_Reg(FLUSH_TX,0);       
- 327   3                    SPI_RW_Reg(WRITE_REG+STATUS,0xFF);
- 328   3                        mRFstatus = 0;
- 329   3                        delay(100);
- 330   3                      }
- 331   2              }
- 332   1      }                                       
+ 300   2      
+ 301   2                      if (mFlag1S==1)                         // 100mS flag
+ 302   2                      {
+ 303   3                              tCnt ++;                                        
+ 304   3                              mFlag1S = 0;
+ 305   3                              if (tCnt>=5)
+ 306   3                              { 
+ 307   4                                      tCnt = 0;
+ 308   4                                      LED1 = !LED1;
+ 309   4      //                              LED1 = 0;
+ 310   4                              }
+ 311   3      
+ 312   3                              if (mKeyMatrix[0] != mKeyMatrix[1])     
+ 313   3                              {
+ 314   4                                      LED0 = !LED0;           
+ 315   4                                      if (mKeyMatrix[0]!=0x00)
+ 316   4                                      {
+ 317   5                                              tKeyMatrix = mKeyMatrix[0];     
+ 318   5                                              tKeyMatrix &= 0x07;
+ 319   5                                              id_buf[8] = 0x1e;
+ 320   5                                              id_buf[8] += tKeyMatrix;
+ 321   5      
+ 322   5      //                                      id_buf[8]=0x26; 
+ 323   5                                      }
+ 324   4                                      else
+ 325   4                                      {
+ 326   5                                              id_buf[8]=0x00; 
+ 327   5                                      }
+ 328   4      
+ 329   4      //                              LED0 = 0;
+ 330   4                                      mRFstatus = 0;
+ 331   4                                      TX_Mode();                                                              // 发射数据
+ 332   4                                      while (!(TX_DS|MAX_RT));                                // 等待发射结束
+ 333   4                                      SPI_RW_Reg(FLUSH_TX,0); 
+ 334   4                                  SPI_RW_Reg(WRITE_REG+STATUS,0xFF);
+ 335   4                                      mRFstatus = 0;
+ 336   4      
+ 337   4                              }
+ 338   3                              else
+ 339   3                              {
+ 340   4                                      id_buf[8]=0x00; 
+ 341   4                              }
+ 342   3                      }
+ 343   2              }
+ 344   1      
+ 345   1      
+ 346   1              while(0)
+ 347   1              {
+ 348   2                  if(key_flag)
+ 349   2                      {
+ 350   3                        tCnt ^=01;
+ 351   3                        LED0 = tCnt;
+ 352   3                        key_flag=0;
+ 353   3                        mRFstatus = 0;
+ 354   3                        TX_Mode();                                                            // 发射数据
+ 355   3                        while (!(TX_DS|MAX_RT));                              // 等待发射结束
+ 356   3                        SPI_RW_Reg(FLUSH_TX,0);       
+ 357   3                    SPI_RW_Reg(WRITE_REG+STATUS,0xFF);
+ 358   3                        mRFstatus = 0;
+ 359   3                        delay(100);
+ 360   3                      }
+ 361   2              }
+C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:30:25 PAGE 7   
+
+ 362   1      }                                       
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    747    ----
+   CODE SIZE        =    834    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =     22       8
