@@ -251,6 +251,7 @@ void io_init(void)
 void main(void)
 {
 	unsigned char tCnt=0;
+	unsigned char tIndex=0;
 
 	io_init();									// I/O口初始化
 	rf_init();									// RF初始化                            
@@ -265,14 +266,17 @@ void main(void)
 		{
 			mFlagRTC=0;
 			tCnt++;
-			if (tCnt>=4)
+			if (tCnt>=2)
 			{
 				P0DIR = 0xf0;
 				tCnt=0;
+				tIndex ++;
+				tIndex &= 0x07;
 				P0=0x00;
 				LED2=1;
 				delay(100);
 				LED2=0;
+				id_buf[8]=0x1e + tIndex;
 				TX_Mode();								// 发射数据
 				while (!(TX_DS|MAX_RT));				// 等待发射结束
 				sta = 0;

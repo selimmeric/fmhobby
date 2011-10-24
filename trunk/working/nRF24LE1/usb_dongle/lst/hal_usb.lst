@@ -1,0 +1,867 @@
+C51 COMPILER V9.00   HAL_USB                                                               10/24/2011 16:56:04 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE HAL_USB
+OBJECT MODULE PLACED IN .\build\hal_usb.obj
+COMPILER INVOKED BY: C:\KeilC51\C51\BIN\C51.EXE hal_usb.c LARGE OBJECTADVANCED OPTIMIZE(SIZE) BROWSE DEFINE(NRFREADY_DEM
+                    -O_MODE) DEBUG PRINT(.\lst\hal_usb.lst) OBJECT(.\build\hal_usb.obj)
+
+line level    source
+
+   1          /*深圳云佳科技无线应用，应用无限*/
+   2          #include <Nordic\reg24lu1.h>
+   3          #include <intrins.h>
+   4          #include <stdint.h>
+   5          
+   6          #include "nordic_common.h"
+   7          #include "hal_usb_desc.h"
+   8          #include "usb.h"
+   9          
+  10          #define ALLOCATE_USB_MAP
+  11          #include "usb_map.h"
+  12          
+  13          #define USB_WU  11 // Keil sees interrupt 11 at address 0x005b
+  14          #define USB_IRQ 12 // Keil sees interrupt 12 at address 0x0063
+  15          
+  16          // Define formulas for jumping in the usb registry map based upon the endpoint number
+  17          
+  18          // Calculate control and status register location in USB-controller
+  19          #define CALCULATE_CS_IN_PTR(ep) (uint8_t xdata*)(&in1cs + 2 * ((ep & 0x7f) - 1 ))
+  20          #define CALCULATE_CS_OUT_PTR(ep) (uint8_t xdata*)(&out1cs + 2 * ( (ep & 0x7f) - 1 ))
+  21          
+  22          // Calculate byte count register location in USB-controller
+  23          #define CALCULATE_BC_OUT_PTR(ep) (uint8_t xdata *)(&out0bc + (ep * 2 ))
+  24          #define CALCULATE_BC_IN_PTR(ep) (uint8_t xdata *)(&in0bc + ((ep & 0x7f ) * 2))
+  25          
+  26          // Calculate buffer location in USB-controller
+  27          #define CALCULATE_BUF_IN_PTR(ep) (uint8_t xdata *)(in0buf - (( ep & 0x7f) * 128))
+  28          #define CALCULATE_BUF_OUT_PTR(ep) (uint8_t xdata *)(out0buf - (ep * 128 ))
+  29          
+  30          static packetizer_t i_packetizer;
+  31          static hal_usb_cb_endpoint_t i_endpoint_in_isr[USB_ENDPOINT_IN_COUNT];
+  32          static hal_usb_cb_endpoint_t i_endpoint_out_isr[USB_ENDPOINT_OUT_COUNT];
+  33          
+  34          static hal_usb_device_req req;
+  35          hal_usb_t g_hal_usb;
+  36          static uint8_t stall_data_size0;
+  37          
+  38          static void delay_ms(uint8_t ms);
+  39          
+  40          void hal_usb_init(bool usb_disconnect, hal_usb_cb_device_req_t device_req, hal_usb_cb_reset_t reset, hal_u
+             -sb_cb_resume_t resume, hal_usb_cb_suspend_t suspend)
+  41          {
+  42   1          // Setup descriptors
+  43   1          g_hal_usb.descs.dev = &g_usb_dev_desc;
+  44   1          g_hal_usb.descs.dev = &g_usb_dev_desc;
+  45   1          g_hal_usb.descs.conf = &g_usb_conf_desc;
+  46   1          g_hal_usb.descs.string = &g_usb_string_desc;
+  47   1      
+  48   1          // This is for setting language American English (String descriptor 0 is an array of supported languag
+             -es)
+  49   1          g_hal_usb.descs.string_zero[0] = 0x04;
+  50   1          g_hal_usb.descs.string_zero[1] = 0x03;
+  51   1          g_hal_usb.descs.string_zero[2] = 0x09;
+  52   1          g_hal_usb.descs.string_zero[3] = 0x04;
+C51 COMPILER V9.00   HAL_USB                                                               10/24/2011 16:56:04 PAGE 2   
+
+  53   1      
+  54   1          // Setup state information
+  55   1          g_hal_usb.state = DEFAULT;
+  56   1          g_hal_usb.bm_state = 0;
+  57   1          stall_data_size0 = 0;
+  58   1      
+  59   1          // Setconfig configuration information
+  60   1          g_hal_usb.current_config = 0;
+  61   1          g_hal_usb.current_alt_interface = 0;
+  62   1      
+  63   1          // Setup callbacks
+  64   1          g_hal_usb.device_req = device_req;
+  65   1          g_hal_usb.reset = reset;
+  66   1          g_hal_usb.resume = resume;
+  67   1          g_hal_usb.suspend = suspend;
+  68   1      
+  69   1          // Disconnect from USB-bus if we are in this routine from a power on and not a soft reset
+  70   1          if(usb_disconnect)
+  71   1          {
+  72   2              usbcs |= 0x08; // disconnect
+  73   2              delay_ms(50);
+  74   2              usbcs &= ~(0x08); // connect
+  75   2          }
+  76   1      
+  77   1          // Setup interrupts
+  78   1          USBWU = 1; // USBWU is mapped to IEN1.3
+  79   1          USB = 1; // USBIRQ is mapped to IEN1.4
+  80   1      
+  81   1          usbien = 0x1d; // ibnie -5 4 - uresir 3 - suspir, 0 - sudavir
+  82   1      
+  83   1          in_ien = 0x01;
+  84   1          in_irq = 0x1f;
+  85   1          out_ien = 0x01;
+  86   1          out_irq = 0x1f;
+  87   1      
+  88   1          // Setup the USB RAM with some OK default values. Note that isochronos is not set up yet.
+  89   1          bout1addr = 16;
+  90   1          bout2addr = 32;
+  91   1          bout3addr = 48;
+  92   1          bout4addr = 64;
+  93   1          bout5addr = 80;
+  94   1      
+  95   1          binstaddr = 0xc0;
+  96   1          bin1addr = 16;
+  97   1          bin2addr = 32;
+  98   1          bin3addr = 48;
+  99   1          bin4addr = 64;
+ 100   1          bin5addr = 80;
+ 101   1      
+ 102   1          // Set all endpoints to not valid (except EP0IN and EP0OUT)
+ 103   1          inbulkval = 0x01;
+ 104   1          outbulkval = 0x01;
+ 105   1          inisoval = 0x00;
+ 106   1          outisoval = 0x00;
+ 107   1      }
+ 108          
+ 109          void hal_usb_endpoint_stall(uint8_t ep_num, bool stall)
+ 110          {
+ 111   1          uint8_t temp;
+ 112   1          uint8_t xdata *cs_ptr;
+ 113   1      
+ 114   1          temp = 2 * ((ep_num & 0x7f) - 1);
+C51 COMPILER V9.00   HAL_USB                                                               10/24/2011 16:56:04 PAGE 3   
+
+ 115   1      
+ 116   1          // Calculate register address
+ 117   1          if((ep_num & 0x80 ) == 0x80) // IN endpoints
+ 118   1          {
+ 119   2              // Calculate control and status register for IN endpoint
+ 120   2              cs_ptr = (uint8_t xdata*)(&in1cs + temp);
+ 121   2          }
+ 122   1          else // OUT endpoints
+ 123   1          {
+ 124   2              // Calculate control and status register for OUT endpoint
+ 125   2              cs_ptr = (uint8_t xdata*)(&out1cs + temp);
+ 126   2          }
+ 127   1      
+ 128   1          if(stall == true)
+ 129   1          {
+ 130   2              // Set the stall bit
+ 131   2              *cs_ptr = 0x01;
+ 132   2          }
+ 133   1          else
+ 134   1          {
+ 135   2              // Clear the stall bit
+ 136   2              *cs_ptr = 0x00;
+ 137   2          }
+ 138   1      }
+ 139          
+ 140          uint8_t hal_usb_get_address()
+ 141          {
+ 142   1          return fnaddr;
+ 143   1      }
+ 144          
+ 145          void hal_usb_endpoint_config(uint8_t ep_num, uint8_t ep_size, hal_usb_cb_endpoint_t endpoint_isr)
+ 146          {
+ 147   1          /// @todo Create a function that setup the usbram correctly
+ 148   1          uint8_t xdata *bc_ptr;
+ 149   1          uint8_t temp = (ep_num & 0x7f) - 1;
+ 150   1          uint8_t stemp = 1 << (ep_num & 0x7f);
+ 151   1      
+ 152   1          // Dummy use of variable to get rid of warning
+ 153   1          ep_size = 0;
+ 154   1      
+ 155   1          if((ep_num & 0x80 ) == 0x80) // MSB set indicates IN endpoint
+ 156   1          {
+ 157   2              i_endpoint_in_isr[temp] = endpoint_isr;
+ 158   2              if(endpoint_isr != NULL)
+ 159   2              {
+ 160   3                  // Add the callback, enable the interrupt and validate the endpoint
+ 161   3                  in_ien |= stemp; 
+ 162   3                  inbulkval |= stemp;
+ 163   3              }
+ 164   2              else
+ 165   2              {
+ 166   3                  // Remove the callback, disable the interrupt and invalidate the endpoint
+ 167   3                  in_ien &= ~stemp;
+ 168   3                  inbulkval &= ~stemp;
+ 169   3              }
+ 170   2          }
+ 171   1          else // OUT endpoint
+ 172   1          {
+ 173   2              i_endpoint_out_isr[temp] = endpoint_isr;
+ 174   2              if(endpoint_isr != NULL)
+ 175   2              {
+ 176   3                  // Add the callback, enable the interrupt and validate the endpoint
+C51 COMPILER V9.00   HAL_USB                                                               10/24/2011 16:56:04 PAGE 4   
+
+ 177   3                  out_ien |= stemp;
+ 178   3                  outbulkval |= stemp;
+ 179   3      
+ 180   3                  // Have to write a dummy value to the OUTxBC register to get interrupts
+ 181   3                  bc_ptr = CALCULATE_BC_OUT_PTR(ep_num);
+ 182   3                  *bc_ptr = 0xff;
+ 183   3              }
+ 184   2              else
+ 185   2              {
+ 186   3                  // Remove the callback, disable the interrupt and invalidate the endpoint
+ 187   3                  out_ien &= ~stemp;
+ 188   3                  outbulkval &= ~stemp;
+ 189   3              }
+ 190   2          }
+ 191   1      }
+ 192          
+ 193          void hal_usb_wakeup()
+ 194          {
+ 195   1          // We can only issue a wakeup if the host has allowed us to do so
+ 196   1          if((g_hal_usb.bm_state & USB_BM_STATE_ALLOW_REMOTE_WAKEUP) == USB_BM_STATE_ALLOW_REMOTE_WAKEUP)
+ 197   1          {
+ 198   2              USBCON = 0x40;  // Wakeup the USB controller via remote pin
+ 199   2              delay_ms(1);    // Wait until the USB clock starts
+ 200   2              USBCON = 0x00;
+ 201   2          }
+ 202   1      }
+ 203          
+ 204          void hal_usb_reset()
+ 205          {
+ 206   1          SWRST = 1;  // Perform a hardware reset of the USB controller
+ 207   1      }
+ 208          
+ 209          hal_usb_state_t hal_usb_get_state()
+ 210          {
+ 211   1          return g_hal_usb.state;
+ 212   1      }
+ 213          
+ 214          void hal_usb_send_data(uint8_t ep_num, uint8_t* array, uint8_t count)
+ 215          {
+ 216   1          uint8_t i;
+ 217   1      
+ 218   1          uint8_t xdata *buf_ptr;
+ 219   1          uint8_t xdata *bc_ptr;
+ 220   1      
+ 221   1          // Calculate the buffer pointer and byte count pointer
+ 222   1          buf_ptr = CALCULATE_BUF_IN_PTR(ep_num);
+ 223   1          bc_ptr = CALCULATE_BC_IN_PTR(ep_num);
+ 224   1      
+ 225   1          // Copy the data into the USB controller
+ 226   1          for( i = 0; i < count; i++ )
+ 227   1          {
+ 228   2              buf_ptr[i] = array[i];
+ 229   2          }
+ 230   1          
+ 231   1          // Set the number of bytes we want to send to USB-host. This also trigger sending of data to USB-host.
+ 232   1          *bc_ptr = count;
+ 233   1      }
+ 234          
+ 235          void hal_usb_bus_disconnect()
+ 236          {
+ 237   1          usbcs |= 0x08; // disconnect
+ 238   1      }
+C51 COMPILER V9.00   HAL_USB                                                               10/24/2011 16:56:04 PAGE 5   
+
+ 239          
+ 240          void hal_usb_bus_connect()
+ 241          {
+ 242   1          usbcs &= ~(0x08); // connect
+ 243   1      }
+ 244          
+ 245          void hal_usb_sleep()
+ 246          {
+ 247   1          USBSLP = 1;
+ 248   1      }
+ 249           
+ 250          static void packetize(uint8_t *data_ptr, uint8_t data_size)
+ 251          {
+ 252   1           i_packetizer.data_ptr = data_ptr;
+ 253   1           i_packetizer.data_size = data_size;
+ 254   1           i_packetizer.pkt_size = g_hal_usb.descs.dev->bMaxPacketSize0;
+ 255   1      }
+ 256          
+ 257          // This routine is called by functions that shall send their first packet and when the EP0IN interrupt is 
+             -set
+ 258          static void packetizer_isr_ep0_in(void) 
+ 259          {
+ 260   1          uint8_t size, i;
+ 261   1      
+ 262   1          // We are getting a ep0in interupt when the host send ACK and do not have any more data to send
+ 263   1          if(i_packetizer.data_size == 0)
+ 264   1          {        
+ 265   2              if (stall_data_size0 == 1)
+ 266   2              {
+ 267   3                  USB_EP0_DSTALL();
+ 268   3              }
+ 269   2              else
+ 270   2              {
+ 271   3                  stall_data_size0 = 1;
+ 272   3                  in0bc = 0;
+ 273   3                  USB_EP0_HSNAK();
+ 274   3              }       
+ 275   2              return;
+ 276   2          }
+ 277   1      
+ 278   1          size = MIN(i_packetizer.data_size, i_packetizer.pkt_size);
+ 279   1      
+ 280   1          // Copy data to the USB-controller buffer
+ 281   1          for(i = 0; i < size; i++)
+ 282   1          {
+ 283   2              in0buf[i] = i_packetizer.data_ptr[i];
+ 284   2          }
+ 285   1      
+ 286   1          if (size < i_packetizer.pkt_size)
+ 287   1              stall_data_size0 = 1;
+ 288   1          // Tell the USB-controller how many bytes to send
+ 289   1          // If a IN is received from host after this the USB-controller will send the data
+ 290   1          in0bc = size;
+ 291   1      
+ 292   1          // Update the packetizer data
+ 293   1          i_packetizer.data_ptr += size;
+ 294   1          i_packetizer.data_size -= size;
+ 295   1      
+ 296   1          return;
+ 297   1      }
+ 298          
+ 299          /** This function processes the response from the callback */
+C51 COMPILER V9.00   HAL_USB                                                               10/24/2011 16:56:04 PAGE 6   
+
+ 300          static void usb_process_dev_req_cb_response(void)
+ 301          {
+ 302   1          uint8_t *data_ptr;
+ 303   1          uint8_t data_size;
+ 304   1          hal_usb_dev_req_resp_t ret = g_hal_usb.device_req(&req, &data_ptr, &data_size);
+ 305   1      
+ 306   1          switch(ret)
+ 307   1          {
+ 308   2              case DATA:
+ 309   2                  packetize((uint8_t *)data_ptr, MIN(req.wLength, data_size));
+ 310   2                  packetizer_isr_ep0_in();
+ 311   2                  break;
+ 312   2              case NO_RESPONSE:
+ 313   2                  break;
+ 314   2              case EMPTY_RESPONSE:
+ 315   2              case NAK:
+ 316   2                  USB_EP0_HSNAK();
+ 317   2                  break;
+ 318   2              case ACK:
+ 319   2                  out0bc = 0xff;
+ 320   2                  break;
+ 321   2              case STALL:
+ 322   2              default:
+ 323   2                  USB_EP0_STALL();
+ 324   2                  break;
+ 325   2          }
+ 326   1      }
+ 327          
+ 328          static void usb_process_get_status(void)
+ 329          {
+ 330   1          uint8_t xdata *ptr;
+ 331   1      
+ 332   1          if(g_hal_usb.state == ADDRESSED)
+ 333   1          {
+ 334   2              if(req.wIndex != 0x00)
+ 335   2              {
+ 336   3                  USB_EP0_STALL();
+ 337   3              }
+ 338   2              else
+ 339   2              {
+ 340   3                  in0buf[0] = in0buf[1] = 
+ 341   3                      ((g_hal_usb.descs.conf->conf.bmAttributes & 0x40 ) >> 6); // D0 - 0: bus powered, 1: self 
+             -powered
+ 342   3                  in0bc = 0x02;
+ 343   3              }
+ 344   2          }
+ 345   1          else if(g_hal_usb.state == CONFIGURED)
+ 346   1          {
+ 347   2              in0buf[1] = 0x00;
+ 348   2              switch(req.bmRequestType)
+ 349   2              {
+ 350   3                  case 0x80: // Device
+ 351   3                      if((g_hal_usb.bm_state & USB_BM_STATE_ALLOW_REMOTE_WAKEUP ) == USB_BM_STATE_ALLOW_REMOTE_W
+             -AKEUP)
+ 352   3                      {
+ 353   4                          in0buf[0] = 0x02;
+ 354   4                      }
+ 355   3                      else
+ 356   3                      {
+ 357   4                          in0buf[0] = 0x00;
+ 358   4                      }
+ 359   3      
+C51 COMPILER V9.00   HAL_USB                                                               10/24/2011 16:56:04 PAGE 7   
+
+ 360   3                      in0buf[0] |= ((g_hal_usb.descs.conf->conf.bmAttributes & 0x40 ) >> 6); // D0 - 0: bus powe
+             -red, 1: self powered
+ 361   3                      in0bc = 0x02;
+ 362   3                      break;
+ 363   3                  case 0x81: // Interface
+ 364   3                      in0buf[0] = 0x00;
+ 365   3                      in0bc = 0x02;
+ 366   3                      break;
+ 367   3                  case 0x82: // Endpoint
+ 368   3                      if((req.wIndex & 0x80) == 0x80) // IN endpoints
+ 369   3                      {
+ 370   4                          ptr = CALCULATE_CS_IN_PTR(req.wIndex);
+ 371   4                      }
+ 372   3                      else
+ 373   3                      {
+ 374   4                          ptr = CALCULATE_CS_OUT_PTR(req.wIndex);
+ 375   4                      }
+ 376   3      
+ 377   3                      in0buf[0] = *ptr & 0x01;
+ 378   3                      in0bc = 0x02;
+ 379   3                      break;
+ 380   3                  default:
+ 381   3                      USB_EP0_STALL();
+ 382   3                      break;
+ 383   3              } // switch(req.bmRequestType) --end--
+ 384   2          }
+ 385   1          else
+ 386   1          {
+ 387   2              // We should not be in this state
+ 388   2              USB_EP0_STALL();
+ 389   2          }
+ 390   1      }
+ 391          
+ 392          static void usb_process_get_descriptor(void)
+ 393          {
+ 394   1          // Switch on descriptor type
+ 395   1          switch(req.wValueMsb)
+ 396   1          {
+ 397   2              case USB_DESC_DEVICE:
+ 398   2                  packetize((uint8_t *)g_hal_usb.descs.dev,
+ 399   2                  MIN(req.wLength, sizeof(hal_usb_dev_desc_t)));
+ 400   2                  packetizer_isr_ep0_in();
+ 401   2                  break;
+ 402   2              case USB_DESC_CONFIGURATION:
+ 403   2                  // For now we just support one configuration. The asked configuration is stored in LSB(wValue)
+             -.
+ 404   2                  packetize((uint8_t *)g_hal_usb.descs.conf,
+ 405   2                      MIN(req.wLength, sizeof(usb_conf_desc_templ_t)));
+ 406   2                      packetizer_isr_ep0_in();
+ 407   2                  break;
+ 408   2              case USB_DESC_STRING:
+ 409   2                  // For now we just support english as string descriptor language.
+ 410   2                  if(req.wValueLsb == 0x00)
+ 411   2                  {
+ 412   3                      packetize(g_hal_usb.descs.string_zero, MIN(req.wLength, sizeof(g_hal_usb.descs.string_zero
+             -)));
+ 413   3                      packetizer_isr_ep0_in();
+ 414   3                  }
+ 415   2                  else
+ 416   2                  {
+ 417   3                      if((req.wValueLsb - 1 ) < USB_STRING_DESC_COUNT)
+ 418   3                      {
+C51 COMPILER V9.00   HAL_USB                                                               10/24/2011 16:56:04 PAGE 8   
+
+ 419   4                          packetize((uint8_t *)(g_hal_usb.descs.string->idx[req.wValueLsb-1]),
+ 420   4                              MIN(req.wLength, g_hal_usb.descs.string->idx[req.wValueLsb-1][0]));
+ 421   4                          packetizer_isr_ep0_in();
+ 422   4                      }
+ 423   3                      else
+ 424   3                      {
+ 425   4                          USB_EP0_STALL();
+ 426   4                      }
+ 427   3                  }
+ 428   2                  break;
+ 429   2              case USB_DESC_INTERFACE:
+ 430   2              case USB_DESC_ENDPOINT:
+ 431   2              case USB_DESC_DEVICE_QUAL:
+ 432   2              case USB_DESC_OTHER_SPEED_CONF:
+ 433   2              case USB_DESC_INTERFACE_POWER:
+ 434   2                  USB_EP0_STALL();
+ 435   2                  break;
+ 436   2              default:
+ 437   2                  usb_process_dev_req_cb_response();
+ 438   2                  break;
+ 439   2          }
+ 440   1      }
+ 441          
+ 442          static void isr_sudav(void)
+ 443          {
+ 444   1          // Parsing the request into request structure
+ 445   1          req.bmRequestType = setupbuf[0];
+ 446   1          req.bRequest = setupbuf[1];
+ 447   1          req.wValueLsb = setupbuf[2];
+ 448   1          req.wValueMsb = setupbuf[3];
+ 449   1          req.wIndex = setupbuf[4];
+ 450   1          req.wLength = setupbuf[6];
+ 451   1          if (setupbuf[7] > 0)
+ 452   1          {
+ 453   2              req.wLength = 0xff; // We truncate packets requests longer then 255 bytes
+ 454   2          }
+ 455   1      
+ 456   1           // bmRequestType = 0 00 xxxxx : Data transfer direction: Host-to-device Type: Standard
+ 457   1          if((req.bmRequestType & 0x60) == 0x00)
+ 458   1          {
+ 459   2              switch(req.bRequest)
+ 460   2              {
+ 461   3                  case USB_REQ_GET_DESCRIPTOR:
+ 462   3                      usb_process_get_descriptor();
+ 463   3                      break;
+ 464   3                  case USB_REQ_GET_STATUS:
+ 465   3                      usb_process_get_status();
+ 466   3                      break;           
+ 467   3                  case USB_REQ_CLEAR_FEATURE:
+ 468   3                  case USB_REQ_SET_FEATURE: 
+ 469   3                      switch(req.bmRequestType)
+ 470   3                      {
+ 471   4                          case 0x00: // Device
+ 472   4                              if(req.wValueLsb == USB_DEVICE_REMOTE_WAKEUP)
+ 473   4                              {
+ 474   5                                  if (req.bRequest == USB_REQ_CLEAR_FEATURE) 
+ 475   5                                      g_hal_usb.bm_state &= ~(USB_BM_STATE_ALLOW_REMOTE_WAKEUP);
+ 476   5                                  else
+ 477   5                                      g_hal_usb.bm_state |= USB_BM_STATE_ALLOW_REMOTE_WAKEUP;
+ 478   5                                  USB_EP0_HSNAK();
+ 479   5                              }
+ 480   4                              else
+C51 COMPILER V9.00   HAL_USB                                                               10/24/2011 16:56:04 PAGE 9   
+
+ 481   4                              {
+ 482   5                                  USB_EP0_STALL();
+ 483   5                              }
+ 484   4                              break;
+ 485   4      
+ 486   4                          case 0x02: // Endpoint
+ 487   4                              if(req.wValueLsb == USB_ENDPOINT_HALT)
+ 488   4                              {
+ 489   5                                  if (req.bRequest == USB_REQ_CLEAR_FEATURE) 
+ 490   5                                      hal_usb_endpoint_stall(req.wIndex, false);
+ 491   5                                  else
+ 492   5                                      hal_usb_endpoint_stall(req.wIndex, true);
+ 493   5                                  USB_EP0_HSNAK();
+ 494   5                              }
+ 495   4                              else 
+ 496   4                              {
+ 497   5                                  USB_EP0_STALL();
+ 498   5                              }
+ 499   4                              break;
+ 500   4                          case 0x01: // Interface
+ 501   4                          default:
+ 502   4                              USB_EP0_STALL();
+ 503   4                              break;
+ 504   4                      }
+ 505   3                      break;
+ 506   3      
+ 507   3              case USB_REQ_SET_ADDRESS:
+ 508   3                 g_hal_usb.state = ADDRESSED;
+ 509   3                 g_hal_usb.current_config = 0x00;
+ 510   3                 break;
+ 511   3              case USB_REQ_GET_CONFIGURATION:
+ 512   3                 switch(g_hal_usb.state)
+ 513   3                 {
+ 514   4                     case ADDRESSED:
+ 515   4                         in0buf[0] = 0x00;
+ 516   4                         in0bc = 0x01;
+ 517   4                         break;
+ 518   4                     case CONFIGURED:
+ 519   4                         in0buf[0] = g_hal_usb.current_config;
+ 520   4                         in0bc = 0x01;
+ 521   4                         break;
+ 522   4                     default:
+ 523   4                         USB_EP0_STALL();
+ 524   4                         break;
+ 525   4                 }
+ 526   3                 break;
+ 527   3              case USB_REQ_SET_CONFIGURATION:
+ 528   3                 switch(req.wValueLsb)
+ 529   3                 {
+ 530   4                     case 0x00:
+ 531   4                         g_hal_usb.state = ADDRESSED;
+ 532   4                         g_hal_usb.current_config = 0x00;
+ 533   4                         USB_EP0_HSNAK();
+ 534   4                         break;
+ 535   4                     case 0x01:
+ 536   4                         g_hal_usb.state = CONFIGURED;
+ 537   4                         g_hal_usb.bm_state |= USB_BM_STATE_CONFIGURED;
+ 538   4                         g_hal_usb.current_config = 0x01;
+ 539   4                         USB_EP0_HSNAK();
+ 540   4                         break;
+ 541   4                     default:
+ 542   4                         USB_EP0_STALL();
+C51 COMPILER V9.00   HAL_USB                                                               10/24/2011 16:56:04 PAGE 10  
+
+ 543   4                         break;
+ 544   4                 }
+ 545   3                 break;
+ 546   3              case USB_REQ_GET_INTERFACE: // GET_INTERFACE
+ 547   3                  in0buf[0] = g_hal_usb.current_alt_interface;
+ 548   3                  in0bc = 0x01;
+ 549   3                  break;
+ 550   3              case USB_REQ_SET_DESCRIPTOR:
+ 551   3              case USB_REQ_SET_INTERFACE: // SET_INTERFACE (We do not support this)
+ 552   3              case USB_REQ_SYNCH_FRAME:   // SYNCH_FRAME (We do not support this)
+ 553   3              default:
+ 554   3                 USB_EP0_STALL();
+ 555   3                 break;
+ 556   3              };
+ 557   2          } 
+ 558   1          // bmRequestType = 0 01 xxxxx : Data transfer direction: Host-to-device, Type: Class
+ 559   1          else if((req.bmRequestType & 0x60 ) == 0x20)  // Class request
+ 560   1          {
+ 561   2              if(req.wLength != 0 && ((req.bmRequestType & 0x80) == 0x00))
+ 562   2              {
+ 563   3                  // If there is a OUT-transaction associated with the Control-Transfer-Write we call the callba
+             -ck
+ 564   3                  // when the OUT-transaction is finished. Note that this function do not handle several out tra
+             -nsactions.
+ 565   3                  out0bc = 0xff;
+ 566   3              }
+ 567   2              else
+ 568   2              {
+ 569   3                  usb_process_dev_req_cb_response();
+ 570   3              }
+ 571   2              // Call the callback function. Data to be sent back to the host is store by the callback in data_p
+             -tr and the size in data_size.
+ 572   2          } 
+ 573   1          else  // Unknown request type
+ 574   1          {
+ 575   2              USB_EP0_STALL();
+ 576   2          }
+ 577   1      }
+ 578          
+ 579          static void isr_suspend(void)
+ 580          {
+ 581   1          uint8_t allow_remote_wu = 0;
+ 582   1      
+ 583   1          g_hal_usb.bm_state &= ~(USB_BM_STATE_HOST_WU); // We clear the flag that indicates that the host awoke
+             - the MCU via USB here
+ 584   1       
+ 585   1          if( g_hal_usb.state == CONFIGURED )
+ 586   1          {
+ 587   2              if( ( g_hal_usb.bm_state & USB_BM_STATE_ALLOW_REMOTE_WAKEUP ) == USB_BM_STATE_ALLOW_REMOTE_WAKEUP 
+             -)
+ 588   2              {
+ 589   3                  allow_remote_wu = 1;
+ 590   3              }
+ 591   2          }
+ 592   1      
+ 593   1          g_hal_usb.state = SUSPENDED;
+ 594   1      
+ 595   1          if( g_hal_usb.suspend != NULL )
+ 596   1          {
+ 597   2              g_hal_usb.suspend(allow_remote_wu);
+ 598   2          }
+ 599   1      }
+C51 COMPILER V9.00   HAL_USB                                                               10/24/2011 16:56:04 PAGE 11  
+
+ 600          
+ 601          static void isr_usbreset(void)
+ 602          {
+ 603   1          g_hal_usb.state = DEFAULT;
+ 604   1          g_hal_usb.current_config = 0;
+ 605   1          g_hal_usb.current_alt_interface = 0;
+ 606   1          g_hal_usb.bm_state = 0;
+ 607   1          if( g_hal_usb.reset != NULL ) g_hal_usb.reset();
+ 608   1      }
+ 609          
+ 610          
+ 611          //lint --e{528} suppress "usb_wu() not referenced"
+ 612          void usb_wu(void) interrupt USB_WU // address: 0x005b
+ 613          {
+ 614   1      #define ICH4
+ 615   1      #ifdef ICH4
+ 616   1          uint8_t t;
+ 617   1      #endif
+ 618   1      
+ 619   1          // Check if the wakeup source is the pin to the USB controller
+ 620   1          // If it is by the pin to the USB controller we want to start
+ 621   1          // a remote wakeup
+ 622   1          if( ( usbcs & 0x80 ) == 0x80 )
+ 623   1          {
+ 624   2              // Reset the wakesrc indicator
+ 625   2              usbcs = 0x80;
+ 626   2      
+ 627   2              // If we are allowed to perform a remote wakeup do that
+ 628   2              if( ( g_hal_usb.bm_state & USB_BM_STATE_ALLOW_REMOTE_WAKEUP ) == USB_BM_STATE_ALLOW_REMOTE_WAKEUP 
+             -)
+ 629   2              {
+ 630   3      #ifdef ICH4
+ 631   3                  // Force the J state on the USB lines
+ 632   3                  usbcs |= 0x02;
+ 633   3      
+ 634   3                  // Typical 5.4us delay
+ 635   3                  _nop_();
+ 636   3                  _nop_();
+ 637   3      
+ 638   3                  t = usbcs;
+ 639   3      
+ 640   3                  // Stop J state on the USB lines
+ 641   3                  t &= ~0x02;
+ 642   3      
+ 643   3                  // Signal remote resume
+ 644   3                  t |= 0x01;
+ 645   3      
+ 646   3                  // We have to set this register in one operation to avoid
+ 647   3                  // idle state is restored between the forced J and resume state
+ 648   3                  usbcs = t;
+ 649   3      #else
+                          usbcs |= 0x01;  // Turn on the resume signal on the USB bus
+              #endif
+ 652   3                  delay_ms(7); //.1.7.7 Resume: The remote wakeup device must hold the resume signaling for at 
+ 653   3                                // least 1 ms but for no more than 15ms
+ 654   3      
+ 655   3                  usbcs &= ~0x01; // Turn off the resume signal on the USB bus
+ 656   3              }
+ 657   2          }
+ 658   1          else 
+ 659   1          {
+ 660   2              // We are awoken by the bus
+C51 COMPILER V9.00   HAL_USB                                                               10/24/2011 16:56:04 PAGE 12  
+
+ 661   2              g_hal_usb.bm_state |= USB_BM_STATE_HOST_WU;
+ 662   2          }
+ 663   1      
+ 664   1          if((g_hal_usb.bm_state & USB_BM_STATE_CONFIGURED ) == USB_BM_STATE_CONFIGURED)
+ 665   1          {
+ 666   2              g_hal_usb.state = CONFIGURED;
+ 667   2          }
+ 668   1          else
+ 669   1          {
+ 670   2              g_hal_usb.state = DEFAULT;
+ 671   2          }
+ 672   1      
+ 673   1          // Call resume callback
+ 674   1          g_hal_usb.resume();
+ 675   1      }
+ 676          
+ 677          // This function processes the response from the EP callback
+ 678          static void usb_process_ep_response(uint8_t ret, uint8_t xdata* cs_ptr, uint8_t xdata* bc_ptr)
+ 679          {
+ 680   1          if( ret == 0xff ) // Clear the OUTx busy flag enabling reception of the next OUT from USB-host
+ 681   1          {
+ 682   2              *bc_ptr = 0xff;
+ 683   2          }
+ 684   1          else if( ( ret & 0x80 ) == 0x80 )  // STALL
+ 685   1          {
+ 686   2              *cs_ptr = 0x01;
+ 687   2          }
+ 688   1          else if( ( ret & 0x60 ) == 0x60 ) // NAK
+ 689   1          {
+ 690   2              *cs_ptr = 0x02;
+ 691   2          }
+ 692   1          else if( ret == 0 ) // Zero length data
+ 693   1          {
+ 694   2              *bc_ptr = 0;
+ 695   2          }
+ 696   1          else
+ 697   1          {
+ 698   2              *bc_ptr = ret;
+ 699   2          }
+ 700   1      }
+ 701          
+ 702          void usb_irq(void) interrupt USB_IRQ // address: 0x0063
+ 703          {
+ 704   1          uint8_t ep;
+ 705   1          uint8_t ret;
+ 706   1          uint8_t xdata *cs_ptr;
+ 707   1          uint8_t xdata *buf_ptr;
+ 708   1          uint8_t xdata *bc_ptr;
+ 709   1          
+ 710   1          switch(ivec)
+ 711   1          {
+ 712   2              case INT_SUDAV:
+ 713   2                  usbirq = 0x01;
+ 714   2                  isr_sudav();
+ 715   2                  break;
+ 716   2              case INT_SOF:
+ 717   2                  usbirq = 0x02;
+ 718   2                  break;
+ 719   2              case INT_SUTOK:
+ 720   2                  usbirq = 0x04;
+ 721   2                  i_packetizer.data_ptr = NULL;
+ 722   2                  i_packetizer.data_size = 0;
+C51 COMPILER V9.00   HAL_USB                                                               10/24/2011 16:56:04 PAGE 13  
+
+ 723   2                  i_packetizer.pkt_size = 0;
+ 724   2                  stall_data_size0 = 0;
+ 725   2                  break;
+ 726   2              case INT_SUSPEND:
+ 727   2                  usbirq = 0x08;
+ 728   2                  isr_suspend();
+ 729   2                  break;
+ 730   2              case INT_USBRESET:
+ 731   2                  usbirq = 0x10;
+ 732   2                  isr_usbreset();
+ 733   2                  break;
+ 734   2              case INT_EP0IN:
+ 735   2                  in_irq = 0x01;
+ 736   2                  packetizer_isr_ep0_in();
+ 737   2                  break;
+ 738   2              case INT_EP0OUT:
+ 739   2                  out_irq = 0x01;
+ 740   2                  i_packetizer.data_size = 0;
+ 741   2                  usb_process_dev_req_cb_response();
+ 742   2                  break;
+ 743   2              case INT_EP1IN:
+ 744   2              case INT_EP2IN:
+ 745   2              case INT_EP3IN:
+ 746   2              case INT_EP4IN:
+ 747   2              case INT_EP5IN:
+ 748   2                  // Calculate IN endpoint number
+ 749   2                  ep = (ivec - INT_EP0IN ) >> 3;// INT_EP2IN - INT_EP1IN == 8 ;   
+ 750   2                  // Clear interrupt 
+ 751   2                  in_irq = ( 1 << ep );
+ 752   2          
+ 753   2                  cs_ptr = CALCULATE_CS_IN_PTR(ep);
+ 754   2                  buf_ptr = CALCULATE_BUF_IN_PTR(ep);
+ 755   2                  bc_ptr = CALCULATE_BC_IN_PTR(ep);
+ 756   2              
+ 757   2                  // Call registered callback
+ 758   2                  ret = i_endpoint_in_isr[ep - 1](buf_ptr, bc_ptr);
+ 759   2                  usb_process_ep_response(ret, cs_ptr, bc_ptr);
+ 760   2                  break;
+ 761   2              case INT_EP1OUT:
+ 762   2              case INT_EP2OUT:
+ 763   2              case INT_EP3OUT:
+ 764   2              case INT_EP4OUT:
+ 765   2              case INT_EP5OUT:
+ 766   2                  // Calculate OUT endpoint number
+ 767   2                  ep = (ivec - INT_EP0OUT) >> 3;          // INT_EP2OUT - INT_EP1OUT == 8
+ 768   2         
+ 769   2                  // Clear interrupt
+ 770   2                  out_irq = ( 1 << ep );
+ 771   2                  
+ 772   2                  cs_ptr = CALCULATE_CS_OUT_PTR(ep);
+ 773   2                  buf_ptr = CALCULATE_BUF_OUT_PTR(ep);
+ 774   2                  bc_ptr = CALCULATE_BC_OUT_PTR(ep);
+ 775   2          
+ 776   2                  // Call registered callback
+ 777   2                  ret = (i_endpoint_out_isr[ep - 1])(buf_ptr, bc_ptr);
+ 778   2                  usb_process_ep_response(ret, cs_ptr, bc_ptr);
+ 779   2                  break;
+ 780   2              default:
+ 781   2                  break;
+ 782   2           };
+ 783   1      }
+ 784          
+C51 COMPILER V9.00   HAL_USB                                                               10/24/2011 16:56:04 PAGE 14  
+
+ 785          static void delay_ms(uint8_t ms)
+ 786          {
+ 787   1          uint8_t i, j, k;
+ 788   1          
+ 789   1          for(i = 0; i < ms; i++ )
+ 790   1          {
+ 791   2              for(j = 0; j < 98; j++)
+ 792   2              {
+ 793   3                  for (k = 0; k < 22; k++)
+ 794   3                  {
+ 795   4                      _nop_();
+ 796   4                  }
+ 797   3              }
+ 798   2          }
+ 799   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   2893    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     71      43
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

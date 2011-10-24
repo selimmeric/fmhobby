@@ -1,4 +1,4 @@
-C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:30:25 PAGE 1   
+C51 COMPILER V9.00   MAIN                                                                  10/24/2011 18:05:45 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
@@ -6,8 +6,6 @@ OBJECT MODULE PLACED IN Main.OBJ
 COMPILER INVOKED BY: C:\KeilC51\C51\BIN\C51.EXE Main.c COMPACT OMF2 BROWSE INCDIR(.\air LCD remote) DEBUG
 
 line level    source
-
-*** WARNING C500 IN LINE 1 OF MAIN.C: LICENSE ERROR (R208: RENEW LICENSE ID CODE (LIC))
 
    1          /*深圳云佳科技无线应用，应用无限*/
    2          /*********************************************************************
@@ -63,9 +61,9 @@ line level    source
   51          #define COL1_SET()    do { COL1_PDIR &= ~(1<<COL1_PIN); COL1=1; }while(0)
   52          #define COL2_SET()    do { COL2_PDIR &= ~(1<<COL2_PIN); COL2=1; }while(0)
   53          #define COL3_SET()    do { COL3_PDIR &= ~(1<<COL3_PIN); COL3=1; }while(0)
-C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:30:25 PAGE 2   
-
   54          
+C51 COMPILER V9.00   MAIN                                                                  10/24/2011 18:05:45 PAGE 2   
+
   55          #define COL0_CLR()    do { COL0=0; COL0_PDIR |= (1<<COL0_PIN); }while(0)
   56          #define COL1_CLR()    do { COL1=0; COL1_PDIR |= (1<<COL1_PIN); }while(0)
   57          #define COL2_CLR()    do { COL2=0; COL2_PDIR |= (1<<COL2_PIN); }while(0)
@@ -100,8 +98,7 @@ line level    source
   86   2                      mKeyMatrix[0] = 0;
   87   2                      for (i=0; i<=3; i++)
   88   2                      {
-  89   3                              mKeyMatrix[0] << 5;
-*** WARNING C275 IN LINE 89 OF MAIN.C: expression with possibly no effect
+  89   3                              mKeyMatrix[0] = mKeyMatrix[0] << 5;
   90   3                              mKeyMatrix[0] += tKey[i];
   91   3                      }               
   92   2              }
@@ -127,10 +124,10 @@ line level    source
  112   3                              tKey[1] =  read_rows_ex();
  113   3                          COL3_CLR();
  114   3                              COL0_SET();                      
-C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:30:25 PAGE 3   
-
  115   3                              break;
  116   3                      case 3:
+C51 COMPILER V9.00   MAIN                                                                  10/24/2011 18:05:45 PAGE 3   
+
  117   3                              tKey[2] =  read_rows_ex();
  118   3                          COL0_CLR();
  119   3                              COL1_SET();                      
@@ -191,10 +188,10 @@ line level    source
  174   1       // P1CON = 0x75;
  175   1       
  176   1      }
-C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:30:25 PAGE 4   
-
  177          
  178          static uint8_t read_rows_ex(void)
+C51 COMPILER V9.00   MAIN                                                                  10/24/2011 18:05:45 PAGE 4   
+
  179          {
  180   1        return  (uint8_t)(ROW0 | ((uint8_t)ROW1 << 1) | ((uint8_t)ROW2 << 2) | ((uint8_t)ROW3 << 3) | ((uint8_t)
              -ROW4 << 4));
@@ -255,10 +252,10 @@ line level    source
  235          功能：设置为发射模式
  236          **************************************************/
  237          void TX_Mode(void)
-C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:30:25 PAGE 5   
-
  238          {
  239   1              SPI_RW_Reg(WRITE_REG + CONFIG, 0x0e);                           // 上电, CRC为2 bytes,接收模式,允许RX_DR产生中断
+C51 COMPILER V9.00   MAIN                                                                  10/24/2011 18:05:45 PAGE 5   
+
  240   1              SPI_Write_Buf(WR_TX_PLOAD, id_buf, TX_PLOAD_WIDTH); // 写数据到FIFO
  241   1              RFCE=1;                                                                                         // 启动发射
  242   1              delay(100);                                                                                     // 发射脉冲
@@ -291,108 +288,149 @@ line level    source
  269   1              SPI_RW_Reg(WRITE_REG+STATUS,0x70);                                      // 清除所有中断标志 
  270   1      }
  271          
- 272                                                  
- 273           
- 274          /**************************************************
- 275          功能：主程序
- 276          **************************************************/
- 277          void main(void)
- 278          {
- 279   1          
- 280   1              static unsigned char tCnt=0;
- 281   1              uint32_t tKeyMatrix;
- 282   1              rf_init();                                                                      // RF初始化
- 283   1              keyinit();                            
- 284   1      
- 285   1      /*--------------------------------------
- 286   1      Set Timer0 for 16-bit timer mode.  The
- 287   1      timer counts to 65535, overflows, and
- 288   1      generates an interrupt.
- 289   1      
- 290   1      Set the Timer0 Run control bit.
- 291   1      --------------------------------------*/
- 292   1      TMOD = (TMOD & 0xF0) | 0x00;  /* Set T/C0 Mode 13bit timer mode*/
- 293   1      ET0 = 1;                      /* Enable Timer 0 Interrupts */
- 294   1      TR0 = 1;                      /* Start Timer 0 Running */
- 295   1      EA = 1;                       /* Global Interrupt Enable */
- 296   1      
- 297   1                                                                                                      
- 298   1              while (1)
- 299   1              {
-C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:30:25 PAGE 6   
+ 272          void RF_TX_BUF(void)
+ 273          {
+ 274   1                                      mRFstatus = 0;
+ 275   1                                      TX_Mode();                                                              // 发射数据
+ 276   1                                      while (!(TX_DS|MAX_RT));                                // 等待发射结束
+ 277   1                                      SPI_RW_Reg(FLUSH_TX,0); 
+ 278   1                                  SPI_RW_Reg(WRITE_REG+STATUS,0xFF);
+ 279   1                                      mRFstatus = 0;
+ 280   1      
+ 281   1      
+ 282   1      
+ 283   1      }                                       
+ 284           
+ 285          /**************************************************
+ 286          功能：主程序
+ 287          **************************************************/
+ 288          void main(void)
+ 289          {
+ 290   1          
+ 291   1              static unsigned char tCnt=0;
+ 292   1              unsigned char i;
+ 293   1              unsigned char tKey;
+ 294   1              uint32_t tKeyMatrix;
+ 295   1              rf_init();                                                                      // RF初始化
+ 296   1              keyinit();           
+ 297   1                               
+ 298   1      
+ 299   1      /*--------------------------------------
+ 300   1      Set Timer0 for 16-bit timer mode.  The
+ 301   1      timer counts to 65535, overflows, and
+C51 COMPILER V9.00   MAIN                                                                  10/24/2011 18:05:45 PAGE 6   
 
- 300   2      
- 301   2                      if (mFlag1S==1)                         // 100mS flag
- 302   2                      {
- 303   3                              tCnt ++;                                        
- 304   3                              mFlag1S = 0;
- 305   3                              if (tCnt>=5)
- 306   3                              { 
- 307   4                                      tCnt = 0;
- 308   4                                      LED1 = !LED1;
- 309   4      //                              LED1 = 0;
- 310   4                              }
- 311   3      
- 312   3                              if (mKeyMatrix[0] != mKeyMatrix[1])     
- 313   3                              {
- 314   4                                      LED0 = !LED0;           
- 315   4                                      if (mKeyMatrix[0]!=0x00)
- 316   4                                      {
- 317   5                                              tKeyMatrix = mKeyMatrix[0];     
- 318   5                                              tKeyMatrix &= 0x07;
- 319   5                                              id_buf[8] = 0x1e;
- 320   5                                              id_buf[8] += tKeyMatrix;
- 321   5      
- 322   5      //                                      id_buf[8]=0x26; 
- 323   5                                      }
- 324   4                                      else
- 325   4                                      {
- 326   5                                              id_buf[8]=0x00; 
- 327   5                                      }
- 328   4      
- 329   4      //                              LED0 = 0;
- 330   4                                      mRFstatus = 0;
- 331   4                                      TX_Mode();                                                              // 发射数据
- 332   4                                      while (!(TX_DS|MAX_RT));                                // 等待发射结束
- 333   4                                      SPI_RW_Reg(FLUSH_TX,0); 
- 334   4                                  SPI_RW_Reg(WRITE_REG+STATUS,0xFF);
- 335   4                                      mRFstatus = 0;
- 336   4      
- 337   4                              }
- 338   3                              else
- 339   3                              {
- 340   4                                      id_buf[8]=0x00; 
- 341   4                              }
- 342   3                      }
- 343   2              }
- 344   1      
- 345   1      
- 346   1              while(0)
- 347   1              {
- 348   2                  if(key_flag)
- 349   2                      {
- 350   3                        tCnt ^=01;
- 351   3                        LED0 = tCnt;
- 352   3                        key_flag=0;
- 353   3                        mRFstatus = 0;
- 354   3                        TX_Mode();                                                            // 发射数据
- 355   3                        while (!(TX_DS|MAX_RT));                              // 等待发射结束
- 356   3                        SPI_RW_Reg(FLUSH_TX,0);       
- 357   3                    SPI_RW_Reg(WRITE_REG+STATUS,0xFF);
- 358   3                        mRFstatus = 0;
- 359   3                        delay(100);
- 360   3                      }
- 361   2              }
-C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:30:25 PAGE 7   
+ 302   1      generates an interrupt.
+ 303   1      
+ 304   1      Set the Timer0 Run control bit.
+ 305   1      --------------------------------------*/
+ 306   1      TMOD = (TMOD & 0xF0) | 0x00;  /* Set T/C0 Mode 13bit timer mode*/
+ 307   1      ET0 = 1;                      /* Enable Timer 0 Interrupts */
+ 308   1      TR0 = 1;                      /* Start Timer 0 Running */
+ 309   1      EA = 1;                       /* Global Interrupt Enable */
+ 310   1      
+ 311   1                                                                                                      
+ 312   1              while (1)
+ 313   1              {
+ 314   2      
+ 315   2                      if (mFlag1S==1)                         // 100mS flag
+ 316   2                      {
+ 317   3                              tCnt ++;                                        
+ 318   3                              mFlag1S = 0;
+ 319   3                              if (tCnt>=5)
+ 320   3                              { 
+ 321   4                                      tCnt = 0;
+ 322   4                                      LED1 = !LED1;
+ 323   4      //                              LED1 = 0;
+ 324   4      //                              id_buf[8] = 0x27;
+ 325   4      //                              RF_TX_BUF();
+ 326   4      //                              id_buf[8] = 0x00;
+ 327   4      //                              RF_TX_BUF();
+ 328   4                              }
+ 329   3      
+ 330   3                              if (mKeyMatrix[0] != mKeyMatrix[1])     
+ 331   3                              {
+ 332   4                                      tKeyMatrix = mKeyMatrix[0];     
+ 333   4                                      if (mKeyMatrix[0]!=0x00)
+ 334   4                                      {
+ 335   5                                              LED0 = !LED0;   
+ 336   5      //                                      tKeyMatrix = mKeyMatrix[0];     
+ 337   5      //                                      tKeyMatrix &= 0x07;
+ 338   5      //                                      id_buf[8] = 0x1e;
+ 339   5      //                                      id_buf[8] += tKeyMatrix;
+ 340   5      //                                      id_buf[8]=0x26; 
+ 341   5                                              for (i=0; i<20;i++)
+ 342   5                                              {
+ 343   6                                                      if ((tKeyMatrix & 0x01) == 0x01)
+ 344   6                                                      {
+ 345   7                                                              tKey = 0x10 + i;
+ 346   7                                                              id_buf[8] = tKey;
+ 347   7      //                                                      id_buf[9] = tKey+1;
+ 348   7                                                              break;
+ 349   7                                                      }
+ 350   6                                                      tKeyMatrix = tKeyMatrix >> 1;                                           
+ 351   6                                              }                       
+ 352   5                                              
+ 353   5                                              tKey = 0x25;
+ 354   5      //                                      id_buf[7]=tKey +0;
+ 355   5                                              id_buf[8]=tKey +0;
+ 356   5                                              id_buf[9]=tKey +1;
+ 357   5                                              id_buf[10]=tKey +2;
+ 358   5                                              id_buf[11]=tKey +3;
+ 359   5                                              id_buf[12]=tKey +4;
+ 360   5                                              id_buf[13]=tKey +5;
+ 361   5                                              
+ 362   5                                      }
+ 363   4                                      else
+C51 COMPILER V9.00   MAIN                                                                  10/24/2011 18:05:45 PAGE 7   
 
- 362   1      }                                       
+ 364   4                                      {
+ 365   5                                              for (i=8; i<=13; i++)
+ 366   5                                              {
+ 367   6                                                      id_buf[i] = 0x00;
+ 368   6                                              }
+ 369   5      
+ 370   5                                      }
+ 371   4      
+ 372   4      //                              LED0 = 0;
+ 373   4                                      RF_TX_BUF();
+ 374   4                              }
+ 375   3                              else
+ 376   3                              {
+ 377   4                                              for (i=8; i<=13; i++)
+ 378   4                                              {
+ 379   5                                                      id_buf[i] = 0x00;
+ 380   5                                              }
+ 381   4      
+ 382   4                              }
+ 383   3                      }
+ 384   2              }
+ 385   1      
+ 386   1      
+ 387   1              while(0)
+ 388   1              {
+ 389   2                  if(key_flag)
+ 390   2                      {
+ 391   3                        tCnt ^=01;
+ 392   3                        LED0 = tCnt;
+ 393   3                        key_flag=0;
+ 394   3                        mRFstatus = 0;
+ 395   3                        TX_Mode();                                                            // 发射数据
+ 396   3                        while (!(TX_DS|MAX_RT));                              // 等待发射结束
+ 397   3                        SPI_RW_Reg(FLUSH_TX,0);       
+ 398   3                    SPI_RW_Reg(WRITE_REG+STATUS,0xFF);
+ 399   3                        mRFstatus = 0;
+ 400   3                        delay(100);
+ 401   3                      }
+ 402   2              }
+ 403   1      }                                       
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    834    ----
+   CODE SIZE        =   1013    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
-   PDATA SIZE       =     22       8
+   PDATA SIZE       =     22      14
    DATA SIZE        =     21    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
@@ -403,4 +441,4 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  2 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,12 @@
+".\build\STARTUP.obj",
+".\build\main.obj",
+".\build\hal_usb.obj",
+".\build\hal_usb_hid.obj",
+".\build\usb_report_desc.obj",
+".\build\usb_standard_desc.obj" 
+TO ".\build\nrf6905_usb_dongle" 
+
+PRINT(".\lst\nrf6905_usb_dongle.map") DISABLEWARNING (15) 
+REMOVEUNUSED 
+CLASSES (XDATA (X:0x8000-X:0x87FF), HDATA (X:0x8000-X:0x87FF), CODE (C:0x0-C:0x3FFF), CONST (C:0x0-C:0x3FFF), 
+ECODE (C:0x0-C:0x3FFF), HCONST (C:0x0-C:0x3FFF)) 

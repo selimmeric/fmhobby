@@ -1,0 +1,72 @@
+C51 COMPILER V9.00   GZPAIR_LU1                                                            01/04/2011 17:48:09 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE GZPAIR_LU1
+OBJECT MODULE PLACED IN .\build\gzpair_lu1.obj
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE ..\..\..\gazell\nrf24lu1\gzpair_lu1.c LARGE OBJECTADVANCED OPTIMIZE(SIZE) B
+                    -ROWSE INCDIR(..\..\..\hal\nrf24l01p;..\..\..\hal\nrf24lu1p;..\..\..\lib\assertions;..\..\..\lib\lib_crypt;..\common_setu
+                    -p;..\..\..\gazell\common;..\..\..\gazell\nrf24lu1) DEFINE(NRFREADY_DEMO_MODE) DEBUG PRINT(.\lst\gzpair_lu1.lst) OBJECT(.
+                    -\build\gzpair_lu1.obj)
+
+line level    source
+
+   1          /* Copyright (c) 2009 Nordic Semiconductor. All Rights Reserved.
+   2           *
+   3           * The information contained herein is property of Nordic Semiconductor ASA.
+   4           * Terms and conditions of usage are described in detail in NORDIC
+   5           * SEMICONDUCTOR STANDARD SOFTWARE LICENSE AGREEMENT. 
+   6           *
+   7           * Licensees are granted free, non-transferable use of the information. NO
+   8           * WARRENTY of ANY KIND is provided. This heading must NOT be removed from
+   9           * the file.
+  10           *
+  11           * $LastChangedRevision$
+  12           */
+  13           
+  14          /** @file
+  15           * @brief Implementation of the Gazell Pairing Library Device functions.
+  16           * The Device functions are implemented for nRf24LE1 only.
+  17           */  
+  18          
+  19          #define GZPAIR_FLASH_PAGE_SIZE 512
+  20          #define GZPAIR_FLASH_BASE_ADDRESS (GZPAIR_FLASH_PAGE_SIZE * GZPAIR_FLASH_PARAMETER_PAGE)
+  21          
+  22          #include "hal_flash.h"
+  23          #include "gzpair.h"
+  24          
+  25          void gzpair_non_volatile_read(uint8_t adr, uint8_t* dst, uint8_t n)
+  26          {
+  27   1      //  hal_flash_bytes_read(GZPAIR_FLASH_BASE_ADDRESS + adr, dst, n);
+  28   1      }
+*** WARNING C280 IN LINE 25 OF ..\..\..\GAZELL\NRF24LU1\GZPAIR_LU1.C: 'adr': unreferenced local variable
+*** WARNING C280 IN LINE 25 OF ..\..\..\GAZELL\NRF24LU1\GZPAIR_LU1.C: 'dst': unreferenced local variable
+*** WARNING C280 IN LINE 25 OF ..\..\..\GAZELL\NRF24LU1\GZPAIR_LU1.C: 'n': unreferenced local variable
+  29          
+  30          void gzpair_non_volatile_write(uint8_t adr, uint8_t* src, uint8_t n)
+  31          {
+  32   1      //  hal_flash_page_erase(GZPAIR_FLASH_PARAMETER_PAGE);
+  33   1      //  hal_flash_bytes_write(GZPAIR_FLASH_BASE_ADDRESS + adr, src, n);
+  34   1      }
+*** WARNING C280 IN LINE 30 OF ..\..\..\GAZELL\NRF24LU1\GZPAIR_LU1.C: 'adr': unreferenced local variable
+*** WARNING C280 IN LINE 30 OF ..\..\..\GAZELL\NRF24LU1\GZPAIR_LU1.C: 'src': unreferenced local variable
+*** WARNING C280 IN LINE 30 OF ..\..\..\GAZELL\NRF24LU1\GZPAIR_LU1.C: 'n': unreferenced local variable
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     18    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----      10
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+C51 COMPILER V9.00   GZPAIR_LU1                                                            01/04/2011 17:48:09 PAGE 2   
+
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  6 WARNING(S),  0 ERROR(S)

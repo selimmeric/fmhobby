@@ -86,7 +86,7 @@ void timer0_ISR (void) interrupt 1
 		mKeyMatrix[0] = 0;
 		for (i=0; i<=3; i++)
 		{
-			mKeyMatrix[0] << 5;
+			mKeyMatrix[0] =	mKeyMatrix[0] << 5;
 			mKeyMatrix[0] += tKey[i];
 		}		
 	}
@@ -269,7 +269,18 @@ void RF_IRQ(void) interrupt INTERRUPT_RFIRQ
 	SPI_RW_Reg(WRITE_REG+STATUS,0x70);					// 清除所有中断标志 
 }
 
-             				
+void RF_TX_BUF(void)
+{
+				mRFstatus = 0;
+				TX_Mode();								// 发射数据
+				while (!(TX_DS|MAX_RT));				// 等待发射结束
+				SPI_RW_Reg(FLUSH_TX,0);	
+			    SPI_RW_Reg(WRITE_REG+STATUS,0xFF);
+				mRFstatus = 0;
+
+
+
+}             				
  
 /**************************************************
 功能：主程序
@@ -278,9 +289,12 @@ void main(void)
 {
     
 	static unsigned char tCnt=0;
+	unsigned char i;
+	unsigned char tKey;
 	uint32_t tKeyMatrix;
 	rf_init();									// RF初始化
-	keyinit();                            
+	keyinit();           
+	                 
 
 /*--------------------------------------
 Set Timer0 for 16-bit timer mode.  The
@@ -307,37 +321,63 @@ EA = 1;                       /* Global Interrupt Enable */
 				tCnt = 0;
 				LED1 = !LED1;
 //				LED1 = 0;
+//				id_buf[8] = 0x27;
+//				RF_TX_BUF();
+//				id_buf[8] = 0x00;
+//				RF_TX_BUF();
 			}
 
 			if (mKeyMatrix[0] != mKeyMatrix[1])	
 			{
-				LED0 = !LED0;		
+				tKeyMatrix = mKeyMatrix[0];	
 				if (mKeyMatrix[0]!=0x00)
 				{
-					tKeyMatrix = mKeyMatrix[0];	
-					tKeyMatrix &= 0x07;
-					id_buf[8] = 0x1e;
-					id_buf[8] += tKeyMatrix;
-
+					LED0 = !LED0;	
+//					tKeyMatrix = mKeyMatrix[0];	
+//					tKeyMatrix &= 0x07;
+//					id_buf[8] = 0x1e;
+//					id_buf[8] += tKeyMatrix;
 //	   				id_buf[8]=0x26;	
+					for (i=0; i<20;i++)
+					{
+						if ((tKeyMatrix & 0x01) == 0x01)
+						{
+							tKey = 0x10 + i;
+							id_buf[8] = tKey;
+//							id_buf[9] = tKey+1;
+							break;
+						}
+						tKeyMatrix = tKeyMatrix >> 1;						
+					}			
+					
+					tKey = 0x25;
+//					id_buf[7]=tKey +0;
+					id_buf[8]=tKey +0;
+					id_buf[9]=tKey +1;
+					id_buf[10]=tKey +2;
+					id_buf[11]=tKey +3;
+					id_buf[12]=tKey +4;
+					id_buf[13]=tKey +5;
 				}
 				else
 				{
-	   				id_buf[8]=0x00;	
+					for (i=8; i<=13; i++)
+					{
+						id_buf[i] = 0x00;
+					}
+
 				}
 
 //				LED0 = 0;
-				mRFstatus = 0;
-				TX_Mode();								// 发射数据
-				while (!(TX_DS|MAX_RT));				// 等待发射结束
-				SPI_RW_Reg(FLUSH_TX,0);	
-			    SPI_RW_Reg(WRITE_REG+STATUS,0xFF);
-				mRFstatus = 0;
-
+				RF_TX_BUF();
 			}
 			else
 			{
-	   			id_buf[8]=0x00;	
+					for (i=8; i<=13; i++)
+					{
+						id_buf[i] = 0x00;
+					}
+
 			}
 		}
 	}

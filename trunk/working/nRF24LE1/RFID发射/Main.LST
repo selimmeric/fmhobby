@@ -1,4 +1,4 @@
-C51 COMPILER V9.00   MAIN                                                                  10/18/2011 16:33:57 PAGE 1   
+C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:57:08 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
@@ -63,7 +63,7 @@ line level    source
               sbit LED1 = P0^0;                               // 1/0=灭/亮
               
               #define p0dir   0xf0
-C51 COMPILER V9.00   MAIN                                                                  10/18/2011 16:33:57 PAGE 2   
+C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:57:08 PAGE 2   
 
               #define p1dir   0x02
               #endif
@@ -127,7 +127,7 @@ line level    source
  114   1      }
  115          /**************************************************
  116          功能：读RF寄存器
-C51 COMPILER V9.00   MAIN                                                                  10/18/2011 16:33:57 PAGE 3   
+C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:57:08 PAGE 3   
 
  117          **************************************************/
  118          uint8_t SPI_Read(uint8_t reg)
@@ -191,7 +191,7 @@ line level    source
  176   1              SPI_RW_Reg(WRITE_REG + EN_AA, 0x01);                            // 启动自动应答功能
  177   1              SPI_RW_Reg(WRITE_REG + EN_RXADDR, 0x01);                        // PIPE0接收数据
  178   1      //      SPI_RW_Reg(WRITE_REG + SETUP_RETR, 0x1a);                       // 自动重传10次
-C51 COMPILER V9.00   MAIN                                                                  10/18/2011 16:33:57 PAGE 4   
+C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:57:08 PAGE 4   
 
  179   1              SPI_RW_Reg(WRITE_REG + SETUP_RETR, 0x10);                       // 自动重传 0 次
  180   1      
@@ -255,7 +255,7 @@ line level    source
  238          void io_init(void)
  239          {
  240   1              P0DIR = p0dir;                                                          // 设定I/O口输入输出
-C51 COMPILER V9.00   MAIN                                                                  10/18/2011 16:33:57 PAGE 5   
+C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:57:08 PAGE 5   
 
  241   1              P1DIR = p1dir;                                  
  242   1      
@@ -270,57 +270,61 @@ line level    source
  251          void main(void)
  252          {
  253   1              unsigned char tCnt=0;
- 254   1      
- 255   1              io_init();                                                                      // I/O口初始化
- 256   1              rf_init();                                                                      // RF初始化                            
- 257   1              EA=1;                                       // 允许中断  
- 258   1              rtc2_init();                                                            // RTC2初始化
- 259   1              LED1=LED2=LED3=0;                                                       // 灯全亮
- 260   1                                                                                                      
- 261   1              while(1)
- 262   1              {
- 263   2                      rtc2_off();                                                             // 关RTC2 
- 264   2                      if (mFlagRTC)
- 265   2                      {
- 266   3                              mFlagRTC=0;
- 267   3                              tCnt++;
- 268   3                              if (tCnt>=4)
- 269   3                              {
- 270   4                                      P0DIR = 0xf0;
- 271   4                                      tCnt=0;
- 272   4                                      P0=0x00;
- 273   4                                      LED2=1;
- 274   4                                      delay(100);
- 275   4                                      LED2=0;
- 276   4                                      TX_Mode();                                                              // 发射数据
- 277   4                                      while (!(TX_DS|MAX_RT));                                // 等待发射结束
- 278   4                                      sta = 0;
- 279   4                                      PD_Mode();                                                              // 关RF
- 280   4                              }
- 281   3                      }
- 282   2      
- 283   2                      rtc2_on();                                                              // 开RTC2
- 284   2      //              P0DIR = 0xff;
- 285   2      //              P1DIR = 0xff;
+ 254   1              unsigned char tIndex=0;
+ 255   1      
+ 256   1              io_init();                                                                      // I/O口初始化
+ 257   1              rf_init();                                                                      // RF初始化                            
+ 258   1              EA=1;                                       // 允许中断  
+ 259   1              rtc2_init();                                                            // RTC2初始化
+ 260   1              LED1=LED2=LED3=0;                                                       // 灯全亮
+ 261   1                                                                                                      
+ 262   1              while(1)
+ 263   1              {
+ 264   2                      rtc2_off();                                                             // 关RTC2 
+ 265   2                      if (mFlagRTC)
+ 266   2                      {
+ 267   3                              mFlagRTC=0;
+ 268   3                              tCnt++;
+ 269   3                              if (tCnt>=2)
+ 270   3                              {
+ 271   4                                      P0DIR = 0xf0;
+ 272   4                                      tCnt=0;
+ 273   4                                      tIndex ++;
+ 274   4                                      tIndex &= 0x07;
+ 275   4                                      P0=0x00;
+ 276   4                                      LED2=1;
+ 277   4                                      delay(100);
+ 278   4                                      LED2=0;
+ 279   4                                      id_buf[8]=0x1e + tIndex;
+ 280   4                                      TX_Mode();                                                              // 发射数据
+ 281   4                                      while (!(TX_DS|MAX_RT));                                // 等待发射结束
+ 282   4                                      sta = 0;
+ 283   4                                      PD_Mode();                                                              // 关RF
+ 284   4                              }
+ 285   3                      }
  286   2      
- 287   2                      PWRDWN = 0x04;                                                  // 进入低功耗模式，等待RTC2唤醒
- 288   2                      delay(10);
- 289   2              }
- 290   1      }                                       
- 291          
- 292          
+ 287   2                      rtc2_on();                                                              // 开RTC2
+ 288   2      //              P0DIR = 0xff;
+ 289   2      //              P1DIR = 0xff;
+ 290   2      
+ 291   2                      PWRDWN = 0x04;                                                  // 进入低功耗模式，等待RTC2唤醒
+ 292   2                      delay(10);
+ 293   2              }
+ 294   1      }                                       
+ 295          
+ 296          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    463    ----
+   CODE SIZE        =    481    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
-   PDATA SIZE       =      6       8
+C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:57:08 PAGE 6   
+
+   PDATA SIZE       =      6       9
    DATA SIZE        =     21    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
-C51 COMPILER V9.00   MAIN                                                                  10/18/2011 16:33:57 PAGE 6   
-
    EDATA SIZE       =   ----    ----
    HDATA SIZE       =   ----    ----
    XDATA CONST SIZE =   ----    ----
