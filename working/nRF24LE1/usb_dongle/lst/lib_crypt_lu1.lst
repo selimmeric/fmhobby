@@ -1,0 +1,59 @@
+C51 COMPILER V9.00   LIB_CRYPT_LU1                                                         01/04/2011 17:42:42 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE LIB_CRYPT_LU1
+OBJECT MODULE PLACED IN .\build\lib_crypt_lu1.obj
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE ..\..\..\lib\lib_crypt\lib_crypt_lu1.c LARGE OBJECTADVANCED OPTIMIZE(SIZE) 
+                    -BROWSE INCDIR(..\..\..\hal\nrf24l01p;..\..\..\hal\nrf24lu1p;..\..\..\lib\assertions;..\..\..\lib\lib_crypt;..\common_set
+                    -up;..\..\..\gazell\common;..\..\..\gazell\nrf24lu1) DEFINE(NRFREADY_DEMO_MODE) DEBUG PRINT(.\lst\lib_crypt_lu1.lst) OBJE
+                    -CT(.\build\lib_crypt_lu1.obj)
+
+line level    source
+
+   1          /* Copyright (c) 2008 Nordic Semiconductor. All Rights Reserved.
+   2           *
+   3           * The information contained herein is confidential property of Nordic 
+   4           * Semiconductor. The use, copying, transfer or disclosure of such information 
+   5           * is prohibited except by express written agreement with Nordic Semiconductor.
+   6           */
+   7          
+   8          #include <stdint.h>
+   9          #include <stdbool.h>
+  10          
+  11          void lib_crypt_generate_ls5b(uint8_t * dest_buf)
+  12          {
+  13   1              uint8_t i;
+  14   1        bool wrap = true;
+  15   1        static xdata ls5b[5] = {0, 0, 0, 0, 0};
+  16   1        
+  17   1        //Increment LS5B, and write back the new LS5B.
+  18   1        for(i=0;i<5;i++)
+  19   1              {               
+  20   2                      if(wrap)  //Check if we need to increment position i.
+  21   2                      {
+  22   3                        ls5b[i]++;
+  23   3            if(ls5b[i] != 0x00) wrap = false; 
+  24   3                      }
+  25   2      
+  26   2          //Write out LS5B
+  27   2          dest_buf[i] = ls5b[i]; 
+  28   2              } 
+  29   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    100    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     10       3
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

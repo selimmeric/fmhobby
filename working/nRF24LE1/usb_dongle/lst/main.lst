@@ -1,0 +1,377 @@
+C51 COMPILER V9.00   MAIN                                                                  10/24/2011 16:56:03 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\build\main.obj
+COMPILER INVOKED BY: C:\KeilC51\C51\BIN\C51.EXE main.c LARGE OBJECTADVANCED OPTIMIZE(SIZE) BROWSE DEFINE(NRFREADY_DEMO_M
+                    -ODE) DEBUG PRINT(.\lst\main.lst) OBJECT(.\build\main.obj)
+
+line level    source
+
+   1          /*深圳云佳科技无线应用，应用无限*/
+   2          #include <Nordic\reg24lu1.h>
+   3          #include <stdint.h>
+   4          #include <intrins.h>
+   5          #include <stdbool.h>
+   6          #include <string.h>
+   7          #include "hal_usb.h"
+   8          #include "hal_usb_hid.h"
+   9          //#include "usb_map.h"
+  10          //#include "app_params.h"
+  11          #include "API.h"
+  12          //-----------------------------------------------------------------------------
+  13          // Application state functions and variables
+  14          //-----------------------------------------------------------------------------
+  15          typedef enum
+  16          {
+  17            APP_ACTIVE,
+  18            APP_SUSPEND,
+  19          } app_states_t;
+  20          
+  21          extern code usb_string_desc_templ_t g_usb_string_desc;
+  22          static xdata uint8_t rx_pipe, rx_data_length;
+  23          static xdata app_states_t app_state;
+  24          void app_enter_active_state();
+  25          void app_enter_suspend_state(void);
+  26          void app_transfer_to_usb(uint8_t* report1, uint8_t* report2);
+  27          
+  28          //-----------------------------------------------------------------------------
+  29          // USB callback function prototypes
+  30          //-----------------------------------------------------------------------------
+  31          static hal_usb_dev_req_resp_t device_req_cb(hal_usb_device_req* req, uint8_t** data_ptr, uint8_t* size) re
+             -entrant;
+  32          static void suspend_cb(void) reentrant;
+  33          static void resume_cb() reentrant;
+  34          static void reset_cb() reentrant;
+  35          static uint8_t ep_1_in_cb(uint8_t *adr_ptr, uint8_t* size) reentrant;
+  36          
+  37          //-----------------------------------------------------------------------------
+  38          // Main dongle application
+  39          //-----------------------------------------------------------------------------
+  40          static xdata bool app_pending_usb_write = false;
+  41          static xdata bool app_endpoint_cleared = true;
+  42          #define NRFR_LENGTH_REPORT_1 5
+  43          #define NRFR_LENGTH_REPORT_2 9
+  44          static xdata uint16_t app_keep_alive_cnt= 0;
+  45          void app_maintain_keep_alive();
+  46          //=======================================
+  47          #define INTERRUPT_RFIRQ 9
+  48          #define TX_ADR_WIDTH    5                                       // RF收发地址共5 bytes 
+  49          #define TX_PLOAD_WIDTH  20                                      // 数据包长度为20 bytes
+  50          #define CE_LOW() do { RFCE = 0; } while(0)
+  51          uint8_t const TX_ADDRESS[TX_ADR_WIDTH]  = {0x34,0x56,0x78,0x90,0x12}; // 定义RF收发地址
+  52          uint8_t data rx_buf[TX_PLOAD_WIDTH];
+  53          uint8_t bdata sta;
+C51 COMPILER V9.00   MAIN                                                                  10/24/2011 16:56:03 PAGE 2   
+
+  54          sbit    RX_DR   =sta^6;
+  55          sbit    TX_DS   =sta^5;
+  56          sbit    MAX_RT  =sta^4;
+  57          /**************************************************
+  58          功能：延时
+  59          **************************************************/
+  60          void delay(uint16_t x)
+  61          {
+  62   1          uint16_t i,j;
+  63   1          i=0;
+  64   1          for(i=0;i<x;i++)
+  65   1          {
+  66   2             j=108;
+  67   2                 ;
+  68   2             while(j--);
+  69   2          }
+  70   1      }
+  71          /**************************************************
+  72          功能：硬件SPI读写
+  73          **************************************************/
+  74          uint8_t SPI_RW(uint8_t value)
+  75          {
+  76   1        RFDAT = value;
+  77   1        RFSPIF = 0;     // ! IMPORTANT ! Clear RF SPI ready flag
+  78   1                        // after data written to RFDAT..
+  79   1        while(!RFSPIF); // wait for byte transfer finished
+  80   1          ;
+  81   1        return RFDAT;   // return SPI read value
+  82   1      }
+  83          /**************************************************
+  84          功能：写RF寄存器，读RF状态值
+  85          **************************************************/
+  86          uint8_t SPI_RW_Reg(uint8_t reg, uint8_t value)
+  87          {
+  88   1              uint8_t status;
+  89   1      
+  90   1              RFCSN = 0;                      
+  91   1              status = SPI_RW(reg);                                           // 选择RF寄存器
+  92   1              SPI_RW(value);                                                  // 写入数据
+  93   1              RFCSN = 1;                      
+  94   1      
+  95   1              return(status);                                                 // 返回RF状态值
+  96   1      }
+  97          /**************************************************
+  98          功能：读RF寄存器
+  99          **************************************************/
+ 100          uint8_t SPI_Read(uint8_t reg)
+ 101          {
+ 102   1              uint8_t reg_val;
+ 103   1      
+ 104   1              RFCSN = 0;                                      
+ 105   1              SPI_RW(reg);                                                    // 选择RF寄存器
+ 106   1              reg_val = SPI_RW(0);                                            // 读出数据
+ 107   1              RFCSN = 1;                                      
+ 108   1      
+ 109   1              return(reg_val);                                                // 返回RF状态值
+ 110   1      }
+ 111          /**************************************************
+ 112          功能：读RF寄存器多字节数据到缓冲区
+ 113          **************************************************/
+ 114          uint8_t SPI_Read_Buf(uint8_t reg, uint8_t *pBuf, uint8_t bytes)
+ 115          {
+C51 COMPILER V9.00   MAIN                                                                  10/24/2011 16:56:03 PAGE 3   
+
+ 116   1              uint8_t status,byte_ctr;
+ 117   1      
+ 118   1              RFCSN = 0;                              
+ 119   1              status = SPI_RW(reg);                                   // 选择RF寄存器
+ 120   1      
+ 121   1              for(byte_ctr=0;byte_ctr<bytes;byte_ctr++)
+ 122   1              pBuf[byte_ctr] = SPI_RW(0);                     // 连接读出数据
+ 123   1      
+ 124   1              RFCSN = 1;                          
+ 125   1      
+ 126   1              return(status);                                         // 返回RF状态值
+ 127   1      }
+ 128          /**************************************************
+ 129          功能：把缓冲区的多字节数据写到RF寄存器
+ 130          **************************************************/
+ 131          uint8_t SPI_Write_Buf(uint8_t reg, uint8_t *pBuf, uint8_t bytes)
+ 132          {
+ 133   1              uint8_t status,byte_ctr;
+ 134   1      
+ 135   1              RFCSN = 0;                              
+ 136   1              status = SPI_RW(reg);                                           // 选择RF寄存器
+ 137   1              for(byte_ctr=0; byte_ctr<bytes; byte_ctr++) // 连接写入数据
+ 138   1              SPI_RW(*pBuf++);
+ 139   1              RFCSN = 1;                                      
+ 140   1              return(status);                                                 // 返回RF状态值
+ 141   1      }
+ 142          
+ 143          /**************************************************
+ 144          功能：设置为接收模式
+ 145          **************************************************/
+ 146          void RX_Mode(void)
+ 147          {
+ 148   1              RFCE=0;
+ 149   1              SPI_RW_Reg(WRITE_REG + CONFIG, 0x0f);           // 上电, CRC为2 bytes,接收模式,允许RX_DR产生中断
+ 150   1              RFCE = 1;                                                                       // 启动接收模式
+ 151   1      }
+ 152          /**************************************************
+ 153          功能：RF初始化
+ 154          **************************************************/
+ 155          void rf_init(void)
+ 156          {
+ 157   1              RFCE = 0;                                               // RF关闭
+ 158   1              RFCKEN = 1;                                             // 启动RF时钟
+ 159   1              RF = 1;                                                 // 允许RF中断
+ 160   1              delay(10);      
+ 161   1              SPI_Write_Buf(WRITE_REG + TX_ADDR, TX_ADDRESS, TX_ADR_WIDTH);           // 设置发射地址长度
+ 162   1              SPI_Write_Buf(WRITE_REG + RX_ADDR_P0, TX_ADDRESS, TX_ADR_WIDTH);        // 设置接收地址长度
+ 163   1              SPI_RW_Reg(WRITE_REG + EN_AA, 0x01);                            // 启动自动应答功能
+ 164   1              SPI_RW_Reg(WRITE_REG + EN_RXADDR, 0x01);                        // PIPE0接收数据
+ 165   1              SPI_RW_Reg(WRITE_REG + SETUP_RETR, 0x1a);                       // 自动重传10次
+ 166   1              SPI_RW_Reg(WRITE_REG + RF_CH, 40);                              // RF频率2440MHz
+ 167   1              SPI_RW_Reg(WRITE_REG + RF_SETUP, 0x0f);                         // 发射功率0dBm, 传输速率2Mbps,
+ 168   1              SPI_RW_Reg(WRITE_REG + RX_PW_P0, TX_PLOAD_WIDTH);       // PIPE0 接收数据包长度
+ 169   1      }
+ 170          /**************************************************
+ 171          功能：RF中断服务程序
+ 172          **************************************************/
+ 173          void RF_IRQ(void) interrupt INTERRUPT_RFIRQ
+ 174          {
+ 175   1              sta=SPI_Read(STATUS);                                                           // 读出状态值
+ 176   1      
+ 177   1              if(RX_DR)                                                                       
+C51 COMPILER V9.00   MAIN                                                                  10/24/2011 16:56:03 PAGE 4   
+
+ 178   1              {
+ 179   2                      SPI_Read_Buf(RD_RX_PLOAD,rx_buf,TX_PLOAD_WIDTH);// 读出FIFO的数据
+ 180   2                      SPI_RW_Reg(FLUSH_RX,0);                                                 // 清除RX的FIFO
+ 181   2              }
+ 182   1      
+ 183   1              SPI_RW_Reg(WRITE_REG+STATUS,0x70);                                      // 清除所有中断标志 
+ 184   1      }
+ 185          //=======================================
+ 186          void main(void)
+ 187          {   
+ 188   1        uint8_t remote_id1_packet[NRFR_LENGTH_REPORT_1], remote_id2_packet[NRFR_LENGTH_REPORT_2];
+ 189   1        uint8_t i;
+ 190   1      //=======================================
+ 191   1        CLKCTL=0;
+ 192   1        RFCE=0;
+ 193   1        RFCTL=0x10;
+ 194   1        rf_init();                                                                    // RF初始化
+ 195   1      //=======================================
+ 196   1        hal_usb_init(true, device_req_cb, reset_cb, resume_cb, suspend_cb);   
+ 197   1        hal_usb_endpoint_config(0x81, 32, ep_1_in_cb); // Configure 32 byte IN endpoint 1
+ 198   1        EA=1;
+ 199   1        app_keep_alive_cnt=0;
+ 200   1        RX_Mode();                                                                    //进入接收模式
+ 201   1        while(true)                                                                               
+ 202   1        {
+ 203   2                if(RX_DR)
+ 204   2                {
+ 205   3                              sta=0;
+ 206   3                              for(i=0;i<5;i++)
+ 207   3                              {
+ 208   4                                 remote_id1_packet[i]=rx_buf[i];
+ 209   4                              }
+ 210   3                              for(i=0;i<9;i++)
+ 211   3                              {
+ 212   4                                 remote_id2_packet[i]=rx_buf[i+5];
+ 213   4                              }
+ 214   3                              app_transfer_to_usb(remote_id1_packet, remote_id2_packet);
+ 215   3                              app_keep_alive_cnt=1;
+ 216   3                              delay(100);
+ 217   3                }
+ 218   2                        app_maintain_keep_alive();        
+ 219   2        }
+ 220   1      }                          
+ 221          
+ 222          //-----------------------------------------------------------------------------
+ 223          // State configuration functions
+ 224          //-----------------------------------------------------------------------------
+ 225          
+ 226          void app_enter_active_state()
+ 227          {
+ 228   1        app_state = APP_ACTIVE;
+ 229   1        app_pending_usb_write = false;
+ 230   1      }
+ 231          
+ 232          void app_enter_suspend_state(void)
+ 233          {  
+ 234   1        app_state = APP_SUSPEND;
+ 235   1        app_pending_usb_write = false;
+ 236   1        WUCONF = 0x22;                              // Enable wakeup on RTC and USBWU
+ 237   1      }
+ 238          void app_maintain_keep_alive()
+ 239          {
+C51 COMPILER V9.00   MAIN                                                                  10/24/2011 16:56:03 PAGE 5   
+
+ 240   1        uint8_t i;
+ 241   1        uint8_t remote_id1_packet[NRFR_LENGTH_REPORT_1], remote_id2_packet[NRFR_LENGTH_REPORT_2];      
+ 242   1        if(app_keep_alive_cnt > 0 && !app_endpoint_cleared)
+ 243   1        {
+ 244   2          for(i = 1; i < NRFR_LENGTH_REPORT_1; i++)
+ 245   2          {
+ 246   3            remote_id1_packet[i] = 0;
+ 247   3          }
+ 248   2        
+ 249   2          for(i = 1; i < NRFR_LENGTH_REPORT_2; i++)
+ 250   2          {
+ 251   3            remote_id2_packet[i] = 0;
+ 252   3          }                                                                     
+ 253   2      
+ 254   2          remote_id1_packet[0] = 0x01;
+ 255   2          remote_id2_packet[0] = 0x02;
+ 256   2      
+ 257   2          app_transfer_to_usb(remote_id1_packet, remote_id2_packet);
+ 258   2          app_keep_alive_cnt = 0;    
+ 259   2        }                     
+ 260   1      }
+ 261          void app_transfer_to_usb(uint8_t* report1, uint8_t* report2)
+ 262          {    
+ 263   1        uint8_t i;
+ 264   1        app_endpoint_cleared = true;
+ 265   1      
+ 266   1        for(i = 1; i < NRFR_LENGTH_REPORT_1; i++)
+ 267   1        {
+ 268   2          if(*(report1 + i) != 0)
+ 269   2          {
+ 270   3            app_endpoint_cleared = false;
+ 271   3            break;  
+ 272   3          }
+ 273   2        }
+ 274   1        
+ 275   1        for(i = 1; i < NRFR_LENGTH_REPORT_2; i++)
+ 276   1        {
+ 277   2          if(*(report2 + i) != 0)
+ 278   2          {
+ 279   3            app_endpoint_cleared = false;
+ 280   3            break;  
+ 281   3          }
+ 282   2        }
+ 283   1      
+ 284   1        while(app_pending_usb_write)
+ 285   1        ;
+ 286   1        app_pending_usb_write = true;                               
+ 287   1        hal_usb_send_data(0x80 | 1, report1, NRFR_LENGTH_REPORT_1);
+ 288   1                    
+ 289   1        while(app_pending_usb_write)
+ 290   1        ;
+ 291   1        app_pending_usb_write = true;
+ 292   1        hal_usb_send_data(0x80 | 1, report2, NRFR_LENGTH_REPORT_2);
+ 293   1      }
+ 294          //-----------------------------------------------------------------------------
+ 295          // USB callback functions
+ 296          //-----------------------------------------------------------------------------
+ 297          
+ 298          static void suspend_cb(void) reentrant
+ 299          {
+ 300   1        USBSLP = 1; // Disable USB clock (auto clear)  
+ 301   1        app_enter_suspend_state();
+C51 COMPILER V9.00   MAIN                                                                  10/24/2011 16:56:03 PAGE 6   
+
+ 302   1      }
+ 303          
+ 304          static void resume_cb() reentrant
+ 305          {
+ 306   1        app_enter_active_state();
+ 307   1      }
+ 308          
+ 309          static void reset_cb() reentrant
+ 310          {
+ 311   1        app_enter_active_state();
+ 312   1      }
+ 313          
+ 314          static uint8_t ep_1_in_cb(uint8_t *adr_ptr, uint8_t* size) reentrant
+ 315          {
+ 316   1        app_pending_usb_write = false;
+ 317   1        return 0x60; // NAK
+ 318   1        adr_ptr = adr_ptr;
+ 319   1        size = size;
+ 320   1      }
+ 321          
+ 322          static hal_usb_dev_req_resp_t device_req_cb(hal_usb_device_req* req, uint8_t** data_ptr, uint8_t* size) re
+             -entrant
+ 323          {
+ 324   1        hal_usb_dev_req_resp_t retval;
+ 325   1      
+ 326   1        if( hal_usb_hid_device_req_proc(req, data_ptr, size, &retval) == true ) 
+ 327   1        {
+ 328   2            // The request was processed with the result stored in the retval variable
+ 329   2            return retval;
+ 330   2        }
+ 331   1        else
+ 332   1        {
+ 333   2          return STALL;
+ 334   2        }
+ 335   1      
+ 336   1        return STALL;
+ 337   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    991    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     12      46
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     21    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

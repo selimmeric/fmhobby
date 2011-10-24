@@ -1,0 +1,225 @@
+C51 COMPILER V9.00   USB_STANDARD_DESC                                                     10/24/2011 16:56:04 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE USB_STANDARD_DESC
+OBJECT MODULE PLACED IN .\build\usb_standard_desc.obj
+COMPILER INVOKED BY: C:\KeilC51\C51\BIN\C51.EXE usb_standard_desc.c LARGE OBJECTADVANCED OPTIMIZE(SIZE) BROWSE DEFINE(NR
+                    -FREADY_DEMO_MODE) DEBUG PRINT(.\lst\usb_standard_desc.lst) OBJECT(.\build\usb_standard_desc.obj)
+
+line level    source
+
+   1          /*深圳云佳科技无线应用，应用无限*/
+   2          /* Copyright (c) 2008 Nordic Semiconductor. All Rights Reserved.
+   3           *
+   4           * The information contained herein is property of Nordic Semiconductor ASA.
+   5           * Terms and conditions of usage are described in detail in NORDIC
+   6           * SEMICONDUCTOR STANDARD SOFTWARE LICENSE AGREEMENT. 
+   7           *
+   8           * Licensees are granted free, non-transferable use of the information. NO
+   9           * WARRENTY of ANY KIND is provided. This heading must NOT be removed from
+  10           * the file.
+  11           *
+  12           * $LastChangedRevision$
+  13           */
+  14          
+  15          #include "usb_desc.h"
+  16          #include "nordic_common.h"               
+  17          
+  18          #define MAX_PACKET_SIZE_EP0  32
+  19          
+  20          #define EP1_PACKET_SIZE 32
+  21          
+  22          code const hal_usb_dev_desc_t g_usb_dev_desc =
+  23          {
+  24            sizeof(hal_usb_dev_desc_t),         // bLength
+  25            0x01,                               // bDescriptorType
+  26            SWAP(0x0200),                       // bcdUSB
+  27            0x00,                               // bDeviceClass
+  28            0x00,                               // bDeviceSubClass
+  29            0x00,                               // bDeviceProtocol
+  30            MAX_PACKET_SIZE_EP0,                // bMaxPacketSize0
+  31            SWAP(VID),                          // idVendor (Nordic )
+  32            SWAP(PID),                          // idProduct (dongle)
+  33            SWAP(0x0100),                       // bcdDevice
+  34            0x01,                               // iManufacturer
+  35            0x02,                               // iProduct
+  36            0x03,                               // iSerialNumber
+  37            0x01                                // bNumConfigurations
+  38          };
+  39          
+  40          // From "USB Device Class Definition for Human Interface Devices (HID)".
+  41          // Section 7.1:
+  42          // "When a Get_Descriptor(Configuration) request is issued,
+  43          // it returns the Configuration descriptor, all Interface descriptors,
+  44          // all Endpoint descriptors, and the HID descriptor for each interface."
+  45          code const usb_conf_desc_templ_t g_usb_conf_desc =
+  46          {
+  47            { // configuration_descriptor hid_configuration_descriptor
+  48              sizeof(hal_usb_conf_desc_t),         // Length
+  49              0x02,                               // Type                             
+  50              SWAP(sizeof(usb_conf_desc_templ_t)),        // Totallength
+  51              0x01,                               // NumInterfaces
+  52              0x01,                               // bConfigurationValue
+  53              0x00,                               // iConfiguration
+  54              0xA0,                               // bmAttributes (0x80 + Remote Wakeup)
+C51 COMPILER V9.00   USB_STANDARD_DESC                                                     10/24/2011 16:56:04 PAGE 2   
+
+  55              0x32                                // MaxPower (in 2mA units) = 100 * 2mA
+  56            },
+  57            { // interface_descriptor hid_interface_descriptor    (REMOTE CONTROL)
+  58              sizeof(hal_usb_if_desc_t),          // Length
+  59              0x04,                               // bDescriptorType
+  60              0x00,                               // bInterfaceNumber
+  61              0x00,                               // bAlternateSetting
+  62              0x01,                               // bNumEndpoints
+  63              0x03,                               // bInterfaceClass (3 = HID)
+  64              0x00,                               // bInterfaceSubClass
+  65              0x00,                               // bInterfaceProcotol(0=None, 1=Keyb, 2=Mouse)
+  66              0x00                                // iInterface
+  67            },
+  68            { // class_descriptor hid_descriptor
+  69              sizeof(hal_usb_hid_desc_t),          // Length
+  70              0x21,                                   // bDescriptorType
+  71              SWAP(0x0111),                           // bcdHID
+  72              0x00,                                   // bCountryCode
+  73              0x01,                                   // bNumDescriptors
+  74              0x22,                               // bDescriptorType
+  75              SWAP(HID_REPORT_DESCRIPTOR_SIZE_RC),// wItemLength (tot. len. of report
+  76                                                  // descriptor)
+  77            },
+  78            { // endpoint_descriptor hid_endpoint_in_descriptor
+  79              sizeof(hal_usb_ep_desc_t),          // Length
+  80              0x05,                               // bDescriptorType
+  81              0x81,                               // bEndpointAddress
+  82              0x03,                               // bmAttributes
+  83              SWAP(EP1_PACKET_SIZE),              // MaxPacketSize (LITTLE ENDIAN)
+  84              2                                  // bInterval
+  85            }
+  86          };
+  87          
+  88          #define USB_STRING_IDX_1_DESC "Nordic Semiconductor"
+  89          #define USB_STRING_IDX_2_DESC "Nordic Semiconductor nRFready Basic Remote Dongle"
+  90          #define USB_STRING_IDX_3_DESC "0123456789"
+  91          
+  92          code uint8_t g_usb_string_desc_1[] = {
+  93              sizeof(USB_STRING_IDX_1_DESC) * 2, 
+  94              0x03, 
+  95              'N',00,
+  96              'o',00,
+  97              'r',00,
+  98              'd',00,
+  99              'i',00,
+ 100              'c',00,
+ 101              ' ',00,
+ 102              'S',00,
+ 103              'e',00,
+ 104              'm',00,
+ 105              'i',00,
+ 106              'c',00,
+ 107              'o',00,
+ 108              'n',00,
+ 109              'd',00,
+ 110              'u',00,
+ 111              'c',00,
+ 112              't',00,
+ 113              'o',00,
+ 114              'r', 00 
+ 115          };
+ 116          
+C51 COMPILER V9.00   USB_STANDARD_DESC                                                     10/24/2011 16:56:04 PAGE 3   
+
+ 117          code uint8_t g_usb_string_desc_2[] = {
+ 118              sizeof(USB_STRING_IDX_2_DESC) * 2,
+ 119              0x03, 
+ 120              'N',00,
+ 121              'o',00,
+ 122              'r',00,
+ 123              'd',00,
+ 124              'i',00,
+ 125              'c',00,
+ 126              ' ',00,
+ 127              'S',00,
+ 128              'e',00,
+ 129              'm',00,
+ 130              'i',00,
+ 131              'c',00,
+ 132              'o',00,
+ 133              'n',00,
+ 134              'd',00,
+ 135              'u',00,
+ 136              'c',00,
+ 137              't',00,
+ 138              'o',00,
+ 139              'r',00, 
+ 140              ' ',00, 
+ 141              'n',00,
+ 142              'R',00,
+ 143              'F',00,
+ 144              'r',00,
+ 145              'e',00,
+ 146              'a',00,
+ 147              'd',00,
+ 148              'y',00,
+ 149              ' ',00, 
+ 150              'B',00,
+ 151              'a',00,
+ 152              's',00,
+ 153              'i',00,
+ 154              'c',00,
+ 155              ' ',00,
+ 156              'R',00,
+ 157              'e',00,
+ 158              'm',00,
+ 159              'o',00,
+ 160              't',00,
+ 161              'e',00,
+ 162              ' ',00,
+ 163              'D',00,
+ 164              'o',00,
+ 165              'n',00,
+ 166              'g',00,
+ 167              'l',00,
+ 168              'e',00
+ 169          };
+ 170          
+ 171          //This is a dummy serial number. The real serial number should be
+ 172          //written by the application
+ 173          code uint8_t g_usb_string_desc_3[] = {
+ 174              sizeof(USB_STRING_IDX_3_DESC) * 2, 
+ 175              0x03, 
+ 176              0xFF,0xFF,
+ 177              0xFF,0xFF,
+ 178              0xFF,0xFF,
+C51 COMPILER V9.00   USB_STANDARD_DESC                                                     10/24/2011 16:56:04 PAGE 4   
+
+ 179              0xFF,0xFF,
+ 180              0xFF,0xFF,
+ 181              0xFF,0xFF,
+ 182              0xFF,0xFF,
+ 183              0xFF,0xFF,
+ 184              0xFF,0xFF,
+ 185              0xFF,0xFF
+ 186          };
+ 187          code usb_string_desc_templ_t g_usb_string_desc = {
+ 188              g_usb_string_desc_1,
+ 189              g_usb_string_desc_2,
+ 190              g_usb_string_desc_3
+ 191          };
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   ----    ----
+   CONSTANT SIZE    =    225    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

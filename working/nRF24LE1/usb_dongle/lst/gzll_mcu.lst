@@ -1,0 +1,70 @@
+C51 COMPILER V9.00   GZLL_MCU                                                              01/05/2011 00:12:27 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE GZLL_MCU
+OBJECT MODULE PLACED IN .\build\gzll_mcu.obj
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE gzll_mcu.c LARGE OBJECTADVANCED OPTIMIZE(SIZE) BROWSE INCDIR(..\..\..\hal\n
+                    -rf24l01p;..\..\..\hal\nrf24lu1p;..\..\..\lib\assertions;..\..\..\lib\lib_crypt;..\common_setup;..\..\..\gazell\common;..
+                    -\..\..\gazell\nrf24lu1) DEFINE(NRFREADY_DEMO_MODE) DEBUG PRINT(.\lst\gzll_mcu.lst) OBJECT(.\build\gzll_mcu.obj)
+
+line level    source
+
+   1          /* Copyright (c) 2008 Nordic Semiconductor. All Rights Reserved.
+   2           *
+   3           * The information contained herein is property of Nordic Semiconductor ASA.
+   4           * Terms and conditions of usage are described in detail in NORDIC
+   5           * SEMICONDUCTOR STANDARD SOFTWARE LICENSE AGREEMENT. 
+   6           *
+   7           * Licensees are granted free, non-transferable use of the information. NO
+   8           * WARRENTY of ANY KIND is provided. This heading must NOT be removed from
+   9           * the file.
+  10           *
+  11           * $LastChangedRevision$
+  12           */ 
+  13          
+  14          #include "gzll.h"
+  15          #include "cklf.h"
+  16          
+  17          void mcu_init()
+  18          {
+  19   1        RF = 1;                                       // Radio IRQ enable
+  20   1        CKCON = 0x02;                                 // nRF24LU1p PAN 011 #2
+  21   1        TICKDV = 0;
+  22   1      
+  23   1        CE_LOW();
+  24   1        RFCTL = 0x10;                                 // RF SPI Enable 
+  25   1         
+  26   1        T2CON = 0x10;                                 // Reload mode 0, osc / 12 
+  27   1        T2I0 = 1;                                     // Start Timer2
+  28   1      }
+  29          /*
+  30          void gzll_set_timer_period(uint16_t period)
+  31          {
+  32            // Note: The dongle uses timer 2 for Gazell timing during active state
+  33            // and RTC2 during USB suspend.
+  34          
+  35            T2 = CRC = (uint32_t)0x10000 - (((float)period * 4 / 3 + 0.5)); // Set up period for timer 2
+  36            period = ((float)period * 32000 / 1000000 + 0.5);
+  37            cklf_rtc_init(0x00, period - 1);                                // Set up period for RTC2
+  38          }
+  39          */
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     19    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+C51 COMPILER V9.00   GZLL_MCU                                                              01/05/2011 00:12:27 PAGE 2   
+
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,4 +1,4 @@
-C51 COMPILER V9.00   MAIN                                                                  10/21/2011 12:01:28 PAGE 1   
+C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:54:09 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
@@ -63,7 +63,7 @@ line level    source
   51          #define COL1_SET()    do { COL1_PDIR &= ~(1<<COL1_PIN); COL1=1; }while(0)
   52          #define COL2_SET()    do { COL2_PDIR &= ~(1<<COL2_PIN); COL2=1; }while(0)
   53          #define COL3_SET()    do { COL3_PDIR &= ~(1<<COL3_PIN); COL3=1; }while(0)
-C51 COMPILER V9.00   MAIN                                                                  10/21/2011 12:01:28 PAGE 2   
+C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:54:09 PAGE 2   
 
   54          
   55          #define COL0_CLR()    do { COL0=0; COL0_PDIR |= (1<<COL0_PIN); }while(0)
@@ -127,7 +127,7 @@ line level    source
  113            COL0=1;
  114            P1=0;
  115            COL0=1;
-C51 COMPILER V9.00   MAIN                                                                  10/21/2011 12:01:28 PAGE 3   
+C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:54:09 PAGE 3   
 
  116            P1=0;
  117          }*/
@@ -191,7 +191,7 @@ line level    source
  174   1              if(temp==0x01)            // key 6
  175   1               {                                                      
  176   2                 key_flag=1;
-C51 COMPILER V9.00   MAIN                                                                  10/21/2011 12:01:28 PAGE 4   
+C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:54:09 PAGE 4   
 
  177   2                 id_buf[8]=0x23;
  178   2                 delay(500);
@@ -255,7 +255,7 @@ line level    source
  236   2                 id_buf[1]=0xCD;
  237   2                 delay(500);
  238   2               }
-C51 COMPILER V9.00   MAIN                                                                  10/21/2011 12:01:28 PAGE 5   
+C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:54:09 PAGE 5   
 
  239   1         COL0_CLR();
  240   1      
@@ -319,7 +319,7 @@ line level    source
  298   1      }
  299          /**************************************************
  300          功能：读RF寄存器
-C51 COMPILER V9.00   MAIN                                                                  10/21/2011 12:01:28 PAGE 6   
+C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:54:09 PAGE 6   
 
  301          **************************************************/
  302          uint8_t SPI_Read(uint8_t reg)
@@ -383,7 +383,7 @@ line level    source
  360          {
  361   1              sta=SPI_Read(STATUS);                                                           // 读出状态值
  362   1              SPI_RW_Reg(WRITE_REG+STATUS,0x70);                                      // 清除所有中断标志 
-C51 COMPILER V9.00   MAIN                                                                  10/21/2011 12:01:28 PAGE 7   
+C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:54:09 PAGE 7   
 
  363   1      }
  364          
@@ -447,7 +447,7 @@ line level    source
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =    963    ----
-C51 COMPILER V9.00   MAIN                                                                  10/21/2011 12:01:28 PAGE 8   
+C51 COMPILER V9.00   MAIN                                                                  10/21/2011 15:54:09 PAGE 8   
 
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
