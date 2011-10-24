@@ -243,10 +243,10 @@
       <FileType>1</FileType>
       <tvExp>1</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>16</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>341</TopLine>
-      <CurrentLine>353</CurrentLine>
+      <CurrentLine>341</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\Main.c</PathWithFileName>
       <FilenameWithoutPath>Main.c</FilenameWithoutPath>
@@ -273,7 +273,7 @@
   </Group>
 
   <AlienFiles>
-    <PathWithFilename>C:\working\nRF24LE1\NRF24LE1发射按键板-FM\STDINT.H</PathWithFilename>
+    <PathWithFilename>C:\working\nRF24LE1\NRF24LE1-Keypad-FM\STDINT.H</PathWithFilename>
     <TopLine>1</TopLine>
     <CurrentLine>1</CurrentLine>
     <Constant>0</Constant>
@@ -299,7 +299,7 @@
   </AlienFiles>
 
   <AlienFiles>
-    <PathWithFilename>C:\working\nRF24LE1\NRF24LE1发射按键板-FM\REG24LE1.H</PathWithFilename>
+    <PathWithFilename>C:\working\nRF24LE1\NRF24LE1-Keypad-FM\REG24LE1.H</PathWithFilename>
     <TopLine>1</TopLine>
     <CurrentLine>1</CurrentLine>
     <Constant>0</Constant>
@@ -1669,9 +1669,9 @@
       <Documents>
         <Doc>
           <Name>.\Main.c</Name>
-          <ColumnNumber>16</ColumnNumber>
+          <ColumnNumber>0</ColumnNumber>
           <TopLine>341</TopLine>
-          <CurrentLine>353</CurrentLine>
+          <CurrentLine>341</CurrentLine>
         </Doc>
         <Doc>
           <Name>REG24LE1.H</Name>

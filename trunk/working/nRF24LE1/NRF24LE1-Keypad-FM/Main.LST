@@ -1,9 +1,9 @@
-C51 COMPILER V9.00   MAIN                                                                  10/24/2011 18:05:45 PAGE 1   
+C51 COMPILER V9.00   MAIN                                                                  10/24/2011 23:20:19 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
 OBJECT MODULE PLACED IN Main.OBJ
-COMPILER INVOKED BY: C:\KeilC51\C51\BIN\C51.EXE Main.c COMPACT OMF2 BROWSE INCDIR(.\air LCD remote) DEBUG
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE Main.c COMPACT OMF2 BROWSE INCDIR(.\air LCD remote) DEBUG
 
 line level    source
 
@@ -62,7 +62,7 @@ line level    source
   52          #define COL2_SET()    do { COL2_PDIR &= ~(1<<COL2_PIN); COL2=1; }while(0)
   53          #define COL3_SET()    do { COL3_PDIR &= ~(1<<COL3_PIN); COL3=1; }while(0)
   54          
-C51 COMPILER V9.00   MAIN                                                                  10/24/2011 18:05:45 PAGE 2   
+C51 COMPILER V9.00   MAIN                                                                  10/24/2011 23:20:19 PAGE 2   
 
   55          #define COL0_CLR()    do { COL0=0; COL0_PDIR |= (1<<COL0_PIN); }while(0)
   56          #define COL1_CLR()    do { COL1=0; COL1_PDIR |= (1<<COL1_PIN); }while(0)
@@ -126,7 +126,7 @@ line level    source
  114   3                              COL0_SET();                      
  115   3                              break;
  116   3                      case 3:
-C51 COMPILER V9.00   MAIN                                                                  10/24/2011 18:05:45 PAGE 3   
+C51 COMPILER V9.00   MAIN                                                                  10/24/2011 23:20:19 PAGE 3   
 
  117   3                              tKey[2] =  read_rows_ex();
  118   3                          COL0_CLR();
@@ -190,7 +190,7 @@ line level    source
  176   1      }
  177          
  178          static uint8_t read_rows_ex(void)
-C51 COMPILER V9.00   MAIN                                                                  10/24/2011 18:05:45 PAGE 4   
+C51 COMPILER V9.00   MAIN                                                                  10/24/2011 23:20:19 PAGE 4   
 
  179          {
  180   1        return  (uint8_t)(ROW0 | ((uint8_t)ROW1 << 1) | ((uint8_t)ROW2 << 2) | ((uint8_t)ROW3 << 3) | ((uint8_t)
@@ -254,7 +254,7 @@ line level    source
  237          void TX_Mode(void)
  238          {
  239   1              SPI_RW_Reg(WRITE_REG + CONFIG, 0x0e);                           // 上电, CRC为2 bytes,接收模式,允许RX_DR产生中断
-C51 COMPILER V9.00   MAIN                                                                  10/24/2011 18:05:45 PAGE 5   
+C51 COMPILER V9.00   MAIN                                                                  10/24/2011 23:20:19 PAGE 5   
 
  240   1              SPI_Write_Buf(WR_TX_PLOAD, id_buf, TX_PLOAD_WIDTH); // 写数据到FIFO
  241   1              RFCE=1;                                                                                         // 启动发射
@@ -318,7 +318,7 @@ line level    source
  299   1      /*--------------------------------------
  300   1      Set Timer0 for 16-bit timer mode.  The
  301   1      timer counts to 65535, overflows, and
-C51 COMPILER V9.00   MAIN                                                                  10/24/2011 18:05:45 PAGE 6   
+C51 COMPILER V9.00   MAIN                                                                  10/24/2011 23:20:19 PAGE 6   
 
  302   1      generates an interrupt.
  303   1      
@@ -379,51 +379,50 @@ line level    source
  358   5                                              id_buf[11]=tKey +3;
  359   5                                              id_buf[12]=tKey +4;
  360   5                                              id_buf[13]=tKey +5;
- 361   5                                              
- 362   5                                      }
- 363   4                                      else
-C51 COMPILER V9.00   MAIN                                                                  10/24/2011 18:05:45 PAGE 7   
+ 361   5                                      }
+ 362   4                                      else
+ 363   4                                      {
+C51 COMPILER V9.00   MAIN                                                                  10/24/2011 23:20:19 PAGE 7   
 
- 364   4                                      {
- 365   5                                              for (i=8; i<=13; i++)
- 366   5                                              {
- 367   6                                                      id_buf[i] = 0x00;
- 368   6                                              }
- 369   5      
- 370   5                                      }
- 371   4      
- 372   4      //                              LED0 = 0;
- 373   4                                      RF_TX_BUF();
- 374   4                              }
- 375   3                              else
- 376   3                              {
- 377   4                                              for (i=8; i<=13; i++)
- 378   4                                              {
- 379   5                                                      id_buf[i] = 0x00;
- 380   5                                              }
- 381   4      
- 382   4                              }
- 383   3                      }
- 384   2              }
+ 364   5                                              for (i=8; i<=13; i++)
+ 365   5                                              {
+ 366   6                                                      id_buf[i] = 0x00;
+ 367   6                                              }
+ 368   5      
+ 369   5                                      }
+ 370   4      
+ 371   4      //                              LED0 = 0;
+ 372   4                                      RF_TX_BUF();
+ 373   4                              }
+ 374   3                              else
+ 375   3                              {
+ 376   4                                              for (i=8; i<=13; i++)
+ 377   4                                              {
+ 378   5                                                      id_buf[i] = 0x00;
+ 379   5                                              }
+ 380   4      
+ 381   4                              }
+ 382   3                      }
+ 383   2              }
+ 384   1      
  385   1      
- 386   1      
- 387   1              while(0)
- 388   1              {
- 389   2                  if(key_flag)
- 390   2                      {
- 391   3                        tCnt ^=01;
- 392   3                        LED0 = tCnt;
- 393   3                        key_flag=0;
- 394   3                        mRFstatus = 0;
- 395   3                        TX_Mode();                                                            // 发射数据
- 396   3                        while (!(TX_DS|MAX_RT));                              // 等待发射结束
- 397   3                        SPI_RW_Reg(FLUSH_TX,0);       
- 398   3                    SPI_RW_Reg(WRITE_REG+STATUS,0xFF);
- 399   3                        mRFstatus = 0;
- 400   3                        delay(100);
- 401   3                      }
- 402   2              }
- 403   1      }                                       
+ 386   1              while(0)
+ 387   1              {
+ 388   2                  if(key_flag)
+ 389   2                      {
+ 390   3                        tCnt ^=01;
+ 391   3                        LED0 = tCnt;
+ 392   3                        key_flag=0;
+ 393   3                        mRFstatus = 0;
+ 394   3                        TX_Mode();                                                            // 发射数据
+ 395   3                        while (!(TX_DS|MAX_RT));                              // 等待发射结束
+ 396   3                        SPI_RW_Reg(FLUSH_TX,0);       
+ 397   3                    SPI_RW_Reg(WRITE_REG+STATUS,0xFF);
+ 398   3                        mRFstatus = 0;
+ 399   3                        delay(100);
+ 400   3                      }
+ 401   2              }
+ 402   1      }                                       
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE

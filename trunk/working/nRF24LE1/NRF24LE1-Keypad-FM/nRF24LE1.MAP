@@ -1,10 +1,10 @@
-LX51 LINKER/LOCATER V4.41                                                               10/24/2011  18:05:45  PAGE 1
+LX51 LINKER/LOCATER V4.41                                                               10/24/2011  23:20:19  PAGE 1
 
 
 LX51 LINKER/LOCATER V4.41, INVOKED BY:
-C:\KEILC51\C51\BIN\LX51.EXE STARTUP.obj, Main.obj TO nRF24LE1 CLASSES (XDATA (X:0X0-X:0X3FF, X:0XFA00-X:0XFFFF), HDATA (
->> X:0X0-X:0X3FF, X:0XFA00-X:0XFFFF), CODE (C:0X0-C:0X3FFF), CONST (C:0X0-C:0X3FFF), ECODE (C:0X0-C:0X3FFF), HCONST (C:0
->> X0-C:0X3FFF))
+C:\KEIL\C51\BIN\LX51.EXE STARTUP.obj, Main.obj TO nRF24LE1 CLASSES (XDATA (X:0X0-X:0X3FF, X:0XFA00-X:0XFFFF), HDATA (X:0
+>> X0-X:0X3FF, X:0XFA00-X:0XFFFF), CODE (C:0X0-C:0X3FFF), CONST (C:0X0-C:0X3FFF), ECODE (C:0X0-C:0X3FFF), HCONST (C:0X0-
+>> C:0X3FFF))
 
 
 CPU MODE:     8051 MODE
@@ -16,19 +16,19 @@ INPUT MODULES INCLUDED:
          COMMENT TYPE 0: AX51 V3.06h
   Main.obj (MAIN)
          COMMENT TYPE 0: C51 V9.00
-  C:\KEILC51\C51\LIB\C51C.LIB (?C_INIT)
+  C:\KEIL\C51\LIB\C51C.LIB (?C_INIT)
          COMMENT TYPE 1: A51 / ASM51 Assembler
-  C:\KEILC51\C51\LIB\C51C.LIB (?C?CLDPTR)
+  C:\KEIL\C51\LIB\C51C.LIB (?C?CLDPTR)
          COMMENT TYPE 1: A51 / ASM51 Assembler
-  C:\KEILC51\C51\LIB\C51C.LIB (?C?ULCMP)
+  C:\KEIL\C51\LIB\C51C.LIB (?C?ULCMP)
          COMMENT TYPE 1: A51 / ASM51 Assembler
-  C:\KEILC51\C51\LIB\C51C.LIB (?C?ULSHR)
+  C:\KEIL\C51\LIB\C51C.LIB (?C?ULSHR)
          COMMENT TYPE 1: A51 / ASM51 Assembler
-  C:\KEILC51\C51\LIB\C51C.LIB (?C?LSHL)
+  C:\KEIL\C51\LIB\C51C.LIB (?C?LSHL)
          COMMENT TYPE 1: A51 / ASM51 Assembler
-  C:\KEILC51\C51\LIB\C51C.LIB (?C?LSTPDATA)
+  C:\KEIL\C51\LIB\C51C.LIB (?C?LSTPDATA)
          COMMENT TYPE 1: A51 / ASM51 Assembler
-  C:\KEILC51\C51\LIB\C51C.LIB (?C?LSTKPDATA)
+  C:\KEIL\C51\LIB\C51C.LIB (?C?LSTKPDATA)
          COMMENT TYPE 1: A51 / ASM51 Assembler
 
 
@@ -67,7 +67,7 @@ START     STOP      LENGTH    ALIGN  RELOC    MEMORY CLASS   SEGMENT NAME
 000003H   00000AH   000008H   ---    ---      **GAP**
 00000BH   00000DH   000003H   BYTE   OFFS..   CODE           ?MAIN?0000B
 00000EH   000049H   00003CH   BYTE   UNIT     CODE           ?PR?_SPI_WRITE_BUF?MAIN
-LX51 LINKER/LOCATER V4.41                                                             10/24/2011  18:05:45  PAGE 2
+LX51 LINKER/LOCATER V4.41                                                             10/24/2011  23:20:19  PAGE 2
 
 
 00004AH   00004AH   000001H   ---    ---      **GAP**
@@ -135,7 +135,7 @@ TX_MODE/MAIN                ----- -----
   +--> ?PR?_SPI_WRITE_BUF?MAIN
   +--> ?PR?_DELAY?MAIN
 
-LX51 LINKER/LOCATER V4.41                                                             10/24/2011  18:05:45  PAGE 3
+LX51 LINKER/LOCATER V4.41                                                             10/24/2011  23:20:19  PAGE 3
 
 
 ?C_INITSEG                  ----- -----
@@ -203,7 +203,7 @@ PUBLIC SYMBOLS OF MODULE:  nRF24LE1 (?C_STARTUP)
 *SFR* 000000DDH   DATA     BYTE      CCPDATIA
 *SFR* 000000DEH   DATA     BYTE      CCPDATIB
 *SFR* 000000DFH   DATA     BYTE      CCPDATO
-LX51 LINKER/LOCATER V4.41                                                             10/24/2011  18:05:45  PAGE 4
+LX51 LINKER/LOCATER V4.41                                                             10/24/2011  23:20:19  PAGE 4
 
 
 *SFR* 000000A3H   DATA     BYTE      CLKCTRL
@@ -271,7 +271,7 @@ PUBLIC SYMBOLS OF MODULE:  nRF24LE1 (?C_STARTUP)
 *SFR* 00000080H.1 DATA     BIT       P01
 *SFR* 00000080H.2 DATA     BIT       P02
 *SFR* 00000080H.3 DATA     BIT       P03
-LX51 LINKER/LOCATER V4.41                                                             10/24/2011  18:05:45  PAGE 5
+LX51 LINKER/LOCATER V4.41                                                             10/24/2011  23:20:19  PAGE 5
 
 
 *SFR* 00000080H.4 DATA     BIT       P04
@@ -339,7 +339,7 @@ PUBLIC SYMBOLS OF MODULE:  nRF24LE1 (?C_STARTUP)
 *SFR* 000000C0H   DATA     BIT       RFSPIF
 *SFR* 00000098H   DATA     BIT       RI0
 *SFR* 000000D6H   DATA     BYTE      RNGCTL
-LX51 LINKER/LOCATER V4.41                                                             10/24/2011  18:05:45  PAGE 6
+LX51 LINKER/LOCATER V4.41                                                             10/24/2011  23:20:19  PAGE 6
 
 
 *SFR* 000000D7H   DATA     BYTE      RNGDAT
@@ -407,7 +407,7 @@ PUBLIC SYMBOLS OF MODULE:  nRF24LE1 (?C_STARTUP)
 *SFR* 000000E2H   DATA     BYTE      W2CON0
 *SFR* 000000E1H   DATA     BYTE      W2CON1
 *SFR* 000000DAH   DATA     BYTE      W2DAT
-LX51 LINKER/LOCATER V4.41                                                             10/24/2011  18:05:45  PAGE 7
+LX51 LINKER/LOCATER V4.41                                                             10/24/2011  23:20:19  PAGE 7
 
 
 *SFR* 000000D9H   DATA     BYTE      W2SADR
@@ -475,7 +475,7 @@ SYMBOL TABLE OF MODULE:  nRF24LE1 (?C_STARTUP)
       0200000EH   PUBLIC    PDATA    ---       TX_ADDRESS
       02000006H   PUBLIC    PDATA    ---       mKeyMatrix
       01000186H   PUBLIC    CODE     ---       main
-LX51 LINKER/LOCATER V4.41                                                             10/24/2011  18:05:45  PAGE 8
+LX51 LINKER/LOCATER V4.41                                                             10/24/2011  23:20:19  PAGE 8
 
 
       010004CEH   PUBLIC    CODE     ---       RF_TX_BUF
@@ -543,7 +543,7 @@ SYMBOL TABLE OF MODULE:  nRF24LE1 (?C_STARTUP)
       000000D0H.2 SFRSYM    DATA     BIT       OV
       000000CAH   SFRSYM    DATA     BYTE      CRCL
       000000ADH   SFRSYM    DATA     BYTE      CLKLFCTRL
-LX51 LINKER/LOCATER V4.41                                                             10/24/2011  18:05:45  PAGE 9
+LX51 LINKER/LOCATER V4.41                                                             10/24/2011  23:20:19  PAGE 9
 
 
       000000B1H   SFRSYM    DATA     BYTE      RSTREAS
@@ -611,7 +611,7 @@ SYMBOL TABLE OF MODULE:  nRF24LE1 (?C_STARTUP)
       000000A7H   SFRSYM    DATA     BYTE      MEMCON
       000000EAH   SFRSYM    DATA     BYTE      MD1
       000000D7H   SFRSYM    DATA     BYTE      RNGDAT
-LX51 LINKER/LOCATER V4.41                                                             10/24/2011  18:05:45  PAGE 10
+LX51 LINKER/LOCATER V4.41                                                             10/24/2011  23:20:19  PAGE 10
 
 
       000000EBH   SFRSYM    DATA     BYTE      MD2
@@ -679,7 +679,7 @@ SYMBOL TABLE OF MODULE:  nRF24LE1 (?C_STARTUP)
       000000DAH   SFRSYM    DATA     BYTE      W2DAT
       00000097H   SFRSYM    DATA     BYTE      P2CON
       00000096H   SFRSYM    DATA     BYTE      P3DIR
-LX51 LINKER/LOCATER V4.41                                                             10/24/2011  18:05:45  PAGE 11
+LX51 LINKER/LOCATER V4.41                                                             10/24/2011  23:20:19  PAGE 11
 
 
       000000A4H   SFRSYM    DATA     BYTE      PWRDWN
@@ -747,7 +747,7 @@ SYMBOL TABLE OF MODULE:  nRF24LE1 (?C_STARTUP)
       01000105H   LINE      CODE     ---       #102
       01000107H   LINE      CODE     ---       #103
       01000109H   LINE      CODE     ---       #104
-LX51 LINKER/LOCATER V4.41                                                             10/24/2011  18:05:45  PAGE 12
+LX51 LINKER/LOCATER V4.41                                                             10/24/2011  23:20:19  PAGE 12
 
 
       0100010EH   LINE      CODE     ---       #105
@@ -815,7 +815,7 @@ SYMBOL TABLE OF MODULE:  nRF24LE1 (?C_STARTUP)
 
       01000459H   BLOCK     CODE     ---       LVL=0
       01000459H   LINE      CODE     ---       #178
-LX51 LINKER/LOCATER V4.41                                                             10/24/2011  18:05:45  PAGE 13
+LX51 LINKER/LOCATER V4.41                                                             10/24/2011  23:20:19  PAGE 13
 
 
       01000459H   LINE      CODE     ---       #179
@@ -883,7 +883,7 @@ SYMBOL TABLE OF MODULE:  nRF24LE1 (?C_STARTUP)
       01000049H   LINE      CODE     ---       #230
       ---         BLOCKEND  ---      ---       LVL=0
 
-LX51 LINKER/LOCATER V4.41                                                             10/24/2011  18:05:45  PAGE 14
+LX51 LINKER/LOCATER V4.41                                                             10/24/2011  23:20:19  PAGE 14
 
 
       010004ABH   BLOCK     CODE     ---       LVL=0
@@ -951,7 +951,7 @@ SYMBOL TABLE OF MODULE:  nRF24LE1 (?C_STARTUP)
       01000195H   LINE      CODE     ---       #312
       01000195H   LINE      CODE     ---       #313
       01000195H   LINE      CODE     ---       #315
-LX51 LINKER/LOCATER V4.41                                                             10/24/2011  18:05:45  PAGE 15
+LX51 LINKER/LOCATER V4.41                                                             10/24/2011  23:20:19  PAGE 15
 
 
       0100019BH   LINE      CODE     ---       #316
@@ -985,20 +985,20 @@ SYMBOL TABLE OF MODULE:  nRF24LE1 (?C_STARTUP)
       01000257H   LINE      CODE     ---       #358
       0100025DH   LINE      CODE     ---       #359
       01000263H   LINE      CODE     ---       #360
-      01000269H   LINE      CODE     ---       #362
+      01000269H   LINE      CODE     ---       #361
+      0100026BH   LINE      CODE     ---       #363
       0100026BH   LINE      CODE     ---       #364
-      0100026BH   LINE      CODE     ---       #365
+      01000279H   LINE      CODE     ---       #365
       01000279H   LINE      CODE     ---       #366
-      01000279H   LINE      CODE     ---       #367
-      0100027FH   LINE      CODE     ---       #368
-      01000286H   LINE      CODE     ---       #370
-      01000286H   LINE      CODE     ---       #373
-      01000289H   LINE      CODE     ---       #374
+      0100027FH   LINE      CODE     ---       #367
+      01000286H   LINE      CODE     ---       #369
+      01000286H   LINE      CODE     ---       #372
+      01000289H   LINE      CODE     ---       #373
+      0100028CH   LINE      CODE     ---       #375
       0100028CH   LINE      CODE     ---       #376
-      0100028CH   LINE      CODE     ---       #377
+      0100029DH   LINE      CODE     ---       #377
       0100029DH   LINE      CODE     ---       #378
-      0100029DH   LINE      CODE     ---       #379
-      010002A3H   LINE      CODE     ---       #380
+      010002A3H   LINE      CODE     ---       #379
       ---         BLOCKEND  ---      ---       LVL=0
 
       ---         MODULE    ---      ---       ?C_INIT
@@ -1019,7 +1019,7 @@ SYMBOL TABLE OF MODULE:  nRF24LE1 (?C_STARTUP)
       ---         MODULE    ---      ---       ?C?LSTPDATA
       01000386H   PUBLIC    CODE     ---       ?C?LSTPDATA
 
-LX51 LINKER/LOCATER V4.41                                                             10/24/2011  18:05:45  PAGE 16
+LX51 LINKER/LOCATER V4.41                                                             10/24/2011  23:20:19  PAGE 16
 
 
       ---         MODULE    ---      ---       ?C?LSTKPDATA
