@@ -1,0 +1,463 @@
+C51 COMPILER V9.00   MAIN                                                                  10/25/2011 14:35:30 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN Main.OBJ
+COMPILER INVOKED BY: C:\KeilC51\C51\BIN\C51.EXE Main.c COMPACT OMF2 BROWSE INCDIR(.\air LCD remote) DEBUG
+
+line level    source
+
+   1          /*深圳云佳科技无线应用，应用无限*/
+   2          /*********************************************************************
+   3          功能:
+   4                  RFID TARGET发射程序
+   5          说明:
+   6                  本程序采用定时2秒发射ID一次,发射完毕进入低功耗模式,低功耗电流3uA
+   7                  ID长度为6 byte
+   8          **********************************************************************/
+   9          #include <reg24le1.h>
+  10          #include <stdint.h>
+  11          #include "API.h"
+  12          //#define p0dir 0xf0
+  13          //#define p1dir 0x02
+  14          #define INTERRUPT_RFIRQ 9
+  15          #define INTERRUPT_TICK  13  
+  16          #define TX_ADR_WIDTH    5                                       // RF收发地址共5 bytes 
+  17          #define TX_PLOAD_WIDTH  20                                      // 数据包长度为20 bytes
+  18          uint8_t const TX_ADDRESS[TX_ADR_WIDTH]  = {0x34,0x56,0x78,0x90,0x12}; // 定义RF收发地址
+  19          //uint8_t data id_buf[TX_PLOAD_WIDTH]={0x01,0xe2,0x00,0x00,0x00,0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x
+             -00};
+  20          uint8_t data id_buf[TX_PLOAD_WIDTH]={0x01,0x00,0x00,0x00,0x00,0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00
+             -};
+  21          uint8_t bdata mRFstatus;
+  22          sbit    RX_DR   =mRFstatus^6;
+  23          sbit    TX_DS   =mRFstatus^5;
+  24          sbit    MAX_RT  =mRFstatus^4;
+  25          //============================================
+  26          #define P0_SLEEP_STATE      0x13
+  27          #define P1_SLEEP_STATE      0x1C
+  28          #define ROW0        P11
+  29          #define ROW1        P10
+  30          #define ROW2        P07
+  31          #define ROW3        P06
+  32          #define ROW4        P16
+  33          
+  34          #define COL0        P13
+  35          #define COL0_PIN    3 //P1.3
+  36          #define COL0_PDIR   P1DIR
+  37          #define COL1        P12
+  38          #define COL1_PIN    2 //P1.2
+  39          #define COL1_PDIR   P1DIR
+  40          #define COL2        P01
+  41          #define COL2_PIN    1 //P0.1
+  42          #define COL2_PDIR   P0DIR
+  43          #define COL3        P00
+  44          #define COL3_PIN    0 //P0.0
+  45          #define COL3_PDIR   P0DIR
+  46          
+  47          #define LED0            P03
+  48          #define LED1            P02             
+  49          
+  50          
+  51          #define COL0_SET()    do { COL0_PDIR &= ~(1<<COL0_PIN); COL0=1; }while(0)
+  52          #define COL1_SET()    do { COL1_PDIR &= ~(1<<COL1_PIN); COL1=1; }while(0)
+  53          #define COL2_SET()    do { COL2_PDIR &= ~(1<<COL2_PIN); COL2=1; }while(0)
+C51 COMPILER V9.00   MAIN                                                                  10/25/2011 14:35:30 PAGE 2   
+
+  54          #define COL3_SET()    do { COL3_PDIR &= ~(1<<COL3_PIN); COL3=1; }while(0)
+  55          
+  56          #define COL0_CLR()    do { COL0=0; COL0_PDIR |= (1<<COL0_PIN); }while(0)
+  57          #define COL1_CLR()    do { COL1=0; COL1_PDIR |= (1<<COL1_PIN); }while(0)
+  58          #define COL2_CLR()    do { COL2=0; COL2_PDIR |= (1<<COL2_PIN); }while(0)
+  59          #define COL3_CLR()    do { COL3=0; COL3_PDIR |= (1<<COL3_PIN); }while(0)
+  60          
+  61          
+  62          static unsigned char mTFlag=0;
+  63          static unsigned char mFlag1S=0;
+  64          uint32_t mKeyMatrix[2];
+  65          unsigned char key_flag=0;
+  66          
+  67          static uint8_t read_rows_ex(void);
+  68          
+  69          void timer0_ISR (void) interrupt 1
+  70          {
+  71   1              static unsigned char tCnt1S=0;
+  72   1              static unsigned char tKey[4];
+  73   1              unsigned char i;
+  74   1      
+  75   1              // 16MHz/12 = 0.75uS
+  76   1              // 16bits counter 0.75uS * 65536 = 49.152mS
+  77   1      
+  78   1              // 13bits counter 0.75uS * 8 * 1024 = 6.144mS
+  79   1              // 6.144mS * 8 = 49.152mS
+  80   1      
+  81   1              tCnt1S ++;
+  82   1              if (tCnt1S >=17)
+  83   1              {
+  84   2                      mFlag1S = 1;            // Set Timer Flag 100mS 
+  85   2                      tCnt1S = 0;
+  86   2                      mKeyMatrix[1]=mKeyMatrix[0];
+  87   2                      mKeyMatrix[0] = 0;
+  88   2                      for (i=0; i<=3; i++)
+  89   2                      {
+  90   3                              mKeyMatrix[0] = mKeyMatrix[0] << 5;
+  91   3                              mKeyMatrix[0] += tKey[i];
+  92   3                      }               
+  93   2              }
+  94   1      
+  95   1              if (1)
+  96   1              {
+  97   2              // Scan KeyMatrix
+  98   2              switch (tCnt1S)
+  99   2              {
+ 100   3                      case 0:
+ 101   3                              tKey[0] = 0;
+ 102   3                              tKey[1] = 0;
+ 103   3                              tKey[2] = 0;
+ 104   3                              tKey[3] = 0;
+ 105   3                              COL2_SET(); 
+ 106   3                              break;
+ 107   3                      case 1:
+ 108   3                              tKey[0] =  read_rows_ex();
+ 109   3                          COL2_CLR();
+ 110   3                              COL3_SET();                      
+ 111   3                              break;
+ 112   3                      case 2:
+ 113   3                              tKey[1] =  read_rows_ex();
+ 114   3                          COL3_CLR();
+ 115   3                              COL0_SET();                      
+C51 COMPILER V9.00   MAIN                                                                  10/25/2011 14:35:30 PAGE 3   
+
+ 116   3                              break;
+ 117   3                      case 3:
+ 118   3                              tKey[2] =  read_rows_ex();
+ 119   3                          COL0_CLR();
+ 120   3                              COL1_SET();                      
+ 121   3                              break;
+ 122   3                      case 4:
+ 123   3                              tKey[3] =  read_rows_ex();
+ 124   3                          COL1_CLR();
+ 125   3                              break;          
+ 126   3                      default:
+ 127   3      
+ 128   3                              COL0_CLR();
+ 129   3                              COL1_CLR();
+ 130   3                              COL2_CLR();
+ 131   3                              COL3_CLR();
+ 132   3                              break;  
+ 133   3              }
+ 134   2              }       
+ 135   1      }
+ 136          
+ 137          
+ 138          /**************************************************
+ 139          功能：延时
+ 140          **************************************************/
+ 141          void delay(uint16_t x)
+ 142          {
+ 143   1          uint16_t i,j;
+ 144   1          i=0;
+ 145   1          for(i=0;i<x;i++)
+ 146   1          {
+ 147   2             j=108;
+ 148   2                 ;
+ 149   2             while(j--);
+ 150   2          }
+ 151   1      }
+ 152          //============================================
+ 153          void keyinit(void)
+ 154          {
+ 155   1        P0=0;
+ 156   1        P1=0;
+ 157   1      //P0DIR=0xec;   //  
+ 158   1        P0DIR=0xc0;   //  0b11000000
+ 159   1        P1DIR=0x43;   //  0b01000011
+ 160   1       // P0CON = 0x70;
+ 161   1       // P0CON = 0x71;
+ 162   1       // P0CON = 0x72;
+ 163   1       // P0CON = 0x73;
+ 164   1       // P0CON = 0x74;
+ 165   1       // P0CON = 0x75;
+ 166   1        P1CON = 0x31;         // P1.1 - Dig in.buf w/ pull down res
+ 167   1        P1CON = 0x30;         // P1.0 - Dig in.buf w/ pull down res
+ 168   1        P1CON = 0x36;         // P1.6 - Dig in.buf w/ pull down res
+ 169   1      
+ 170   1        P0CON = 0x37;         // P0.7 - Dig in.buf w/ pull down res
+ 171   1        P0CON = 0x36;         // P0.6 - Dig in.buf w/ pull down res
+ 172   1       // P1CON = 0x72;
+ 173   1       // P1CON = 0x73;
+ 174   1       // P1CON = 0x74;
+ 175   1       // P1CON = 0x75;
+ 176   1       
+ 177   1      }
+C51 COMPILER V9.00   MAIN                                                                  10/25/2011 14:35:30 PAGE 4   
+
+ 178          
+ 179          static uint8_t read_rows_ex(void)
+ 180          {
+ 181   1        return  (uint8_t)(ROW0 | ((uint8_t)ROW1 << 1) | ((uint8_t)ROW2 << 2) | ((uint8_t)ROW3 << 3) | ((uint8_t)
+             -ROW4 << 4));
+ 182   1      }
+ 183          
+ 184          
+ 185          
+ 186          /**************************************************
+ 187          功能：硬件SPI读写
+ 188          **************************************************/
+ 189          uint8_t SPI_RW(uint8_t value)
+ 190          {
+ 191   1        SPIRDAT = value;                                                                                     
+ 192   1        while(!(SPIRSTAT & 0x02));                                    // 等待SPI传输完成
+ 193   1        return SPIRDAT;                                               // 返回读出值
+ 194   1      }
+ 195          /**************************************************
+ 196          功能：写RF寄存器，读RF状态值
+ 197          **************************************************/
+ 198          uint8_t SPI_RW_Reg(uint8_t reg, uint8_t value)
+ 199          {
+ 200   1              uint8_t status;
+ 201   1              RFCSN = 0;                      
+ 202   1              status = SPI_RW(reg);                                           // 选择RF寄存器
+ 203   1              SPI_RW(value);                                                  // 写入数据
+ 204   1              RFCSN = 1;                      
+ 205   1              return(status);                                                 // 返回RF状态值
+ 206   1      }
+ 207          /**************************************************
+ 208          功能：读RF寄存器
+ 209          **************************************************/
+ 210          uint8_t SPI_Read(uint8_t reg)
+ 211          {
+ 212   1              uint8_t reg_val;
+ 213   1              RFCSN = 0;                                      
+ 214   1              SPI_RW(reg);                                                    // 选择RF寄存器
+ 215   1              reg_val = SPI_RW(0);                                            // 读出数据
+ 216   1              RFCSN = 1;                                      
+ 217   1              return(reg_val);                                                // 返回RF状态值
+ 218   1      }
+ 219          /**************************************************
+ 220          功能：把缓冲区的多字节数据写到RF寄存器
+ 221          **************************************************/
+ 222          uint8_t SPI_Write_Buf(uint8_t reg, uint8_t *pBuf, uint8_t bytes)
+ 223          {
+ 224   1              uint8_t status,byte_ctr;
+ 225   1              RFCSN = 0;                              
+ 226   1              status = SPI_RW(reg);                                           // 选择RF寄存器
+ 227   1              for(byte_ctr=0; byte_ctr<bytes; byte_ctr++) // 连接写入数据
+ 228   1              SPI_RW(*pBuf++);
+ 229   1              RFCSN = 1;                                      
+ 230   1              return(status);                                                 // 返回RF状态值
+ 231   1      }
+ 232          /**************************************************
+ 233          功能：设置为掉电模式
+ 234          **************************************************/
+ 235          /**************************************************
+ 236          功能：设置为发射模式
+ 237          **************************************************/
+ 238          void TX_Mode(void)
+C51 COMPILER V9.00   MAIN                                                                  10/25/2011 14:35:30 PAGE 5   
+
+ 239          {
+ 240   1              SPI_RW_Reg(WRITE_REG + CONFIG, 0x0e);                           // 上电, CRC为2 bytes,接收模式,允许RX_DR产生中断
+ 241   1              SPI_Write_Buf(WR_TX_PLOAD, id_buf, TX_PLOAD_WIDTH); // 写数据到FIFO
+ 242   1              RFCE=1;                                                                                         // 启动发射
+ 243   1              delay(100);                                                                                     // 发射脉冲
+ 244   1              RFCE=0;                                                                                         
+ 245   1      }
+ 246          /**************************************************
+ 247          功能：RF初始化
+ 248          **************************************************/
+ 249          void rf_init(void)
+ 250          {
+ 251   1              RFCE = 0;                                               // RF关闭
+ 252   1              RFCKEN = 1;                                             // 启动RF时钟
+ 253   1              RF = 1;                                                 // 允许RF中断
+ 254   1              delay(1000);
+ 255   1              SPI_Write_Buf(WRITE_REG + TX_ADDR, TX_ADDRESS, TX_ADR_WIDTH);           // 设置发射地址长度
+ 256   1              SPI_Write_Buf(WRITE_REG + RX_ADDR_P0, TX_ADDRESS, TX_ADR_WIDTH);        // 设置接收地址长度
+ 257   1              SPI_RW_Reg(WRITE_REG + EN_AA, 0x01);                            // 启动自动应答功能
+ 258   1              SPI_RW_Reg(WRITE_REG + EN_RXADDR, 0x01);                        // PIPE0接收数据
+ 259   1      //      SPI_RW_Reg(WRITE_REG + SETUP_RETR, 0x1a);                       // 自动重传10次
+ 260   1              SPI_RW_Reg(WRITE_REG + SETUP_RETR, 0x10);                       // 自动重传10次
+ 261   1              SPI_RW_Reg(WRITE_REG + RF_CH, 40);                              // RF频率2440MHz
+ 262   1              SPI_RW_Reg(WRITE_REG + RF_SETUP, 0x0f);                         // 发射功率0dBm, 传输速率2Mbps,
+ 263   1              SPI_RW_Reg(WRITE_REG + RX_PW_P0, TX_PLOAD_WIDTH);       // PIPE0 接收数据包长度                 
+ 264   1      }
+ 265          /**************************************************
+ 266          功能：RF中断服务程序
+ 267          **************************************************/
+ 268          void RF_IRQ(void) interrupt INTERRUPT_RFIRQ
+ 269          {
+ 270   1              mRFstatus=SPI_Read(STATUS);                                                             // 读出状态值
+ 271   1              SPI_RW_Reg(WRITE_REG+STATUS,0x70);                                      // 清除所有中断标志 
+ 272   1      }
+ 273          
+ 274          void RF_TX_BUF(void)
+ 275          {
+ 276   1              mRFstatus = 0;
+ 277   1              TX_Mode();                                                              // 发射数据
+ 278   1              while (!(TX_DS|MAX_RT));                                // 等待发射结束
+ 279   1              SPI_RW_Reg(FLUSH_TX,0); 
+ 280   1              SPI_RW_Reg(WRITE_REG+STATUS,0xFF);
+ 281   1              mRFstatus = 0;
+ 282   1      
+ 283   1      }                                       
+ 284           
+ 285          /**************************************************
+ 286          功能：主程序
+ 287          **************************************************/
+ 288          void main(void)
+ 289          {
+ 290   1          
+ 291   1              static unsigned char tCnt=0;
+ 292   1              unsigned char i;
+ 293   1              unsigned char tKey=0;
+ 294   1              uint32_t tKeyMatrix;
+ 295   1              rf_init();                                                                      // RF初始化
+ 296   1              keyinit();           
+ 297   1      
+ 298   1      /*--------------------------------------
+ 299   1      Set Timer0 for 16-bit timer mode.  The
+ 300   1      timer counts to 65535, overflows, and
+C51 COMPILER V9.00   MAIN                                                                  10/25/2011 14:35:30 PAGE 6   
+
+ 301   1      generates an interrupt.
+ 302   1      
+ 303   1      Set the Timer0 Run control bit.
+ 304   1      --------------------------------------*/
+ 305   1      TMOD = (TMOD & 0xF0) | 0x00;  /* Set T/C0 Mode 13bit timer mode*/
+ 306   1      ET0 = 1;                      /* Enable Timer 0 Interrupts */
+ 307   1      TR0 = 1;                      /* Start Timer 0 Running */
+ 308   1      EA = 1;                       /* Global Interrupt Enable */
+ 309   1      
+ 310   1                                                                                                      
+ 311   1              while (1)
+ 312   1              {
+ 313   2      
+ 314   2                      if (mFlag1S==1)                         // 100mS flag
+ 315   2                      {
+ 316   3                              tCnt ++;                                        
+ 317   3                              mFlag1S = 0;
+ 318   3                              if (tCnt>=5)
+ 319   3                              { 
+ 320   4                                      tCnt = 0;
+ 321   4                                      LED1 = !LED1;
+ 322   4      //                              LED1 = 0;
+ 323   4      //                              id_buf[8] = 0x27;
+ 324   4      //                              RF_TX_BUF();
+ 325   4      //                              id_buf[8] = 0x00;
+ 326   4      //                              RF_TX_BUF();
+ 327   4                              }
+ 328   3      
+ 329   3                              if (mKeyMatrix[0] != mKeyMatrix[1])     
+ 330   3                              {
+ 331   4                                      tKeyMatrix = mKeyMatrix[0];     
+ 332   4                                      if (mKeyMatrix[0]!=0x00)
+ 333   4                                      {
+ 334   5                                              LED0 = !LED0;   
+ 335   5      //                                      tKeyMatrix = mKeyMatrix[0];     
+ 336   5      //                                      tKeyMatrix &= 0x07;
+ 337   5      //                                      id_buf[8] = 0x1e;
+ 338   5      //                                      id_buf[8] += tKeyMatrix;
+ 339   5      //                                      id_buf[8]=0x26; 
+ 340   5                                              for (i=0; i<20;i++)
+ 341   5                                              {
+ 342   6                                                      if ((tKeyMatrix & 0x01) == 0x01)
+ 343   6                                                      {
+ 344   7      //                                                      tKey = 0x10 + i;
+ 345   7                                                              id_buf[8] = tKey;
+ 346   7      //                                                      break;
+ 347   7                                                      }
+ 348   6                                                      tKeyMatrix = tKeyMatrix >> 1;                                           
+ 349   6                                              }                       
+ 350   5                                              
+ 351   5       /*
+ 352   5                                              tKey = 0x1e;
+ 353   5                                              id_buf[8]=tKey +0;
+ 354   5                                              id_buf[9]=tKey +1;
+ 355   5                                              id_buf[10]=tKey +2;
+ 356   5                                              id_buf[11]=tKey +3;
+ 357   5                                              id_buf[12]=tKey +4;
+ 358   5                                              id_buf[13]=tKey +5;
+ 359   5      */
+ 360   5      
+ 361   5                                              if (tKey>=36)
+ 362   5                                              {
+C51 COMPILER V9.00   MAIN                                                                  10/25/2011 14:35:30 PAGE 7   
+
+ 363   6                                                      tKey=0;
+ 364   6                                              }
+ 365   5      //                                      id_buf[8] = 0x1e + tKey;
+ 366   5                                              id_buf[8] = 0x04 + tKey;
+ 367   5                                              id_buf[9] = 0x28;
+ 368   5                                              tKey ++;
+ 369   5                                      }
+ 370   4                                      else
+ 371   4                                      {
+ 372   5                                              id_buf[8]=0x00;
+ 373   5                                              for (i=8; i<=13; i++)
+ 374   5                                              {
+ 375   6                                                      id_buf[i] = 0x00;
+ 376   6                                              }
+ 377   5                                      }
+ 378   4      
+ 379   4      //                              LED0 = 0;
+ 380   4                                      RF_TX_BUF();
+ 381   4                                      for (i=8; i<=13; i++)
+ 382   4                                      {
+ 383   5                                              id_buf[i] = 0x00;
+ 384   5                                      }
+ 385   4                                      RF_TX_BUF();
+ 386   4      
+ 387   4      
+ 388   4                              }
+ 389   3                              else
+ 390   3                              {
+ 391   4                                      for (i=8; i<=13; i++)
+ 392   4                                      {
+ 393   5                                              id_buf[i] = 0x00;
+ 394   5                                      }
+ 395   4                                      id_buf[8]=0x00;
+ 396   4      //                              RF_TX_BUF();
+ 397   4      
+ 398   4                              }
+ 399   3                      }
+ 400   2              }
+ 401   1      
+ 402   1      
+ 403   1              while(0)
+ 404   1              {
+ 405   2                  if(key_flag)
+ 406   2                      {
+ 407   3                        tCnt ^=01;
+ 408   3                        LED0 = tCnt;
+ 409   3                        key_flag=0;
+ 410   3                        mRFstatus = 0;
+ 411   3                        TX_Mode();                                                            // 发射数据
+ 412   3                        while (!(TX_DS|MAX_RT));                              // 等待发射结束
+ 413   3                        SPI_RW_Reg(FLUSH_TX,0);       
+ 414   3                    SPI_RW_Reg(WRITE_REG+STATUS,0xFF);
+ 415   3                        mRFstatus = 0;
+ 416   3                        delay(100);
+ 417   3                      }
+ 418   2              }
+ 419   1      }                                       
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1037    ----
+   CONSTANT SIZE    =   ----    ----
+C51 COMPILER V9.00   MAIN                                                                  10/25/2011 14:35:30 PAGE 8   
+
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =     22      14
+   DATA SIZE        =     21    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
