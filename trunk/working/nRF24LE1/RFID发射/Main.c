@@ -61,9 +61,13 @@ sbit LED1 = P0^0;                               // 1/0=灭/亮
 #define TX_ADR_WIDTH    5   					// RF收发地址共5 bytes 
 #define TX_PLOAD_WIDTH  20  					// 数据包长度为20 bytes
 
-uint8_t const TX_ADDRESS[TX_ADR_WIDTH]  = {0x34,0x56,0x78,0x90,0x12}; // 定义RF收发地址
+//uint8_t const TX_ADDRESS[TX_ADR_WIDTH]  = {0x34,0x56,0x78,0x90,0x12}; // 定义RF收发地址
+//uint8_t data id_buf[TX_PLOAD_WIDTH]={0xff, 0x01, 0x02, 0x03, 0x04, 0x05};
 
-uint8_t data id_buf[TX_PLOAD_WIDTH]={0xff, 0x01, 0x02, 0x03, 0x04, 0x05};
+uint8_t const TX_ADDRESS[TX_ADR_WIDTH]  = {0x34,0x56,0x78,0x90,0x12}; // 定义RF收发地址
+uint8_t data id_buf[TX_PLOAD_WIDTH]={0x01,0x00,0x00,0x00,0x00,0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+
+
 
 uint8_t bdata sta;
 sbit	RX_DR	=sta^6;
@@ -245,6 +249,19 @@ void io_init(void)
 //	LED1=LED2=LED3=1;							// 灯全灭         
          
 }  
+
+void RF_TX_BUF(void)
+{
+	sta = 0;
+	TX_Mode();								// 发射数据
+	while (!(TX_DS|MAX_RT));				// 等待发射结束
+	SPI_RW_Reg(FLUSH_TX,0);	
+	SPI_RW_Reg(WRITE_REG+STATUS,0xFF);
+	sta= 0;
+}             				
+ 
+
+
 /**************************************************
 功能：主程序
 **************************************************/
@@ -252,6 +269,7 @@ void main(void)
 {
 	unsigned char tCnt=0;
 	unsigned char tIndex=0;
+	unsigned char i;
 
 	io_init();									// I/O口初始化
 	rf_init();									// RF初始化                            
@@ -272,14 +290,31 @@ void main(void)
 				tCnt=0;
 				tIndex ++;
 				tIndex &= 0x07;
-				P0=0x00;
+				P0=0x00;												  
 				LED2=1;
 				delay(100);
 				LED2=0;
+/*
 				id_buf[8]=0x1e + tIndex;
 				TX_Mode();								// 发射数据
 				while (!(TX_DS|MAX_RT));				// 等待发射结束
 				sta = 0;
+  */
+//				id_buf[8] = 0x1e+tIndex;	 
+				id_buf[8] = 0x2f;
+				id_buf[9] = 0x1e+tIndex;
+				id_buf[10] = 0x27;
+				id_buf[11] = 0x1f;
+				id_buf[12] = 0x30;
+				id_buf[13] = 0x28;
+//				id_buf[14] = 0x28;
+				RF_TX_BUF();
+
+				for (i=8; i<=14; i++)
+				{
+					id_buf[i] = 0x00;
+				}
+				RF_TX_BUF();
 				PD_Mode();								// 关RF
 			}
 		}
