@@ -1,4 +1,4 @@
-C51 COMPILER V9.00   MAIN                                                                  10/25/2011 14:22:57 PAGE 1   
+C51 COMPILER V9.00   MAIN                                                                  10/25/2011 14:47:39 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ line level    source
               
               #define p0dir   0xf0
               #define p1dir   0x02
-C51 COMPILER V9.00   MAIN                                                                  10/25/2011 14:22:57 PAGE 2   
+C51 COMPILER V9.00   MAIN                                                                  10/25/2011 14:47:39 PAGE 2   
 
               #endif
   57          
@@ -79,276 +79,274 @@ line level    source
   68          uint8_t data id_buf[TX_PLOAD_WIDTH]={0x01,0x00,0x00,0x00,0x00,0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00
              -};
   69          
-  70          
-  71          
-  72          uint8_t bdata sta;
-  73          sbit    RX_DR   =sta^6;
-  74          sbit    TX_DS   =sta^5;
-  75          sbit    MAX_RT  =sta^4;
-  76          
+  70          uint8_t bdata sta;
+  71          sbit    RX_DR   =sta^6;
+  72          sbit    TX_DS   =sta^5;
+  73          sbit    MAX_RT  =sta^4;
+  74          
+  75          
+  76          unsigned char mFlagRTC=0; 
   77          
-  78          unsigned char mFlagRTC=0; 
-  79          
-  80          /**************************************************
-  81          功能：延时
-  82          **************************************************/
-  83          void delay(uint16_t x)
-  84          {
-  85   1          uint16_t i,j;
-  86   1          i=0;
-  87   1          for(i=0;i<x;i++)
-  88   1          {
-  89   2             j=108;
-  90   2                 ;
-  91   2             while(j--);
-  92   2          }
-  93   1      }
-  94          /**************************************************
-  95          功能：硬件SPI读写
-  96          **************************************************/
-  97          uint8_t SPI_RW(uint8_t value)
-  98          {
-  99   1        SPIRDAT = value;
- 100   1                                                                                                     
- 101   1        while(!(SPIRSTAT & 0x02));                                    // 等待SPI传输完成
- 102   1      
- 103   1        return SPIRDAT;                                               // 返回读出值
- 104   1      }
- 105          /**************************************************
- 106          功能：写RF寄存器，读RF状态值
- 107          **************************************************/
- 108          uint8_t SPI_RW_Reg(uint8_t reg, uint8_t value)
- 109          {
- 110   1              uint8_t status;
- 111   1      
- 112   1              RFCSN = 0;                      
- 113   1              status = SPI_RW(reg);                                           // 选择RF寄存器
- 114   1              SPI_RW(value);                                                  // 写入数据
- 115   1              RFCSN = 1;                      
- 116   1      
-C51 COMPILER V9.00   MAIN                                                                  10/25/2011 14:22:57 PAGE 3   
+  78          /**************************************************
+  79          功能：延时
+  80          **************************************************/
+  81          void delay(uint16_t x)
+  82          {
+  83   1          uint16_t i,j;
+  84   1          i=0;
+  85   1          for(i=0;i<x;i++)
+  86   1          {
+  87   2             j=108;
+  88   2                 ;
+  89   2             while(j--);
+  90   2          }
+  91   1      }
+  92          /**************************************************
+  93          功能：硬件SPI读写
+  94          **************************************************/
+  95          uint8_t SPI_RW(uint8_t value)
+  96          {
+  97   1        SPIRDAT = value;
+  98   1                                                                                                     
+  99   1        while(!(SPIRSTAT & 0x02));                                    // 等待SPI传输完成
+ 100   1      
+ 101   1        return SPIRDAT;                                               // 返回读出值
+ 102   1      }
+ 103          /**************************************************
+ 104          功能：写RF寄存器，读RF状态值
+ 105          **************************************************/
+ 106          uint8_t SPI_RW_Reg(uint8_t reg, uint8_t value)
+ 107          {
+ 108   1              uint8_t status;
+ 109   1      
+ 110   1              RFCSN = 0;                      
+ 111   1              status = SPI_RW(reg);                                           // 选择RF寄存器
+ 112   1              SPI_RW(value);                                                  // 写入数据
+ 113   1              RFCSN = 1;                      
+ 114   1      
+ 115   1              return(status);                                                 // 返回RF状态值
+ 116   1      }
+C51 COMPILER V9.00   MAIN                                                                  10/25/2011 14:47:39 PAGE 3   
 
- 117   1              return(status);                                                 // 返回RF状态值
- 118   1      }
- 119          /**************************************************
- 120          功能：读RF寄存器
- 121          **************************************************/
- 122          uint8_t SPI_Read(uint8_t reg)
- 123          {
- 124   1              uint8_t reg_val;
- 125   1      
- 126   1              RFCSN = 0;                                      
- 127   1              SPI_RW(reg);                                                    // 选择RF寄存器
- 128   1              reg_val = SPI_RW(0);                                            // 读出数据
- 129   1              RFCSN = 1;                                      
- 130   1      
- 131   1              return(reg_val);                                                // 返回RF状态值
- 132   1      }
- 133          /**************************************************
- 134          功能：把缓冲区的多字节数据写到RF寄存器
- 135          **************************************************/
- 136          uint8_t SPI_Write_Buf(uint8_t reg, uint8_t *pBuf, uint8_t bytes)
- 137          {
- 138   1              uint8_t status,byte_ctr;
- 139   1      
- 140   1              RFCSN = 0;                              
- 141   1              status = SPI_RW(reg);                                           // 选择RF寄存器
- 142   1              for(byte_ctr=0; byte_ctr<bytes; byte_ctr++) // 连接写入数据
- 143   1              SPI_RW(*pBuf++);
- 144   1              RFCSN = 1;                                      
- 145   1              return(status);                                                 // 返回RF状态值
- 146   1      }
- 147          /**************************************************
- 148          功能：设置为掉电模式
- 149          **************************************************/
- 150          void PD_Mode(void)
- 151          {
- 152   1              RFCE=0;
- 153   1              SPI_RW_Reg(WRITE_REG + CONFIG, 0x0c);           // PWR_UP=0
- 154   1      }
- 155          /**************************************************
- 156          功能：设置为发射模式
- 157          **************************************************/
- 158          void TX_Mode(void)
- 159          {
- 160   1              SPI_RW_Reg(WRITE_REG + CONFIG, 0x0e);                           // 上电, CRC为2 bytes,接收模式,允许RX_DR产生中断
- 161   1              SPI_Write_Buf(WR_TX_PLOAD, id_buf, TX_PLOAD_WIDTH); // 写数据到FIFO
- 162   1              RFCE=1;                                                                                         // 启动发射
- 163   1              delay(10);                                                                                      // 发射脉冲
- 164   1              RFCE=0;                                                                                         
- 165   1      }
- 166          /**************************************************
- 167          功能：RF初始化
- 168          **************************************************/
- 169          void rf_init(void)
- 170          {
- 171   1              RFCE = 0;                                               // RF关闭
- 172   1              RFCKEN = 1;                                             // 启动RF时钟
- 173   1              RF = 1;                                                 // 允许RF中断
+ 117          /**************************************************
+ 118          功能：读RF寄存器
+ 119          **************************************************/
+ 120          uint8_t SPI_Read(uint8_t reg)
+ 121          {
+ 122   1              uint8_t reg_val;
+ 123   1      
+ 124   1              RFCSN = 0;                                      
+ 125   1              SPI_RW(reg);                                                    // 选择RF寄存器
+ 126   1              reg_val = SPI_RW(0);                                            // 读出数据
+ 127   1              RFCSN = 1;                                      
+ 128   1      
+ 129   1              return(reg_val);                                                // 返回RF状态值
+ 130   1      }
+ 131          /**************************************************
+ 132          功能：把缓冲区的多字节数据写到RF寄存器
+ 133          **************************************************/
+ 134          uint8_t SPI_Write_Buf(uint8_t reg, uint8_t *pBuf, uint8_t bytes)
+ 135          {
+ 136   1              uint8_t status,byte_ctr;
+ 137   1      
+ 138   1              RFCSN = 0;                              
+ 139   1              status = SPI_RW(reg);                                           // 选择RF寄存器
+ 140   1              for(byte_ctr=0; byte_ctr<bytes; byte_ctr++) // 连接写入数据
+ 141   1              SPI_RW(*pBuf++);
+ 142   1              RFCSN = 1;                                      
+ 143   1              return(status);                                                 // 返回RF状态值
+ 144   1      }
+ 145          /**************************************************
+ 146          功能：设置为掉电模式
+ 147          **************************************************/
+ 148          void PD_Mode(void)
+ 149          {
+ 150   1              RFCE=0;
+ 151   1              SPI_RW_Reg(WRITE_REG + CONFIG, 0x0c);           // PWR_UP=0
+ 152   1      }
+ 153          /**************************************************
+ 154          功能：设置为发射模式
+ 155          **************************************************/
+ 156          void TX_Mode(void)
+ 157          {
+ 158   1              SPI_RW_Reg(WRITE_REG + CONFIG, 0x0e);                           // 上电, CRC为2 bytes,接收模式,允许RX_DR产生中断
+ 159   1              SPI_Write_Buf(WR_TX_PLOAD, id_buf, TX_PLOAD_WIDTH); // 写数据到FIFO
+ 160   1              RFCE=1;                                                                                         // 启动发射
+ 161   1              delay(10);                                                                                      // 发射脉冲
+ 162   1              RFCE=0;                                                                                         
+ 163   1      }
+ 164          /**************************************************
+ 165          功能：RF初始化
+ 166          **************************************************/
+ 167          void rf_init(void)
+ 168          {
+ 169   1              RFCE = 0;                                               // RF关闭
+ 170   1              RFCKEN = 1;                                             // 启动RF时钟
+ 171   1              RF = 1;                                                 // 允许RF中断
+ 172   1      
+ 173   1              delay(1000);
  174   1      
- 175   1              delay(1000);
- 176   1      
- 177   1              SPI_Write_Buf(WRITE_REG + TX_ADDR, TX_ADDRESS, TX_ADR_WIDTH);           // 设置发射地址长度
- 178   1              SPI_Write_Buf(WRITE_REG + RX_ADDR_P0, TX_ADDRESS, TX_ADR_WIDTH);        // 设置接收地址长度
-C51 COMPILER V9.00   MAIN                                                                  10/25/2011 14:22:57 PAGE 4   
+ 175   1              SPI_Write_Buf(WRITE_REG + TX_ADDR, TX_ADDRESS, TX_ADR_WIDTH);           // 设置发射地址长度
+ 176   1              SPI_Write_Buf(WRITE_REG + RX_ADDR_P0, TX_ADDRESS, TX_ADR_WIDTH);        // 设置接收地址长度
+ 177   1      
+ 178   1              SPI_RW_Reg(WRITE_REG + EN_AA, 0x01);                            // 启动自动应答功能
+C51 COMPILER V9.00   MAIN                                                                  10/25/2011 14:47:39 PAGE 4   
 
- 179   1      
- 180   1              SPI_RW_Reg(WRITE_REG + EN_AA, 0x01);                            // 启动自动应答功能
- 181   1              SPI_RW_Reg(WRITE_REG + EN_RXADDR, 0x01);                        // PIPE0接收数据
- 182   1      //      SPI_RW_Reg(WRITE_REG + SETUP_RETR, 0x1a);                       // 自动重传10次
- 183   1              SPI_RW_Reg(WRITE_REG + SETUP_RETR, 0x10);                       // 自动重传 0 次
- 184   1      
- 185   1              SPI_RW_Reg(WRITE_REG + RF_CH, 40);                              // RF频率2440MHz
- 186   1              SPI_RW_Reg(WRITE_REG + RF_SETUP, 0x0f);                         // 发射功率0dBm, 传输速率2Mbps,
- 187   1              SPI_RW_Reg(WRITE_REG + RX_PW_P0, TX_PLOAD_WIDTH);       // PIPE0 接收数据包长度                 
- 188   1      }
- 189          /**************************************************
- 190          功能：RF中断服务程序
- 191          **************************************************/
- 192          void RF_IRQ(void) interrupt INTERRUPT_RFIRQ
- 193          {
- 194   1              sta=SPI_Read(STATUS);                                                           // 读出状态值
- 195   1              SPI_RW_Reg(WRITE_REG+STATUS,0x70);                                      // 清除所有中断标志 
- 196   1      }
- 197          
- 198          /**************************************************
- 199          功能：RTC2初始化
- 200          **************************************************/
- 201          void rtc2_init(void)
- 202          {
- 203   1              CLKLFCTRL=0x01;                                                                         // 使用RC 32KHz时钟
- 204   1              RTC2CMP0=0xff;                                                                          // 定时2秒
- 205   1              RTC2CMP1=0xff;
- 206   1              RTC2CON=0x06;                                                                           // 比较模式
- 207   1              WUIRQ=1;                                                                                        // 允许TICK中断
- 208   1      }
- 209          /**************************************************
- 210          功能：启动RTC2
- 211          **************************************************/
- 212          void rtc2_on(void)
- 213          {
- 214   1              RTC2CON |=0x01;                                                                 
- 215   1      }
- 216          /**************************************************
- 217          功能：关闭RTC2
- 218          **************************************************/
- 219          void rtc2_off(void)
- 220          {                                                                                                               
- 221   1              RTC2CON &=~0x01;                                                                        
- 222   1      }
- 223          /**************************************************
- 224          功能：RTC2中断服务程序
- 225          **************************************************/
- 226          void RTC2_IRQ(void) interrupt INTERRUPT_TICK 
- 227          {
- 228   1      //      LED2=!LED2;     
- 229   1      //      P03=0;
- 230   1      /*
- 231   1              P0=0x00;
- 232   1              LED2=1;
- 233   1              delay(100);
- 234   1              LED2=0;
- 235   1        */
- 236   1              mFlagRTC=1;
- 237   1      
- 238   1      }                                       
- 239          /**************************************************
- 240          功能:I/O口初始化
-C51 COMPILER V9.00   MAIN                                                                  10/25/2011 14:22:57 PAGE 5   
+ 179   1              SPI_RW_Reg(WRITE_REG + EN_RXADDR, 0x01);                        // PIPE0接收数据
+ 180   1      //      SPI_RW_Reg(WRITE_REG + SETUP_RETR, 0x1a);                       // 自动重传10次
+ 181   1              SPI_RW_Reg(WRITE_REG + SETUP_RETR, 0x10);                       // 自动重传 0 次
+ 182   1      
+ 183   1              SPI_RW_Reg(WRITE_REG + RF_CH, 40);                              // RF频率2440MHz
+ 184   1              SPI_RW_Reg(WRITE_REG + RF_SETUP, 0x0f);                         // 发射功率0dBm, 传输速率2Mbps,
+ 185   1              SPI_RW_Reg(WRITE_REG + RX_PW_P0, TX_PLOAD_WIDTH);       // PIPE0 接收数据包长度                 
+ 186   1      }
+ 187          /**************************************************
+ 188          功能：RF中断服务程序
+ 189          **************************************************/
+ 190          void RF_IRQ(void) interrupt INTERRUPT_RFIRQ
+ 191          {
+ 192   1              sta=SPI_Read(STATUS);                                                           // 读出状态值
+ 193   1              SPI_RW_Reg(WRITE_REG+STATUS,0x70);                                      // 清除所有中断标志 
+ 194   1      }
+ 195          
+ 196          /**************************************************
+ 197          功能：RTC2初始化
+ 198          **************************************************/
+ 199          void rtc2_init(void)
+ 200          {
+ 201   1              CLKLFCTRL=0x01;                                                                         // 使用RC 32KHz时钟
+ 202   1              RTC2CMP0=0xff;                                                                          // 定时2秒
+ 203   1              RTC2CMP1=0xff;
+ 204   1              RTC2CON=0x06;                                                                           // 比较模式
+ 205   1              WUIRQ=1;                                                                                        // 允许TICK中断
+ 206   1      }
+ 207          /**************************************************
+ 208          功能：启动RTC2
+ 209          **************************************************/
+ 210          void rtc2_on(void)
+ 211          {
+ 212   1              RTC2CON |=0x01;                                                                 
+ 213   1      }
+ 214          /**************************************************
+ 215          功能：关闭RTC2
+ 216          **************************************************/
+ 217          void rtc2_off(void)
+ 218          {                                                                                                               
+ 219   1              RTC2CON &=~0x01;                                                                        
+ 220   1      }
+ 221          /**************************************************
+ 222          功能：RTC2中断服务程序
+ 223          **************************************************/
+ 224          void RTC2_IRQ(void) interrupt INTERRUPT_TICK 
+ 225          {
+ 226   1      //      LED2=!LED2;     
+ 227   1      //      P03=0;
+ 228   1      /*
+ 229   1              P0=0x00;
+ 230   1              LED2=1;
+ 231   1              delay(100);
+ 232   1              LED2=0;
+ 233   1        */
+ 234   1              mFlagRTC=1;
+ 235   1      
+ 236   1      }                                       
+ 237          /**************************************************
+ 238          功能:I/O口初始化
+ 239          **************************************************/
+ 240          void io_init(void)
+C51 COMPILER V9.00   MAIN                                                                  10/25/2011 14:47:39 PAGE 5   
 
- 241          **************************************************/
- 242          void io_init(void)
- 243          {
- 244   1              P0DIR = p0dir;                                                          // 设定I/O口输入输出
- 245   1              P1DIR = p1dir;                                  
- 246   1      
- 247   1              LED1=LED2=LED3=0;                                                       // 灯全亮
- 248   1      //      delay(1000);
- 249   1      //      LED1=LED2=LED3=1;                                                       // 灯全灭         
- 250   1               
- 251   1      }  
- 252          
- 253          void RF_TX_BUF(void)
- 254          {
- 255   1              sta = 0;
- 256   1              TX_Mode();                                                              // 发射数据
- 257   1              while (!(TX_DS|MAX_RT));                                // 等待发射结束
- 258   1              SPI_RW_Reg(FLUSH_TX,0); 
- 259   1              SPI_RW_Reg(WRITE_REG+STATUS,0xFF);
- 260   1              sta= 0;
- 261   1      }                                       
- 262           
- 263          
- 264          
- 265          /**************************************************
- 266          功能：主程序
- 267          **************************************************/
- 268          void main(void)
- 269          {
- 270   1              unsigned char tCnt=0;
- 271   1              unsigned char tIndex=0;
- 272   1              unsigned char i;
- 273   1      
- 274   1              io_init();                                                                      // I/O口初始化
- 275   1              rf_init();                                                                      // RF初始化                            
- 276   1              EA=1;                                       // 允许中断  
- 277   1              rtc2_init();                                                            // RTC2初始化
- 278   1              LED1=LED2=LED3=0;                                                       // 灯全亮
- 279   1                                                                                                      
- 280   1              while(1)
- 281   1              {
- 282   2                      rtc2_off();                                                             // 关RTC2 
- 283   2                      if (mFlagRTC)
- 284   2                      {
- 285   3                              mFlagRTC=0;
- 286   3                              tCnt++;
- 287   3                              if (tCnt>=2)
- 288   3                              {
- 289   4                                      P0DIR = 0xf0;
- 290   4                                      tCnt=0;
- 291   4                                      tIndex ++;
- 292   4                                      tIndex &= 0x07;
- 293   4                                      P0=0x00;                                                                                                  
- 294   4                                      LED2=1;
- 295   4                                      delay(100);
- 296   4                                      LED2=0;
- 297   4      /*
- 298   4                                      id_buf[8]=0x1e + tIndex;
- 299   4                                      TX_Mode();                                                              // 发射数据
- 300   4                                      while (!(TX_DS|MAX_RT));                                // 等待发射结束
- 301   4                                      sta = 0;
- 302   4        */
-C51 COMPILER V9.00   MAIN                                                                  10/25/2011 14:22:57 PAGE 6   
+ 241          {
+ 242   1              P0DIR = p0dir;                                                          // 设定I/O口输入输出
+ 243   1              P1DIR = p1dir;                                  
+ 244   1      
+ 245   1              LED1=LED2=LED3=0;                                                       // 灯全亮
+ 246   1      //      delay(1000);
+ 247   1      //      LED1=LED2=LED3=1;                                                       // 灯全灭         
+ 248   1               
+ 249   1      }  
+ 250          
+ 251          void RF_TX_BUF(void)
+ 252          {
+ 253   1              sta = 0;
+ 254   1              TX_Mode();                                                              // 发射数据
+ 255   1              while (!(TX_DS|MAX_RT));                                // 等待发射结束
+ 256   1              SPI_RW_Reg(FLUSH_TX,0); 
+ 257   1              SPI_RW_Reg(WRITE_REG+STATUS,0xFF);
+ 258   1              sta= 0;
+ 259   1      }                                       
+ 260           
+ 261          
+ 262          
+ 263          /**************************************************
+ 264          功能：主程序
+ 265          **************************************************/
+ 266          void main(void)
+ 267          {
+ 268   1              unsigned char tCnt=0;
+ 269   1              unsigned char tIndex=0;
+ 270   1              unsigned char i;
+ 271   1      
+ 272   1              io_init();                                                                      // I/O口初始化
+ 273   1              rf_init();                                                                      // RF初始化                            
+ 274   1              EA=1;                                       // 允许中断  
+ 275   1              rtc2_init();                                                            // RTC2初始化
+ 276   1              LED1=LED2=LED3=0;                                                       // 灯全亮
+ 277   1                                                                                                      
+ 278   1              while(1)
+ 279   1              {
+ 280   2                      rtc2_off();                                                             // 关RTC2 
+ 281   2                      if (mFlagRTC)
+ 282   2                      {
+ 283   3                              mFlagRTC=0;
+ 284   3                              tCnt++;
+ 285   3                              if (tCnt>=2)
+ 286   3                              {
+ 287   4                                      P0DIR = 0xf0;
+ 288   4                                      tCnt=0;
+ 289   4                                      tIndex ++;
+ 290   4                                      tIndex &= 0x07;
+ 291   4                                      P0=0x00;                                                                                                  
+ 292   4                                      LED2=1;
+ 293   4                                      delay(100);
+ 294   4                                      LED2=0;
+ 295   4      /*
+ 296   4                                      id_buf[8]=0x1e + tIndex;
+ 297   4                                      TX_Mode();                                                              // 发射数据
+ 298   4                                      while (!(TX_DS|MAX_RT));                                // 等待发射结束
+ 299   4                                      sta = 0;
+ 300   4        */
+ 301   4      //                              id_buf[8] = 0x1e+tIndex;         
+ 302   4                                      id_buf[8] = 0x2f;
+C51 COMPILER V9.00   MAIN                                                                  10/25/2011 14:47:39 PAGE 6   
 
- 303   4      //                              id_buf[8] = 0x1e+tIndex;         
- 304   4                                      id_buf[8] = 0x2f;
- 305   4                                      id_buf[9] = 0x1e+tIndex;
- 306   4                                      id_buf[10] = 0x27;
- 307   4                                      id_buf[11] = 0x1f;
- 308   4                                      id_buf[12] = 0x30;
- 309   4                                      id_buf[13] = 0x28;
- 310   4      //                              id_buf[14] = 0x28;
- 311   4                                      RF_TX_BUF();
- 312   4      
- 313   4                                      for (i=8; i<=14; i++)
- 314   4                                      {
- 315   5                                              id_buf[i] = 0x00;
- 316   5                                      }
- 317   4                                      RF_TX_BUF();
- 318   4                                      PD_Mode();                                                              // 关RF
- 319   4                              }
- 320   3                      }
- 321   2      
- 322   2                      rtc2_on();                                                              // 开RTC2
- 323   2      //              P0DIR = 0xff;
- 324   2      //              P1DIR = 0xff;
- 325   2      
- 326   2                      PWRDWN = 0x04;                                                  // 进入低功耗模式，等待RTC2唤醒
- 327   2                      delay(10);
- 328   2              }
- 329   1      }                                       
- 330          
- 331          
+ 303   4                                      id_buf[9] = 0x1e+tIndex;
+ 304   4                                      id_buf[10] = 0x27;
+ 305   4                                      id_buf[11] = 0x1f;
+ 306   4                                      id_buf[12] = 0x30;
+ 307   4                                      id_buf[13] = 0x28;
+ 308   4      //                              id_buf[14] = 0x28;
+ 309   4                                      RF_TX_BUF();
+ 310   4      
+ 311   4                                      for (i=8; i<=14; i++)
+ 312   4                                      {
+ 313   5                                              id_buf[i] = 0x00;
+ 314   5                                      }
+ 315   4                                      RF_TX_BUF();
+ 316   4                                      PD_Mode();                                                              // 关RF
+ 317   4                              }
+ 318   3                      }
+ 319   2      
+ 320   2                      rtc2_on();                                                              // 开RTC2
+ 321   2      //              P0DIR = 0xff;
+ 322   2      //              P1DIR = 0xff;
+ 323   2      
+ 324   2                      PWRDWN = 0x04;                                                  // 进入低功耗模式，等待RTC2唤醒
+ 325   2                      delay(10);
+ 326   2              }
+ 327   1      }                                       
+ 328          
+ 329          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
