@@ -227,10 +227,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>28</ColumnNumber>
+      <ColumnNumber>19</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>49</TopLine>
-      <CurrentLine>49</CurrentLine>
+      <TopLine>273</TopLine>
+      <CurrentLine>273</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -241,10 +241,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>68</ColumnNumber>
+      <ColumnNumber>58</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>139</TopLine>
-      <CurrentLine>139</CurrentLine>
+      <TopLine>190</TopLine>
+      <CurrentLine>190</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\hal_usb.c</PathWithFileName>
       <FilenameWithoutPath>hal_usb.c</FilenameWithoutPath>
@@ -257,8 +257,8 @@
       <Focus>0</Focus>
       <ColumnNumber>64</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>26</TopLine>
-      <CurrentLine>37</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>1</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\hal_usb_hid.c</PathWithFileName>
       <FilenameWithoutPath>hal_usb_hid.c</FilenameWithoutPath>
@@ -288,12 +288,12 @@
       <GroupNumber>2</GroupNumber>
       <FileNumber>6</FileNumber>
       <FileType>1</FileType>
-      <tvExp>0</tvExp>
+      <tvExp>1</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>25</ColumnNumber>
+      <ColumnNumber>66</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>29</TopLine>
-      <CurrentLine>29</CurrentLine>
+      <TopLine>56</TopLine>
+      <CurrentLine>61</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\usb_standard_desc.c</PathWithFileName>
       <FilenameWithoutPath>usb_standard_desc.c</FilenameWithoutPath>
@@ -1641,31 +1641,19 @@
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>100</Size>
-      <ActiveTab>2</ActiveTab>
+      <ActiveTab>1</ActiveTab>
       <Documents>
         <Doc>
           <Name>.\main.c</Name>
-          <ColumnNumber>28</ColumnNumber>
-          <TopLine>49</TopLine>
-          <CurrentLine>49</CurrentLine>
+          <ColumnNumber>19</ColumnNumber>
+          <TopLine>273</TopLine>
+          <CurrentLine>273</CurrentLine>
         </Doc>
         <Doc>
           <Name>.\hal_usb.c</Name>
-          <ColumnNumber>68</ColumnNumber>
-          <TopLine>139</TopLine>
-          <CurrentLine>139</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\hal_usb_hid.c</Name>
-          <ColumnNumber>64</ColumnNumber>
-          <TopLine>26</TopLine>
-          <CurrentLine>37</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\usb_standard_desc.c</Name>
-          <ColumnNumber>25</ColumnNumber>
-          <TopLine>29</TopLine>
-          <CurrentLine>29</CurrentLine>
+          <ColumnNumber>58</ColumnNumber>
+          <TopLine>190</TopLine>
+          <CurrentLine>190</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>
