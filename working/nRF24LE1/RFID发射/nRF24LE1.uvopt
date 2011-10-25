@@ -243,10 +243,10 @@
       <FileType>1</FileType>
       <tvExp>1</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>21</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>298</TopLine>
-      <CurrentLine>307</CurrentLine>
+      <TopLine>62</TopLine>
+      <CurrentLine>70</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\Main.c</PathWithFileName>
       <FilenameWithoutPath>Main.c</FilenameWithoutPath>
@@ -1617,9 +1617,9 @@
       <Documents>
         <Doc>
           <Name>.\Main.c</Name>
-          <ColumnNumber>21</ColumnNumber>
-          <TopLine>298</TopLine>
-          <CurrentLine>307</CurrentLine>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>62</TopLine>
+          <CurrentLine>70</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>

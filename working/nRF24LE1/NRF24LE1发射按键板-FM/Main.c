@@ -315,10 +315,15 @@ EA = 1;                       /* Global Interrupt Enable */
 		{
 			tCnt ++; 					
 			mFlag1S = 0;
-			if (tCnt>=5)
+			if (tCnt>=10)
 			{ 
 				tCnt = 0;
-				LED1 = !LED1;
+//				LED1 = !LED1;
+				LED1 = 0;
+				LED1 = 1;
+				delay(10);	
+				LED1 = 0;
+					
 //				LED1 = 0;
 //				id_buf[8] = 0x27;
 //				RF_TX_BUF();
