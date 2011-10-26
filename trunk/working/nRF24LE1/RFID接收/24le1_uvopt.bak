@@ -117,7 +117,7 @@
         <tRbox>1</tRbox>
         <sRunDeb>0</sRunDeb>
         <sLrtime>0</sLrtime>
-        <nTsel>10</nTsel>
+        <nTsel>-1</nTsel>
         <sDll></sDll>
         <sDllPa></sDllPa>
         <sDlgDll></sDlgDll>
@@ -198,10 +198,10 @@
       <FileType>1</FileType>
       <tvExp>1</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>34</ColumnNumber>
+      <ColumnNumber>29</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1</TopLine>
-      <CurrentLine>1</CurrentLine>
+      <TopLine>234</TopLine>
+      <CurrentLine>244</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -225,10 +225,24 @@
         </NormalPosition>
       </WindowPosition>
     </File>
+    <File>
+      <GroupNumber>1</GroupNumber>
+      <FileNumber>0</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>1</tvExp>
+      <Focus>0</Focus>
+      <ColumnNumber>29</ColumnNumber>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <TopLine>140</TopLine>
+      <CurrentLine>140</CurrentLine>
+      <bDave2>0</bDave2>
+      <PathWithFileName>.\hal_uart.c</PathWithFileName>
+      <FilenameWithoutPath>hal_uart.c</FilenameWithoutPath>
+    </File>
   </Group>
 
   <AlienFiles>
-    <PathWithFilename>C:\KEIL\C51\INC\NORDIC\REG24LE1.H</PathWithFilename>
+    <PathWithFilename>C:\working\nRF24LE1\RFID接收\API.H</PathWithFilename>
     <TopLine>1</TopLine>
     <CurrentLine>1</CurrentLine>
     <Constant>0</Constant>
@@ -254,7 +268,7 @@
   </AlienFiles>
 
   <AlienFiles>
-    <PathWithFilename>E:\项目\NRF24系列模块\NRF24L01资料\无线VIVTA\RFID接收\STDINT.H</PathWithFilename>
+    <PathWithFilename>C:\working\nRF24LE1\RFID接收\STDINT.H</PathWithFilename>
     <TopLine>1</TopLine>
     <CurrentLine>1</CurrentLine>
     <Constant>0</Constant>
@@ -280,9 +294,9 @@
   </AlienFiles>
 
   <AlienFiles>
-    <PathWithFilename>E:\项目\NRF24系列模块\NRF24L01资料\无线VIVTA\RFID接收\API.H</PathWithFilename>
-    <TopLine>1</TopLine>
-    <CurrentLine>1</CurrentLine>
+    <PathWithFilename>C:\working\nRF24LE1\RFID接收\HAL_UART.H</PathWithFilename>
+    <TopLine>40</TopLine>
+    <CurrentLine>48</CurrentLine>
     <Constant>0</Constant>
     <WindowPosition>
       <length>0</length>
@@ -1646,19 +1660,13 @@
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>100</Size>
-      <ActiveTab>3</ActiveTab>
+      <ActiveTab>4</ActiveTab>
       <Documents>
         <Doc>
           <Name>.\main.c</Name>
-          <ColumnNumber>34</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>1</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>C:\KEIL\C51\INC\NORDIC\REG24LE1.H</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>1</CurrentLine>
+          <ColumnNumber>29</ColumnNumber>
+          <TopLine>234</TopLine>
+          <CurrentLine>244</CurrentLine>
         </Doc>
         <Doc>
           <Name>STDINT.H</Name>
@@ -1671,6 +1679,18 @@
           <ColumnNumber>34</ColumnNumber>
           <TopLine>1</TopLine>
           <CurrentLine>1</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>HAL_UART.H</Name>
+          <ColumnNumber>18</ColumnNumber>
+          <TopLine>40</TopLine>
+          <CurrentLine>48</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\hal_uart.c</Name>
+          <ColumnNumber>29</ColumnNumber>
+          <TopLine>140</TopLine>
+          <CurrentLine>140</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>
