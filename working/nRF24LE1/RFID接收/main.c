@@ -9,6 +9,7 @@
 #include "reg24le1.h"
 #include <stdint.h>
 #include "API.h"
+#include "hal_uart.h"
 
 //#define	PIN24
 #define	PIN32
@@ -238,18 +239,28 @@ void io_init(void)
 void main(void)
 {
 	io_init();									// I/O口初始化
-	uart_init();                           		// 串口初始化 
+//	P03 = 0;
+//	uart_init();                           		// 串口初始化 
+	hal_uart_init(UART_BAUD_19K2);
 	rf_init();									// RF初始化                            
   	EA=1;                                       // 允许中断
 
 	RX_Mode();									//进入接收模式
 
-	uart_putchar ('h');
-	uart_putchar ('e');
-	uart_putchar ('l');
-	uart_putchar ('l');
-	uart_putchar ('o');
+	uart_putchar('h');
+	uart_putchar('e');
+	uart_putchar('l');
+	uart_putchar('l');
+	uart_putchar('o');
 
+/*	hal_uart_putchar ('1');
+	hal_uart_putchar ('e');
+	hal_uart_putchar ('l');
+	hal_uart_putchar ('l');
+	hal_uart_putchar ('o');
+*/
+	delay(100);
+	RX_DR = 0;
 	while(1)
 	{
 		if(RX_DR)								// 数据已收到
@@ -257,14 +268,14 @@ void main(void)
 			sta=0;
 
 			LED2=0;
-
-			uart_putchar(rx_buf[0]);			// 显示所有ID值
+/*			uart_putchar(rx_buf[0]);			// 显示所有ID值
 			uart_putchar(rx_buf[1]);
 			uart_putchar(rx_buf[2]);
 			uart_putchar(rx_buf[3]);
 			uart_putchar(rx_buf[4]);
 			uart_putchar(rx_buf[5]);
-
+*/
+			hal_uart_putchar ('a');			
 			delay(1000);
 
 			LED1=LED2=LED3=1;					// 灯全灭
