@@ -198,10 +198,10 @@
       <FileType>1</FileType>
       <tvExp>1</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>29</ColumnNumber>
+      <ColumnNumber>2</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>234</TopLine>
-      <CurrentLine>244</CurrentLine>
+      <TopLine>420</TopLine>
+      <CurrentLine>439</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -225,26 +225,12 @@
         </NormalPosition>
       </WindowPosition>
     </File>
-    <File>
-      <GroupNumber>1</GroupNumber>
-      <FileNumber>3</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <Focus>0</Focus>
-      <ColumnNumber>29</ColumnNumber>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>100</TopLine>
-      <CurrentLine>100</CurrentLine>
-      <bDave2>0</bDave2>
-      <PathWithFileName>.\hal_uart.c</PathWithFileName>
-      <FilenameWithoutPath>hal_uart.c</FilenameWithoutPath>
-    </File>
   </Group>
 
   <AlienFiles>
     <PathWithFilename>C:\working\nRF24LE1\RFID接收\HAL_UART.H</PathWithFilename>
-    <TopLine>40</TopLine>
-    <CurrentLine>48</CurrentLine>
+    <TopLine>1</TopLine>
+    <CurrentLine>1</CurrentLine>
     <Constant>0</Constant>
     <WindowPosition>
       <length>0</length>
@@ -297,6 +283,32 @@
     <PathWithFilename>C:\working\nRF24LE1\RFID接收\STDINT.H</PathWithFilename>
     <TopLine>1</TopLine>
     <CurrentLine>1</CurrentLine>
+    <Constant>0</Constant>
+    <WindowPosition>
+      <length>0</length>
+      <flags>0</flags>
+      <showCmd>0</showCmd>
+      <MinPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MinPosition>
+      <MaxPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MaxPosition>
+      <NormalPosition>
+        <Top>0</Top>
+        <Left>0</Left>
+        <Right>0</Right>
+        <Bottom>0</Bottom>
+      </NormalPosition>
+    </WindowPosition>
+  </AlienFiles>
+
+  <AlienFiles>
+    <PathWithFilename>C:\working\nRF24LE1\RFID接收\REG24LE1.H</PathWithFilename>
+    <TopLine>153</TopLine>
+    <CurrentLine>165</CurrentLine>
     <Constant>0</Constant>
     <WindowPosition>
       <length>0</length>
@@ -1660,13 +1672,13 @@
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>100</Size>
-      <ActiveTab>3</ActiveTab>
+      <ActiveTab>0</ActiveTab>
       <Documents>
         <Doc>
           <Name>.\main.c</Name>
-          <ColumnNumber>29</ColumnNumber>
-          <TopLine>234</TopLine>
-          <CurrentLine>244</CurrentLine>
+          <ColumnNumber>2</ColumnNumber>
+          <TopLine>420</TopLine>
+          <CurrentLine>439</CurrentLine>
         </Doc>
         <Doc>
           <Name>STDINT.H</Name>
@@ -1681,16 +1693,16 @@
           <CurrentLine>1</CurrentLine>
         </Doc>
         <Doc>
-          <Name>HAL_UART.H</Name>
+          <Name>C:\working\nRF24LE1\RFID接收\HAL_UART.H</Name>
           <ColumnNumber>18</ColumnNumber>
-          <TopLine>40</TopLine>
-          <CurrentLine>48</CurrentLine>
+          <TopLine>1</TopLine>
+          <CurrentLine>1</CurrentLine>
         </Doc>
         <Doc>
-          <Name>.\hal_uart.c</Name>
-          <ColumnNumber>29</ColumnNumber>
-          <TopLine>100</TopLine>
-          <CurrentLine>100</CurrentLine>
+          <Name>REG24LE1.H</Name>
+          <ColumnNumber>9</ColumnNumber>
+          <TopLine>153</TopLine>
+          <CurrentLine>165</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>

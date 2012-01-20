@@ -1,0 +1,4 @@
+".\out\startup.o" ".\out\webserver.o" ".\out\enc28j60.o" ".\out\ip_arp_udp_tcp.o" --device DARMP --strict --scatter ".\out\WebServer.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\out\WebServer.map" -o ".\out\WebServer.axf"

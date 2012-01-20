@@ -1,0 +1,1 @@
+-c --device DARMP -g -O0 --apcs=interwork -I "C:\Keil\ARM\INC\Philips" -o ".\out\zt018.o" --omf_browse ".\out\zt018.crf" --depend ".\out\zt018.d" "ZT018.c"

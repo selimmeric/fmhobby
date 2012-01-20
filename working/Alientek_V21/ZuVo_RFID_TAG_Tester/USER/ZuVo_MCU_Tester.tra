@@ -1,0 +1,33 @@
+*** Creating Trace Output File 'ZuVo_MCU_Tester.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '"stm32f10x.o"'
+### List of Objects: adding '"test.o"'
+### List of Objects: adding '"mytest.o"'
+### List of Objects: adding '"cbuffer.o"'
+### List of Objects: adding '"delay.o"'
+### List of Objects: adding '"sys.o"'
+### List of Objects: adding '"usart.o"'
+### List of Objects: adding '"led.o"'
+### List of Objects: adding '"key.o"'
+### List of Objects: adding '"exti.o"'
+### List of Objects: adding '"wdg.o"'
+### List of Objects: adding '"timer.o"'
+### List of Objects: adding '"ili93xx.o"'
+### List of Objects: adding '"24cxx.o"'
+### List of Objects: adding '"myiic.o"'
+### ADS-LD Command completed:
+--device DARMSTM "stm32f10x.o" "test.o" "mytest.o" "cbuffer.o" "delay.o" "sys.o" "usart.o" "led.o" "key.o" "exti.o" "wdg.o" "timer.o" "ili93xx.o" "24cxx.o" "myiic.o" --nodebug --strict --scatter "ZuVo_MCU_Tester.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\ZuVo_MCU_Tester.map" -o "ZuVo_MCU_Tester.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: 'ZuVo_MCU_Tester.axf'
+### ADS-LD Command File: 'ZuVo_MCU_Tester.lnp'
+### Checking for dirty Components...
+### Creating CmdFile 'ZuVo_MCU_Tester.lnp', Handle=0x0000024C
+### Writing '.lnp' file
+### ADS-LD Command file 'ZuVo_MCU_Tester.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.

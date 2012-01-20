@@ -1,0 +1,30 @@
+*** Creating Trace Output File 'RFID_FS_READER.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '"stm32f10x.o"'
+### List of Objects: adding '"test.o"'
+### List of Objects: adding '"mytest.o"'
+### List of Objects: adding '"delay.o"'
+### List of Objects: adding '"sys.o"'
+### List of Objects: adding '"usart.o"'
+### List of Objects: adding '"led.o"'
+### List of Objects: adding '"key.o"'
+### List of Objects: adding '"exti.o"'
+### List of Objects: adding '"wdg.o"'
+### List of Objects: adding '"timer.o"'
+### List of Objects: adding '"ili93xx.o"'
+### ADS-LD Command completed:
+--device DARMSTM "stm32f10x.o" "test.o" "mytest.o" "delay.o" "sys.o" "usart.o" "led.o" "key.o" "exti.o" "wdg.o" "timer.o" "ili93xx.o" --strict --scatter "RFID_FS_READER.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\RFID_FS_READER.map" -o "RFID_FS_READER.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: 'RFID_FS_READER.axf'
+### ADS-LD Command File: 'RFID_FS_READER.lnp'
+### Checking for dirty Components...
+### Creating CmdFile 'RFID_FS_READER.lnp', Handle=0x00000138
+### Writing '.lnp' file
+### ADS-LD Command file 'RFID_FS_READER.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.

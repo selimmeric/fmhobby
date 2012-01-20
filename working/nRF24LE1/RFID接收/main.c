@@ -9,7 +9,8 @@
 #include "reg24le1.h"
 #include <stdint.h>
 #include "API.h"
-#include "hal_uart.h"
+//#include "hal_uart.h"
+#include <intrins.h>
 
 //#define	PIN24
 #define	PIN32
@@ -67,6 +68,100 @@ uint8_t bdata sta;
 sbit	RX_DR	=sta^6;
 sbit	TX_DS	=sta^5;
 sbit	MAX_RT	=sta^4;
+
+
+//-------------------------------------------------------------------------------------------------------
+//
+// All UART function here
+//
+//-------------------------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------
+// Function name	: putch
+// Created by		: Fong Ming
+// Date created		: 2010-09-10
+// Description		: put a character into UART
+//
+//----------------------------------------------------------------------------
+//                       
+// Notes			: 1. Clear Watchdog timer
+//					: 2. put ONE character into Uart
+//
+//----------------------------------------------------------------------------
+
+void putch(unsigned char byte) 
+{
+	
+	TI0=0;
+	S0BUF=byte;
+	while (!TI0)
+	{
+		_nop_ ();	
+	}
+}
+
+//----------------------------------------------------------------------------
+// Function name	: puts
+// Created by		: Fong Ming
+// Date created		: 2010-09-10
+// Description		: put a string into UART
+//
+//----------------------------------------------------------------------------
+//                       
+// Notes			: 
+//
+//----------------------------------------------------------------------------
+
+void puts( char *sptr) 
+{
+	while(*sptr != 0) 
+        putch(*sptr++);
+}
+
+
+//----------------------------------------------------------------------------
+// Function name	: putHexByteEx
+// Created by		: Fong Ming
+// Date created		: 2010-09-10
+// Description		: put a 8bits number into UART
+//
+//----------------------------------------------------------------------------
+//                       
+// Notes			: The 8 bits number is in form of HexDecimal format 
+//
+//----------------------------------------------------------------------------
+
+
+void putHexByteEx(unsigned char c) 
+{
+	static const char STR_HEX[]="0123456789ABCDEF";
+	putch(STR_HEX[(c&0xF0)>>4]);
+	putch(STR_HEX[c&0x0F]);
+
+}
+
+ 
+//----------------------------------------------------------------------------
+// Function name	: putHexInt
+// Created by		: Fong Ming
+// Date created		: 2010-09-10
+// Description		: put a integer into UART
+//
+//----------------------------------------------------------------------------
+//                       
+// Notes			: The integer is in form of two byte HexDecimal format 
+//
+//----------------------------------------------------------------------------
+
+void putHexInt(unsigned int c) 
+{
+
+	putHexByteEx (c>>8);
+	putHexByteEx (c&0xff);
+
+}
+
+
 /**************************************************
 功能：延时
 **************************************************/
@@ -210,7 +305,8 @@ void uart_init(void)
     S0RELL = 0xe6;                				// 波特率19.2K(十进制998=十六进制0x03e6)
     S0RELH = 0x03;
     TI0 = 0;					  				// 清发送完成标志
-	S0BUF=0x99;					  				// 送初值
+//	S0BUF=0x99;					  				// 送初值
+//	S0BUF='@';					  				// 送初值
 }
 /**************************************************
 功能：向串口发送1 byte数据
@@ -221,6 +317,37 @@ void uart_putchar(uint8_t x)
 	TI0=0;										// 清发送完成标志
 	S0BUF=x;									// 发送数据
 }
+
+void u_putchar(uint8_t x)
+{
+
+	TI0=0;
+	S0BUF=x;
+	while (!TI0)
+	{
+		_nop_ ();	
+	}
+
+/*
+	if (!TI0)
+	{
+		S0BUF=x;
+		TI0=0;
+		delay(50);
+		return;	
+	}	
+
+	while (!TI0)
+	{
+		_nop_ ();
+	}
+	TI0 = 0;
+	S0BUF=x;
+	delay(50);
+*/
+
+}
+
 /**************************************************
 功能:I/O口初始化
 **************************************************/
@@ -238,23 +365,35 @@ void io_init(void)
 **************************************************/
 void main(void)
 {
+	unsigned char i;
+	unsigned char bTest;
 	io_init();									// I/O口初始化
-//	P03 = 0;
-//	uart_init();                           		// 串口初始化 
-	hal_uart_init(UART_BAUD_19K2);
+	uart_init();                           		// 串口初始化 
+//	hal_uart_init(UART_BAUD_19K2);
 	rf_init();									// RF初始化                            
   	EA=1;                                       // 允许中断
 
 	RX_Mode();									//进入接收模式
-
+	TI0=0;
+/*
 	uart_putchar('h');
 	uart_putchar('e');
 	uart_putchar('l');
 	uart_putchar('l');
 	uart_putchar('o');
+*/
+//	hal_uart_putchar ('1');
+	puts("Hello\r\n");
+	u_putchar('@');
+	u_putchar('1');
+	u_putchar('2');
+	u_putchar('3');
+	u_putchar('4');
+	u_putchar('5');
+	u_putchar('6');
+	u_putchar('\n');
 
-/*	hal_uart_putchar ('1');
-	hal_uart_putchar ('e');
+/*	hal_uart_putchar ('e');
 	hal_uart_putchar ('l');
 	hal_uart_putchar ('l');
 	hal_uart_putchar ('o');
@@ -275,8 +414,29 @@ void main(void)
 			uart_putchar(rx_buf[4]);
 			uart_putchar(rx_buf[5]);
 */
-			hal_uart_putchar ('a');			
-			delay(1000);
+//			hal_uart_putchar ('a');	
+
+			bTest = 0;
+			for (i=8;i<=13; i++)
+			{
+				if (rx_buf[i] !=0)
+				{
+					bTest = 1;
+				}	
+			
+			}
+		   	
+			if (bTest)
+			{
+			puts("Data Received ");
+			for (i=0; i<=13; i++)
+			{
+				putHexByteEx(rx_buf[i]);
+			}	
+
+			puts("\r\n");	
+			}
+//			delay(1000);
 
 			LED1=LED2=LED3=1;					// 灯全灭
 		}

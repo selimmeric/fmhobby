@@ -1,0 +1,66 @@
+C51 COMPILER V7.06   TEST_LED                                                              01/18/2012 23:46:48 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE TEST_LED
+OBJECT MODULE PLACED IN test_led.OBJ
+COMPILER INVOKED BY: C:\Keil2\C51\BIN\C51.EXE test_led.c BROWSE DEBUG OBJECTEXTEND
+
+stmt level    source
+
+   1          /*******************************************************************************
+   2          ?????                                                            
+   3           P1???                                   
+   4          *******************************************************************************/
+   5          
+   6          #include<reg52.h>
+   7          #include <intrins.h>
+   8          
+   9          
+  10          
+  11          /*****************************************************************************
+  12            ????                                                                                  
+  13          ******************************************************************************/
+  14          
+  15          void delayms(unsigned char ms)
+  16          {
+  17   1              unsigned char i;
+  18   1              while(ms--)
+  19   1              {
+  20   2              for(i = 0; i < 120; i++);
+  21   2              }
+  22   1      }
+  23          
+  24          /*****************************************************************************
+  25          *  ???                                                                                                  
+  26          ******************************************************************************/
+  27           main()
+  28          {
+  29   1              unsigned char LED;
+  30   1              LED = 0xfe;
+  31   1              P1 = LED;
+  32   1              while(1)
+  33   1              {
+  34   2              delayms(500);
+  35   2      //      LED = _crol_(LED,1);            //????1?,?????LED  ???????
+  36   2              LED ^= 0xff;            //????1?,?????LED  ???????
+  37   2              P1 = LED;
+  38   2              delayms(100);
+  39   2              LED ^= 0xff;            //????1?,?????LED  ???????
+  40   2              P1 = LED;
+  41   2              
+  42   2              }
+  43   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     44    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

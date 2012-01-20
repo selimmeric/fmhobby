@@ -1,4 +1,4 @@
-C51 COMPILER V9.00   MAIN                                                                  10/26/2011 16:27:04 PAGE 1   
+C51 COMPILER V9.00   MAIN                                                                  10/27/2011 14:58:49 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE MAIN
@@ -18,13 +18,14 @@ line level    source
    9          #include "reg24le1.h"
   10          #include <stdint.h>
   11          #include "API.h"
-  12          #include "hal_uart.h"
-  13          
-  14          //#define       PIN24
-  15          #define PIN32
-  16          //#define       PIN48
-  17          
-  18          #ifdef  PIN24
+  12          //#include "hal_uart.h"
+  13          #include <intrins.h>
+  14          
+  15          //#define       PIN24
+  16          #define PIN32
+  17          //#define       PIN48
+  18          
+  19          #ifdef  PIN24
               sbit S3  = P0^6;                                // 1/0=未按/按下
               sbit S2  = P0^4;                                // 1/0=未按/按下
               sbit S1  = P0^3;                                // 1/0=未按/按下
@@ -36,21 +37,21 @@ line level    source
               #define p0dir   0xd8
               #define p1dir   0xff
               #endif
-  30          
-  31          #ifdef  PIN32
-  32          sbit S3  = P1^4;                                // 1/0=未按/按下
-  33          sbit S2  = P1^3;                                // 1/0=未按/按下
-  34          sbit S1  = P1^2;                                // 1/0=未按/按下
-  35          
-  36          sbit LED3 = P0^1;                               // 1/0=灭/亮
-  37          sbit LED2 = P0^2;                               // 1/0=灭/亮
-  38          sbit LED1 = P0^0;                               // 1/0=灭/亮
-  39          
-  40          #define p0dir   0xf0
-  41          #define p1dir   0xff
-  42          #endif
-  43          
-  44          #ifdef  PIN48
+  31          
+  32          #ifdef  PIN32
+  33          sbit S3  = P1^4;                                // 1/0=未按/按下
+  34          sbit S2  = P1^3;                                // 1/0=未按/按下
+  35          sbit S1  = P1^2;                                // 1/0=未按/按下
+  36          
+  37          sbit LED3 = P0^1;                               // 1/0=灭/亮
+  38          sbit LED2 = P0^2;                               // 1/0=灭/亮
+  39          sbit LED1 = P0^0;                               // 1/0=灭/亮
+  40          
+  41          #define p0dir   0xf0
+  42          #define p1dir   0xff
+  43          #endif
+  44          
+  45          #ifdef  PIN48
               sbit S3  = P0^7;                                // 1/0=未按/按下
               sbit S2  = P0^6;                                // 1/0=未按/按下
               sbit S1  = P0^5;                                // 1/0=未按/按下
@@ -61,255 +62,420 @@ line level    source
               
               #define p0dir   0xf0
               #define p1dir   0x02
+C51 COMPILER V9.00   MAIN                                                                  10/27/2011 14:58:49 PAGE 2   
+
               #endif
-C51 COMPILER V9.00   MAIN                                                                  10/26/2011 16:27:04 PAGE 2   
+  57          
+  58          #define INTERRUPT_RFIRQ 9
+  59          
+  60          #define TX_ADR_WIDTH    5                                       // RF收发地址共5 bytes 
+  61          #define TX_PLOAD_WIDTH  20                                      // 数据包长度为20 bytes
+  62          
+  63          uint8_t const TX_ADDRESS[TX_ADR_WIDTH]  = {0x34,0x56,0x78,0x90,0x12}; // 定义RF收发地址
+  64          
+  65          uint8_t data rx_buf[TX_PLOAD_WIDTH];
+  66          
+  67          uint8_t bdata sta;
+  68          sbit    RX_DR   =sta^6;
+  69          sbit    TX_DS   =sta^5;
+  70          sbit    MAX_RT  =sta^4;
+  71          
+  72          
+  73          //-------------------------------------------------------------------------------------------------------
+  74          //
+  75          // All UART function here
+  76          //
+  77          //-------------------------------------------------------------------------------------------------------
+  78          
+  79          //----------------------------------------------------------------------------
+  80          // Function name        : putch
+  81          // Created by           : Fong Ming
+  82          // Date created         : 2010-09-10
+  83          // Description          : put a character into UART
+  84          //
+  85          //----------------------------------------------------------------------------
+  86          //                       
+  87          // Notes                        : 1. Clear Watchdog timer
+  88          //                                      : 2. put ONE character into Uart
+  89          //
+  90          //----------------------------------------------------------------------------
+  91          
+  92          void putch(unsigned char byte) 
+  93          {
+  94   1              
+  95   1              TI0=0;
+  96   1              S0BUF=byte;
+  97   1              while (!TI0)
+  98   1              {
+  99   2                      _nop_ ();       
+ 100   2              }
+ 101   1      }
+ 102          
+ 103          //----------------------------------------------------------------------------
+ 104          // Function name        : puts
+ 105          // Created by           : Fong Ming
+ 106          // Date created         : 2010-09-10
+ 107          // Description          : put a string into UART
+ 108          //
+ 109          //----------------------------------------------------------------------------
+ 110          //                       
+ 111          // Notes                        : 
+ 112          //
+ 113          //----------------------------------------------------------------------------
+ 114          
+ 115          void puts( char *sptr) 
+ 116          {
+ 117   1              while(*sptr != 0) 
+C51 COMPILER V9.00   MAIN                                                                  10/27/2011 14:58:49 PAGE 3   
 
-  56          
-  57          #define INTERRUPT_RFIRQ 9
-  58          
-  59          #define TX_ADR_WIDTH    5                                       // RF收发地址共5 bytes 
-  60          #define TX_PLOAD_WIDTH  20                                      // 数据包长度为20 bytes
-  61          
-  62          uint8_t const TX_ADDRESS[TX_ADR_WIDTH]  = {0x34,0x56,0x78,0x90,0x12}; // 定义RF收发地址
-  63          
-  64          uint8_t data rx_buf[TX_PLOAD_WIDTH];
-  65          
-  66          uint8_t bdata sta;
-  67          sbit    RX_DR   =sta^6;
-  68          sbit    TX_DS   =sta^5;
-  69          sbit    MAX_RT  =sta^4;
-  70          /**************************************************
-  71          功能：延时
-  72          **************************************************/
-  73          void delay(uint16_t x)
-  74          {
-  75   1          uint16_t i,j;
-  76   1          i=0;
-  77   1          for(i=0;i<x;i++)
-  78   1          {
-  79   2             j=108;
-  80   2                 ;
-  81   2             while(j--);
-  82   2          }
-  83   1      }
-  84          /**************************************************
-  85          功能：硬件SPI读写
-  86          **************************************************/
-  87          uint8_t SPI_RW(uint8_t value)
-  88          {
-  89   1        SPIRDAT = value;
-  90   1                                                                                                     
-  91   1        while(!(SPIRSTAT & 0x02));                                    // 等待SPI传输完成
-  92   1      
-  93   1        return SPIRDAT;                                               // 返回读出值
-  94   1      }
-  95          /**************************************************
-  96          功能：写RF寄存器，读RF状态值
-  97          **************************************************/
-  98          uint8_t SPI_RW_Reg(uint8_t reg, uint8_t value)
-  99          {
- 100   1              uint8_t status;
- 101   1      
- 102   1              RFCSN = 0;                      
- 103   1              status = SPI_RW(reg);                                           // 选择RF寄存器
- 104   1              SPI_RW(value);                                                  // 写入数据
- 105   1              RFCSN = 1;                      
- 106   1      
- 107   1              return(status);                                                 // 返回RF状态值
- 108   1      }
- 109          /**************************************************
- 110          功能：读RF寄存器
- 111          **************************************************/
- 112          uint8_t SPI_Read(uint8_t reg)
- 113          {
- 114   1              uint8_t reg_val;
- 115   1      
- 116   1              RFCSN = 0;                                      
- 117   1              SPI_RW(reg);                                                    // 选择RF寄存器
-C51 COMPILER V9.00   MAIN                                                                  10/26/2011 16:27:04 PAGE 3   
+ 118   1              putch(*sptr++);
+ 119   1      }
+ 120          
+ 121          
+ 122          //----------------------------------------------------------------------------
+ 123          // Function name        : putHexByteEx
+ 124          // Created by           : Fong Ming
+ 125          // Date created         : 2010-09-10
+ 126          // Description          : put a 8bits number into UART
+ 127          //
+ 128          //----------------------------------------------------------------------------
+ 129          //                       
+ 130          // Notes                        : The 8 bits number is in form of HexDecimal format 
+ 131          //
+ 132          //----------------------------------------------------------------------------
+ 133          
+ 134          
+ 135          void putHexByteEx(unsigned char c) 
+ 136          {
+ 137   1              static const char STR_HEX[]="0123456789ABCDEF";
+ 138   1              putch(STR_HEX[(c&0xF0)>>4]);
+ 139   1              putch(STR_HEX[c&0x0F]);
+ 140   1      
+ 141   1      }
+ 142          
+ 143           
+ 144          //----------------------------------------------------------------------------
+ 145          // Function name        : putHexInt
+ 146          // Created by           : Fong Ming
+ 147          // Date created         : 2010-09-10
+ 148          // Description          : put a integer into UART
+ 149          //
+ 150          //----------------------------------------------------------------------------
+ 151          //                       
+ 152          // Notes                        : The integer is in form of two byte HexDecimal format 
+ 153          //
+ 154          //----------------------------------------------------------------------------
+ 155          
+ 156          void putHexInt(unsigned int c) 
+ 157          {
+ 158   1      
+ 159   1              putHexByteEx (c>>8);
+ 160   1              putHexByteEx (c&0xff);
+ 161   1      
+ 162   1      }
+ 163          
+ 164          
+ 165          /**************************************************
+ 166          功能：延时
+ 167          **************************************************/
+ 168          void delay(uint16_t x)
+ 169          {
+ 170   1          uint16_t i,j;
+ 171   1          i=0;
+ 172   1          for(i=0;i<x;i++)
+ 173   1          {
+ 174   2             j=108;
+ 175   2                 ;
+ 176   2             while(j--);
+ 177   2          }
+ 178   1      }
+ 179          /**************************************************
+C51 COMPILER V9.00   MAIN                                                                  10/27/2011 14:58:49 PAGE 4   
 
- 118   1              reg_val = SPI_RW(0);                                            // 读出数据
- 119   1              RFCSN = 1;                                      
- 120   1      
- 121   1              return(reg_val);                                                // 返回RF状态值
- 122   1      }
- 123          /**************************************************
- 124          功能：读RF寄存器多字节数据到缓冲区
- 125          **************************************************/
- 126          uint8_t SPI_Read_Buf(uint8_t reg, uint8_t *pBuf, uint8_t bytes)
- 127          {
- 128   1              uint8_t status,byte_ctr;
- 129   1      
- 130   1              RFCSN = 0;                              
- 131   1              status = SPI_RW(reg);                                   // 选择RF寄存器
- 132   1      
- 133   1              for(byte_ctr=0;byte_ctr<bytes;byte_ctr++)
- 134   1              pBuf[byte_ctr] = SPI_RW(0);                     // 连接读出数据
- 135   1      
- 136   1              RFCSN = 1;                          
- 137   1      
- 138   1              return(status);                                         // 返回RF状态值
- 139   1      }
- 140          /**************************************************
- 141          功能：把缓冲区的多字节数据写到RF寄存器
- 142          **************************************************/
- 143          uint8_t SPI_Write_Buf(uint8_t reg, uint8_t *pBuf, uint8_t bytes)
- 144          {
- 145   1              uint8_t status,byte_ctr;
- 146   1      
- 147   1              RFCSN = 0;                              
- 148   1              status = SPI_RW(reg);                                           // 选择RF寄存器
- 149   1              for(byte_ctr=0; byte_ctr<bytes; byte_ctr++) // 连接写入数据
- 150   1              SPI_RW(*pBuf++);
- 151   1              RFCSN = 1;                                      
- 152   1              return(status);                                                 // 返回RF状态值
- 153   1      }
- 154          
- 155          /**************************************************
- 156          功能：设置为接收模式
- 157          **************************************************/
- 158          void RX_Mode(void)
- 159          {
- 160   1              RFCE=0;
- 161   1              SPI_RW_Reg(WRITE_REG + CONFIG, 0x0f);           // 上电, CRC为2 bytes,接收模式,允许RX_DR产生中断
- 162   1              RFCE = 1;                                                                       // 启动接收模式
- 163   1      }
- 164          /**************************************************
- 165          功能：RF初始化
- 166          **************************************************/
- 167          void rf_init(void)
- 168          {
- 169   1              RFCE = 0;                                               // RF关闭
- 170   1              RFCKEN = 1;                                             // 启动RF时钟
- 171   1              RF = 1;                                                 // 允许RF中断
- 172   1              delay(1000);    
- 173   1              SPI_Write_Buf(WRITE_REG + TX_ADDR, TX_ADDRESS, TX_ADR_WIDTH);           // 设置发射地址长度
- 174   1              SPI_Write_Buf(WRITE_REG + RX_ADDR_P0, TX_ADDRESS, TX_ADR_WIDTH);        // 设置接收地址长度
- 175   1              SPI_RW_Reg(WRITE_REG + EN_AA, 0x01);                            // 启动自动应答功能
- 176   1              SPI_RW_Reg(WRITE_REG + EN_RXADDR, 0x01);                        // PIPE0接收数据
- 177   1              SPI_RW_Reg(WRITE_REG + SETUP_RETR, 0x1a);                       // 自动重传10次
- 178   1              SPI_RW_Reg(WRITE_REG + RF_CH, 40);                              // RF频率2440MHz
- 179   1              SPI_RW_Reg(WRITE_REG + RF_SETUP, 0x0f);                         // 发射功率0dBm, 传输速率2Mbps,
-C51 COMPILER V9.00   MAIN                                                                  10/26/2011 16:27:04 PAGE 4   
+ 180          功能：硬件SPI读写
+ 181          **************************************************/
+ 182          uint8_t SPI_RW(uint8_t value)
+ 183          {
+ 184   1        SPIRDAT = value;
+ 185   1                                                                                                     
+ 186   1        while(!(SPIRSTAT & 0x02));                                    // 等待SPI传输完成
+ 187   1      
+ 188   1        return SPIRDAT;                                               // 返回读出值
+ 189   1      }
+ 190          /**************************************************
+ 191          功能：写RF寄存器，读RF状态值
+ 192          **************************************************/
+ 193          uint8_t SPI_RW_Reg(uint8_t reg, uint8_t value)
+ 194          {
+ 195   1              uint8_t status;
+ 196   1      
+ 197   1              RFCSN = 0;                      
+ 198   1              status = SPI_RW(reg);                                           // 选择RF寄存器
+ 199   1              SPI_RW(value);                                                  // 写入数据
+ 200   1              RFCSN = 1;                      
+ 201   1      
+ 202   1              return(status);                                                 // 返回RF状态值
+ 203   1      }
+ 204          /**************************************************
+ 205          功能：读RF寄存器
+ 206          **************************************************/
+ 207          uint8_t SPI_Read(uint8_t reg)
+ 208          {
+ 209   1              uint8_t reg_val;
+ 210   1      
+ 211   1              RFCSN = 0;                                      
+ 212   1              SPI_RW(reg);                                                    // 选择RF寄存器
+ 213   1              reg_val = SPI_RW(0);                                            // 读出数据
+ 214   1              RFCSN = 1;                                      
+ 215   1      
+ 216   1              return(reg_val);                                                // 返回RF状态值
+ 217   1      }
+ 218          /**************************************************
+ 219          功能：读RF寄存器多字节数据到缓冲区
+ 220          **************************************************/
+ 221          uint8_t SPI_Read_Buf(uint8_t reg, uint8_t *pBuf, uint8_t bytes)
+ 222          {
+ 223   1              uint8_t status,byte_ctr;
+ 224   1      
+ 225   1              RFCSN = 0;                              
+ 226   1              status = SPI_RW(reg);                                   // 选择RF寄存器
+ 227   1      
+ 228   1              for(byte_ctr=0;byte_ctr<bytes;byte_ctr++)
+ 229   1              pBuf[byte_ctr] = SPI_RW(0);                     // 连接读出数据
+ 230   1      
+ 231   1              RFCSN = 1;                          
+ 232   1      
+ 233   1              return(status);                                         // 返回RF状态值
+ 234   1      }
+ 235          /**************************************************
+ 236          功能：把缓冲区的多字节数据写到RF寄存器
+ 237          **************************************************/
+ 238          uint8_t SPI_Write_Buf(uint8_t reg, uint8_t *pBuf, uint8_t bytes)
+ 239          {
+ 240   1              uint8_t status,byte_ctr;
+ 241   1      
+C51 COMPILER V9.00   MAIN                                                                  10/27/2011 14:58:49 PAGE 5   
 
- 180   1              SPI_RW_Reg(WRITE_REG + RX_PW_P0, TX_PLOAD_WIDTH);       // PIPE0 接收数据包长度
- 181   1      }
- 182          /**************************************************
- 183          功能：RF中断服务程序
- 184          **************************************************/
- 185          void RF_IRQ(void) interrupt INTERRUPT_RFIRQ
- 186          {
- 187   1              sta=SPI_Read(STATUS);                                                           // 读出状态值
- 188   1      
- 189   1              if(RX_DR)                                                                       
- 190   1              {
- 191   2                      SPI_Read_Buf(RD_RX_PLOAD,rx_buf,TX_PLOAD_WIDTH);// 读出FIFO的数据
- 192   2                      SPI_RW_Reg(FLUSH_RX,0);                                                 // 清除RX的FIFO
- 193   2              }
- 194   1      
- 195   1              SPI_RW_Reg(WRITE_REG+STATUS,0x70);                                      // 清除所有中断标志 
- 196   1      }
- 197          /**************************************************
- 198          功能：串口初始化子程序
- 199          说明：波特率19.2K，使用内部波特率发生器
- 200          **************************************************/
- 201          void uart_init(void)
- 202          {
- 203   1          ES0 = 0;                                                    // 关UART0中断
- 204   1          REN0 = 1;                                                   // 允许接收
- 205   1          SM0 = 0;                                                    // 串口模式1，8bit可变波特率
- 206   1          SM1 = 1;                   
- 207   1          PCON |= 0x80;                                               // SMOD = 1
- 208   1          ADCON |= 0x80;                                              // 选择内部波特率发生器
- 209   1      
- 210   1          S0RELL = 0xe6;                                              // 波特率19.2K(十进制998=十六进制0x03e6)
- 211   1          S0RELH = 0x03;
- 212   1          TI0 = 0;                                                                    // 清发送完成标志
- 213   1              S0BUF=0x99;                                                                     // 送初值
- 214   1      }
- 215          /**************************************************
- 216          功能：向串口发送1 byte数据
- 217          **************************************************/
- 218          void uart_putchar(uint8_t x)
- 219          {
- 220   1              while (!TI0);                                                           // 等待发送完成
- 221   1              TI0=0;                                                                          // 清发送完成标志
- 222   1              S0BUF=x;                                                                        // 发送数据
- 223   1      }
- 224          /**************************************************
- 225          功能:I/O口初始化
- 226          **************************************************/
- 227          void io_init(void)
- 228          {
- 229   1              P0DIR = p0dir;                                                          // 设定I/O口输入输出
- 230   1              P1DIR = p1dir;                                  
- 231   1      
- 232   1              LED1=LED2=LED3=0;                                                       // 灯全亮
- 233   1              delay(1000);
- 234   1              LED1=LED2=LED3=1;                                                       // 灯全灭                  
- 235   1      }  
- 236          /**************************************************
- 237          功能：主程序
- 238          **************************************************/
- 239          void main(void)
- 240          {
- 241   1              io_init();                                                                      // I/O口初始化
-C51 COMPILER V9.00   MAIN                                                                  10/26/2011 16:27:04 PAGE 5   
+ 242   1              RFCSN = 0;                              
+ 243   1              status = SPI_RW(reg);                                           // 选择RF寄存器
+ 244   1              for(byte_ctr=0; byte_ctr<bytes; byte_ctr++) // 连接写入数据
+ 245   1              SPI_RW(*pBuf++);
+ 246   1              RFCSN = 1;                                      
+ 247   1              return(status);                                                 // 返回RF状态值
+ 248   1      }
+ 249          
+ 250          /**************************************************
+ 251          功能：设置为接收模式
+ 252          **************************************************/
+ 253          void RX_Mode(void)
+ 254          {
+ 255   1              RFCE=0;
+ 256   1              SPI_RW_Reg(WRITE_REG + CONFIG, 0x0f);           // 上电, CRC为2 bytes,接收模式,允许RX_DR产生中断
+ 257   1              RFCE = 1;                                                                       // 启动接收模式
+ 258   1      }
+ 259          /**************************************************
+ 260          功能：RF初始化
+ 261          **************************************************/
+ 262          void rf_init(void)
+ 263          {
+ 264   1              RFCE = 0;                                               // RF关闭
+ 265   1              RFCKEN = 1;                                             // 启动RF时钟
+ 266   1              RF = 1;                                                 // 允许RF中断
+ 267   1              delay(1000);    
+ 268   1              SPI_Write_Buf(WRITE_REG + TX_ADDR, TX_ADDRESS, TX_ADR_WIDTH);           // 设置发射地址长度
+ 269   1              SPI_Write_Buf(WRITE_REG + RX_ADDR_P0, TX_ADDRESS, TX_ADR_WIDTH);        // 设置接收地址长度
+ 270   1              SPI_RW_Reg(WRITE_REG + EN_AA, 0x01);                            // 启动自动应答功能
+ 271   1              SPI_RW_Reg(WRITE_REG + EN_RXADDR, 0x01);                        // PIPE0接收数据
+ 272   1              SPI_RW_Reg(WRITE_REG + SETUP_RETR, 0x1a);                       // 自动重传10次
+ 273   1              SPI_RW_Reg(WRITE_REG + RF_CH, 40);                              // RF频率2440MHz
+ 274   1              SPI_RW_Reg(WRITE_REG + RF_SETUP, 0x0f);                         // 发射功率0dBm, 传输速率2Mbps,
+ 275   1              SPI_RW_Reg(WRITE_REG + RX_PW_P0, TX_PLOAD_WIDTH);       // PIPE0 接收数据包长度
+ 276   1      }
+ 277          /**************************************************
+ 278          功能：RF中断服务程序
+ 279          **************************************************/
+ 280          void RF_IRQ(void) interrupt INTERRUPT_RFIRQ
+ 281          {
+ 282   1              sta=SPI_Read(STATUS);                                                           // 读出状态值
+ 283   1      
+ 284   1              if(RX_DR)                                                                       
+ 285   1              {
+ 286   2                      SPI_Read_Buf(RD_RX_PLOAD,rx_buf,TX_PLOAD_WIDTH);// 读出FIFO的数据
+ 287   2                      SPI_RW_Reg(FLUSH_RX,0);                                                 // 清除RX的FIFO
+ 288   2              }
+ 289   1      
+ 290   1              SPI_RW_Reg(WRITE_REG+STATUS,0x70);                                      // 清除所有中断标志 
+ 291   1      }
+ 292          /**************************************************
+ 293          功能：串口初始化子程序
+ 294          说明：波特率19.2K，使用内部波特率发生器
+ 295          **************************************************/
+ 296          void uart_init(void)
+ 297          {
+ 298   1          ES0 = 0;                                                    // 关UART0中断
+ 299   1          REN0 = 1;                                                   // 允许接收
+ 300   1          SM0 = 0;                                                    // 串口模式1，8bit可变波特率
+ 301   1          SM1 = 1;                   
+ 302   1          PCON |= 0x80;                                               // SMOD = 1
+ 303   1          ADCON |= 0x80;                                              // 选择内部波特率发生器
+C51 COMPILER V9.00   MAIN                                                                  10/27/2011 14:58:49 PAGE 6   
 
- 242   1      //      P03 = 0;
- 243   1      //      uart_init();                                    // 串口初始化 
- 244   1              hal_uart_init(UART_BAUD_19K2);
- 245   1              rf_init();                                                                      // RF初始化                            
- 246   1              EA=1;                                       // 允许中断
- 247   1      
- 248   1              RX_Mode();                                                                      //进入接收模式
- 249   1      
- 250   1              uart_putchar('h');
- 251   1              uart_putchar('e');
- 252   1              uart_putchar('l');
- 253   1              uart_putchar('l');
- 254   1              uart_putchar('o');
- 255   1      
- 256   1      /*      hal_uart_putchar ('1');
- 257   1              hal_uart_putchar ('e');
- 258   1              hal_uart_putchar ('l');
- 259   1              hal_uart_putchar ('l');
- 260   1              hal_uart_putchar ('o');
- 261   1      */
- 262   1              delay(100);
- 263   1              RX_DR = 0;
- 264   1              while(1)
- 265   1              {
- 266   2                      if(RX_DR)                                                               // 数据已收到
- 267   2                      {
- 268   3                              sta=0;
- 269   3      
- 270   3                              LED2=0;
- 271   3      /*                      uart_putchar(rx_buf[0]);                        // 显示所有ID值
- 272   3                              uart_putchar(rx_buf[1]);
- 273   3                              uart_putchar(rx_buf[2]);
- 274   3                              uart_putchar(rx_buf[3]);
- 275   3                              uart_putchar(rx_buf[4]);
- 276   3                              uart_putchar(rx_buf[5]);
- 277   3      */
- 278   3                              hal_uart_putchar ('a');                 
- 279   3                              delay(1000);
- 280   3      
- 281   3                              LED1=LED2=LED3=1;                                       // 灯全灭
- 282   3                      }
- 283   2              }       
- 284   1      }                                       
- 285                                                               
- 286                                                  
- 287          
+ 304   1      
+ 305   1          S0RELL = 0xe6;                                              // 波特率19.2K(十进制998=十六进制0x03e6)
+ 306   1          S0RELH = 0x03;
+ 307   1          TI0 = 0;                                                                    // 清发送完成标志
+ 308   1      //      S0BUF=0x99;                                                                     // 送初值
+ 309   1      //      S0BUF='@';                                                                      // 送初值
+ 310   1      }
+ 311          /**************************************************
+ 312          功能：向串口发送1 byte数据
+ 313          **************************************************/
+ 314          void uart_putchar(uint8_t x)
+ 315          {
+ 316   1              while (!TI0);                                                           // 等待发送完成
+ 317   1              TI0=0;                                                                          // 清发送完成标志
+ 318   1              S0BUF=x;                                                                        // 发送数据
+ 319   1      }
+ 320          
+ 321          void u_putchar(uint8_t x)
+ 322          {
+ 323   1      
+ 324   1              TI0=0;
+ 325   1              S0BUF=x;
+ 326   1              while (!TI0)
+ 327   1              {
+ 328   2                      _nop_ ();       
+ 329   2              }
+ 330   1      
+ 331   1      /*
+ 332   1              if (!TI0)
+ 333   1              {
+ 334   1                      S0BUF=x;
+ 335   1                      TI0=0;
+ 336   1                      delay(50);
+ 337   1                      return; 
+ 338   1              }       
+ 339   1      
+ 340   1              while (!TI0)
+ 341   1              {
+ 342   1                      _nop_ ();
+ 343   1              }
+ 344   1              TI0 = 0;
+ 345   1              S0BUF=x;
+ 346   1              delay(50);
+ 347   1      */
+ 348   1      
+ 349   1      }
+ 350          
+ 351          /**************************************************
+ 352          功能:I/O口初始化
+ 353          **************************************************/
+ 354          void io_init(void)
+ 355          {
+ 356   1              P0DIR = p0dir;                                                          // 设定I/O口输入输出
+ 357   1              P1DIR = p1dir;                                  
+ 358   1      
+ 359   1              LED1=LED2=LED3=0;                                                       // 灯全亮
+ 360   1              delay(1000);
+ 361   1              LED1=LED2=LED3=1;                                                       // 灯全灭                  
+ 362   1      }  
+ 363          /**************************************************
+ 364          功能：主程序
+ 365          **************************************************/
+C51 COMPILER V9.00   MAIN                                                                  10/27/2011 14:58:49 PAGE 7   
+
+ 366          void main(void)
+ 367          {
+ 368   1              unsigned char i;
+ 369   1              unsigned char bTest;
+ 370   1              io_init();                                                                      // I/O口初始化
+ 371   1              uart_init();                                    // 串口初始化 
+ 372   1      //      hal_uart_init(UART_BAUD_19K2);
+ 373   1              rf_init();                                                                      // RF初始化                            
+ 374   1              EA=1;                                       // 允许中断
+ 375   1      
+ 376   1              RX_Mode();                                                                      //进入接收模式
+ 377   1              TI0=0;
+ 378   1      /*
+ 379   1              uart_putchar('h');
+ 380   1              uart_putchar('e');
+ 381   1              uart_putchar('l');
+ 382   1              uart_putchar('l');
+ 383   1              uart_putchar('o');
+ 384   1      */
+ 385   1      //      hal_uart_putchar ('1');
+ 386   1              puts("Hello\r\n");
+ 387   1              u_putchar('@');
+ 388   1              u_putchar('1');
+ 389   1              u_putchar('2');
+ 390   1              u_putchar('3');
+ 391   1              u_putchar('4');
+ 392   1              u_putchar('5');
+ 393   1              u_putchar('6');
+ 394   1              u_putchar('\n');
+ 395   1      
+ 396   1      /*      hal_uart_putchar ('e');
+ 397   1              hal_uart_putchar ('l');
+ 398   1              hal_uart_putchar ('l');
+ 399   1              hal_uart_putchar ('o');
+ 400   1      */
+ 401   1              delay(100);
+ 402   1              RX_DR = 0;
+ 403   1              while(1)
+ 404   1              {
+ 405   2                      if(RX_DR)                                                               // 数据已收到
+ 406   2                      {
+ 407   3                              sta=0;
+ 408   3      
+ 409   3                              LED2=0;
+ 410   3      /*                      uart_putchar(rx_buf[0]);                        // 显示所有ID值
+ 411   3                              uart_putchar(rx_buf[1]);
+ 412   3                              uart_putchar(rx_buf[2]);
+ 413   3                              uart_putchar(rx_buf[3]);
+ 414   3                              uart_putchar(rx_buf[4]);
+ 415   3                              uart_putchar(rx_buf[5]);
+ 416   3      */
+ 417   3      //                      hal_uart_putchar ('a'); 
+ 418   3      
+ 419   3                              bTest = 0;
+ 420   3                              for (i=8;i<=13; i++)
+ 421   3                              {
+ 422   4                                      if (rx_buf[i] !=0)
+ 423   4                                      {
+ 424   5                                              bTest = 1;
+ 425   5                                      }       
+ 426   4                              
+ 427   4                              }
+C51 COMPILER V9.00   MAIN                                                                  10/27/2011 14:58:49 PAGE 8   
+
+ 428   3                              
+ 429   3                              if (bTest)
+ 430   3                              {
+ 431   4                              puts("Data Received ");
+ 432   4                              for (i=0; i<=13; i++)
+ 433   4                              {
+ 434   5                                      putHexByteEx(rx_buf[i]);
+ 435   5                              }       
+ 436   4      
+ 437   4                              puts("\r\n");   
+ 438   4                              }
+ 439   3      //                      delay(1000);
+ 440   3      
+ 441   3                              LED1=LED2=LED3=1;                                       // 灯全灭
+ 442   3                      }
+ 443   2              }       
+ 444   1      }                                       
+ 445                                                               
+ 446                                                  
+ 447          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    486    ----
-   CONSTANT SIZE    =   ----    ----
+   CODE SIZE        =    644    ----
+   CONSTANT SIZE    =     26    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     26      10
+   DATA SIZE        =     43      13
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
    EDATA SIZE       =   ----    ----
