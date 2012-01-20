@@ -1,0 +1,1 @@
+-c --device DARMP -g -O0 --apcs=interwork -I "C:\Keil\ARM\INC\Philips" -o ".\out\enc28j60.o" --omf_browse ".\out\enc28j60.crf" --depend ".\out\enc28j60.d" "enc28j60.c"

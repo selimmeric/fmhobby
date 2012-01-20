@@ -1,0 +1,405 @@
+A51 MACRO ASSEMBLER  FM_3D8_MAIN                                                          01/19/2012 23:22:24 PAGE     1
+
+
+MACRO ASSEMBLER A51 V7.07
+OBJECT MODULE PLACED IN fm_3d8_main.OBJ
+ASSEMBLER INVOKED BY: C:\Keil2\C51\BIN\A51.EXE fm_3d8_main.src PR(.\fm_3d8_main.ls1) EP DEBUG
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; .\fm_3d8_main.SRC generated from: fm_3d8_main.c
+                       2     ; COMPILER INVOKED BY:
+                       3     ;        C:\Keil2\C51\BIN\C51.EXE fm_3d8_main.c BROWSE DEBUG OBJECTEXTEND SRC(.\fm_3d8_main
+                             .SRC)
+                       4     
+                       5     $nomod51 
+                       6     
+                       7     NAME    FM_3D8_MAIN
+                       8     
+  0080                 9     P0      DATA    080H
+  0090                10     P1      DATA    090H
+  00A0                11     P2      DATA    0A0H
+  00B0                12     P3      DATA    0B0H
+  00B4                13     T0      BIT     0B0H.4
+  00D6                14     AC      BIT     0D0H.6
+  00B5                15     T1      BIT     0B0H.5
+  00AF                16     EA      BIT     0A8H.7
+  00A8                17     IE      DATA    0A8H
+  00B7                18     RD      BIT     0B0H.7
+  00AC                19     ES      BIT     0A8H.4
+  00B8                20     IP      DATA    0B8H
+  0098                21     RI      BIT     098H.0
+  00B2                22     INT0    BIT     0B0H.2
+  00D7                23     CY      BIT     0D0H.7
+  0099                24     TI      BIT     098H.1
+  00B3                25     INT1    BIT     0B0H.3
+  00BC                26     PS      BIT     0B8H.4
+  0081                27     SP      DATA    081H
+  00D2                28     OV      BIT     0D0H.2
+  00B6                29     WR      BIT     0B0H.6
+  0099                30     SBUF    DATA    099H
+  0087                31     PCON    DATA    087H
+  0098                32     SCON    DATA    098H
+  0089                33     TMOD    DATA    089H
+  0088                34     TCON    DATA    088H
+  0089                35     IE0     BIT     088H.1
+  008B                36     IE1     BIT     088H.3
+  00F0                37     B       DATA    0F0H
+  00E0                38     ACC     DATA    0E0H
+  00A9                39     ET0     BIT     0A8H.1
+  00AB                40     ET1     BIT     0A8H.3
+  008D                41     TF0     BIT     088H.5
+  008F                42     TF1     BIT     088H.7
+  009A                43     RB8     BIT     098H.2
+  008C                44     TH0     DATA    08CH
+  00A8                45     EX0     BIT     0A8H.0
+  0088                46     IT0     BIT     088H.0
+  008D                47     TH1     DATA    08DH
+  009B                48     TB8     BIT     098H.3
+  00AA                49     EX1     BIT     0A8H.2
+  008A                50     IT1     BIT     088H.2
+  00D0                51     P       BIT     0D0H.0
+  009F                52     SM0     BIT     098H.7
+  008A                53     TL0     DATA    08AH
+  009E                54     SM1     BIT     098H.6
+  008B                55     TL1     DATA    08BH
+  009D                56     SM2     BIT     098H.5
+  00B9                57     PT0     BIT     0B8H.1
+A51 MACRO ASSEMBLER  FM_3D8_MAIN                                                          01/19/2012 23:22:24 PAGE     2
+
+  00BB                58     PT1     BIT     0B8H.3
+  00D3                59     RS0     BIT     0D0H.3
+  008C                60     TR0     BIT     088H.4
+  00D4                61     RS1     BIT     0D0H.4
+  008E                62     TR1     BIT     088H.6
+  00B8                63     PX0     BIT     0B8H.0
+  00BA                64     PX1     BIT     0B8H.2
+  0083                65     DPH     DATA    083H
+  0082                66     DPL     DATA    082H
+  009C                67     REN     BIT     098H.4
+  00B0                68     RXD     BIT     0B0H.0
+  00B1                69     TXD     BIT     0B0H.1
+  00D5                70     F0      BIT     0D0H.5
+  00D0                71     PSW     DATA    0D0H
+                      72     ?PR?tm0_isr?FM_3D8_MAIN                  SEGMENT CODE 
+                      73     ?DT?FM_3D8_MAIN      SEGMENT DATA 
+                      74     ?PR?main?FM_3D8_MAIN SEGMENT CODE 
+                      75     ?C_INITSEG           SEGMENT CODE 
+                      76             EXTRN   CODE (?C_STARTUP)
+                      77             PUBLIC  mLED
+                      78             PUBLIC  main
+                      79             PUBLIC  tm0_isr
+                      80     
+----                  81             RSEG  ?DT?FM_3D8_MAIN
+0000                  82           count?040:   DS   2
+0002                  83                mLED:   DS   64
+                      84     
+----                  85             RSEG  ?C_INITSEG
+0000 02               86             DB      002H
+0001 00       F       87             DB      count?040
+0002 0000             88             DW      00000H
+                      89     
+                      90     ; /*------------------------------------------------------------------------------
+                      91     ; fm_3d8_main.C
+                      92     ; 
+                      93     ; ------------------------------------------------------------------------------*/
+                      94     ; //#pragma SRC
+                      95     ; 
+                      96     ; #include <REG51.H>                /* special function register declarations   */
+                      97     ;                                   /* for the intended 8051 derivative         */
+                      98     ;                                   /* is enabled                                         *
+                             /
+                      99     ; 
+                     100     ; #include <intrins.h>
+                     101     ; 
+                     102     ; #define FOSC 22118400L
+                     103     ; #define T1MS (65536 - FOSC/12/500)
+                     104     ; 
+                     105     ; #define S_CLK\
+                     106     ;               P3 |= 0x10;\
+                     107     ;               P3 &= ~0x10;
+                     108     ;               
+                     109     ; //#define S_ENA_H P3 |= 0x04;
+                     110     ; //#define S_ENA_L P3 &= 0x04;
+                     111     ; 
+                     112     ; 
+                     113     ; unsigned char mLED[8][8];                     // LED matrix
+                     114     ; 
+                     115     ; /* Timer0 interrupt routine */
+                     116     ; // 1mS interrupt
+----                 117     CSEG    AT      0000BH
+000B 020000   F      118             LJMP    tm0_isr
+                     119     
+                     120     ; void tm0_isr() interrupt 1 using 1
+                     121     
+----                 122             RSEG  ?PR?tm0_isr?FM_3D8_MAIN
+A51 MACRO ASSEMBLER  FM_3D8_MAIN                                                          01/19/2012 23:22:24 PAGE     3
+
+                     123             USING   1
+0000                 124     tm0_isr:
+0000 C0E0            125             PUSH    ACC
+0002 C0D0            126             PUSH    PSW
+                     127             USING   1
+0004 75D008          128             MOV     PSW,#08H
+                     129                             ; SOURCE LINE # 28
+                     130     ; {
+                     131     ; 
+                     132     ;       static unsigned int count=0;
+                     133     ;       unsigned char i,j;
+                     134     ;       TL0 = T1MS;
+                     135                             ; SOURCE LINE # 33
+0007 758A9A          136             MOV     TL0,#09AH
+                     137     ;       TH0 = T1MS >> 8;
+                     138                             ; SOURCE LINE # 34
+000A 758CF1          139             MOV     TH0,#0F1H
+                     140     ; 
+                     141     ;       P3 &= 0xC3;
+                     142                             ; SOURCE LINE # 36
+000D 53B0C3          143             ANL     P3,#0C3H
+                     144     ; //    S_ENA_H
+                     145     ;       for (i=0; i<=7; i++)
+                     146                             ; SOURCE LINE # 38
+                     147     ;---- Variable 'i?041' assigned to Register 'R7' ----
+0010 E4              148             CLR     A
+0011 FF              149             MOV     R7,A
+0012                 150     ?C0001:
+                     151     ;       {
+                     152                             ; SOURCE LINE # 39
+                     153     ;               for (j=0; j<=7; j++)
+                     154                             ; SOURCE LINE # 40
+                     155     ;---- Variable 'j?042' assigned to Register 'R6' ----
+0012 E4              156             CLR     A
+0013 FE              157             MOV     R6,A
+0014                 158     ?C0004:
+                     159     ;               {
+                     160                             ; SOURCE LINE # 41
+                     161     ;                       P3 |= 0x10;
+                     162                             ; SOURCE LINE # 42
+0014 43B010          163             ORL     P3,#010H
+                     164     ;                       P3 &= ~0x10;
+                     165                             ; SOURCE LINE # 43
+0017 53B0EF          166             ANL     P3,#0EFH
+                     167     ; 
+                     168     ;                       S_CLK
+                     169                             ; SOURCE LINE # 45
+001A 43B010          170             ORL     P3,#010H
+001D 53B0EF          171             ANL     P3,#0EFH
+                     172     ;               }
+                     173                             ; SOURCE LINE # 46
+0020 0E              174             INC     R6
+0021 BE08F0          175             CJNE    R6,#08H,?C0004
+                     176     ;       }
+                     177                             ; SOURCE LINE # 47
+0024                 178     ?C0003:
+0024 0F              179             INC     R7
+0025 BF08EA          180             CJNE    R7,#08H,?C0001
+0028                 181     ?C0002:
+                     182     ; //    S_ENA_L
+                     183     ;       P3 |= 0x20;
+                     184                             ; SOURCE LINE # 49
+0028 43B020          185             ORL     P3,#020H
+                     186     ; 
+                     187     ;       if (count -- == 0)
+                     188                             ; SOURCE LINE # 51
+A51 MACRO ASSEMBLER  FM_3D8_MAIN                                                          01/19/2012 23:22:24 PAGE     4
+
+002B E500     F      189             MOV     A,count?040+01H
+002D 1500     F      190             DEC     count?040+01H
+002F AE00     F      191             MOV     R6,count?040
+0031 7002            192             JNZ     ?C0012
+0033 1500     F      193             DEC     count?040
+0035                 194     ?C0012:
+0035 4E              195             ORL     A,R6
+0036 7008            196             JNZ     ?C0008
+                     197     ;       {
+                     198                             ; SOURCE LINE # 52
+                     199     ;               count = 250;
+                     200                             ; SOURCE LINE # 53
+0038 F500     F      201             MOV     count?040,A
+003A 7500FA   F      202             MOV     count?040+01H,#0FAH
+                     203     ;               P1 ^= 0x02;
+                     204                             ; SOURCE LINE # 54
+003D 639002          205             XRL     P1,#02H
+                     206     ;       }
+                     207                             ; SOURCE LINE # 55
+                     208     ; 
+                     209     ; }
+                     210                             ; SOURCE LINE # 57
+0040                 211     ?C0008:
+0040 D0D0            212             POP     PSW
+0042 D0E0            213             POP     ACC
+0044 32              214             RETI    
+                     215     ; END OF tm0_isr
+                     216     
+                     217     ; 
+                     218     ; 
+                     219     ; 
+                     220     ; /*------------------------------------------------
+                     221     ; The main C function.  Program execution starts
+                     222     ; here after stack initialization.
+                     223     ; ------------------------------------------------*/
+                     224     ; void main (void) {
+                     225     
+----                 226             RSEG  ?PR?main?FM_3D8_MAIN
+0000                 227     main:
+                     228                             ; SOURCE LINE # 65
+                     229     ; 
+                     230     ; 
+                     231     ; //    Init Timer0 
+                     232     ;       TMOD    = 0x01;                         // Set Timer0 to 16bits mode
+                     233                             ; SOURCE LINE # 69
+0000 758901          234             MOV     TMOD,#01H
+                     235     ;       TL0     = T1MS;                         // Init Timer Lower Byte
+                     236                             ; SOURCE LINE # 70
+0003 758A9A          237             MOV     TL0,#09AH
+                     238     ;       TH0             = T1MS >> 8;            // Init Timer Higher Byte
+                     239                             ; SOURCE LINE # 71
+0006 758CF1          240             MOV     TH0,#0F1H
+                     241     ;       TR0             = 1;                            // Start Timer0
+                     242                             ; SOURCE LINE # 72
+0009 D28C            243             SETB    TR0
+                     244     ;       ET0             = 1;                            // Enable Timer0 Interrupt
+                     245                             ; SOURCE LINE # 73
+000B D2A9            246             SETB    ET0
+                     247     ;       EA              = 1;                            // Enable Global Interrupt
+                     248                             ; SOURCE LINE # 74
+000D D2AF            249             SETB    EA
+                     250     ; 
+                     251     ;       mLED[0][0]      = 0x5A;
+                     252                             ; SOURCE LINE # 76
+000F 75005A   F      253             MOV     mLED,#05AH
+                     254     ;       mLED[0][1]  = 0xA5;
+A51 MACRO ASSEMBLER  FM_3D8_MAIN                                                          01/19/2012 23:22:24 PAGE     5
+
+                     255                             ; SOURCE LINE # 77
+0012 7500A5   F      256             MOV     mLED+01H,#0A5H
+                     257     ;       mLED[0][2]      = 0xFF;
+                     258                             ; SOURCE LINE # 78
+0015 7500FF   F      259             MOV     mLED+02H,#0FFH
+                     260     ;       mLED[0][3]      = 0x00;
+                     261                             ; SOURCE LINE # 79
+0018 E4              262             CLR     A
+0019 F500     F      263             MOV     mLED+03H,A
+                     264     ;       mLED[0][4]      = 0x01;
+                     265                             ; SOURCE LINE # 80
+001B 750001   F      266             MOV     mLED+04H,#01H
+                     267     ;       mLED[0][5]      = 0x02;
+                     268                             ; SOURCE LINE # 81
+001E 750002   F      269             MOV     mLED+05H,#02H
+                     270     ;       mLED[0][6]      = 0x03;
+                     271                             ; SOURCE LINE # 82
+0021 750003   F      272             MOV     mLED+06H,#03H
+                     273     ;       mLED[0][7]      = 0x04;
+                     274                             ; SOURCE LINE # 83
+0024 750004   F      275             MOV     mLED+07H,#04H
+0027                 276     ?C0009:
+                     277     ; 
+                     278     ;       while (1) 
+                     279                             ; SOURCE LINE # 85
+                     280     ;       {
+                     281                             ; SOURCE LINE # 86
+                     282     ;       P1 ^= 0x01;                         /* Toggle P1.0 each time we print */
+                     283                             ; SOURCE LINE # 87
+0027 639001          284             XRL     P1,#01H
+                     285     ;       }
+                     286                             ; SOURCE LINE # 88
+002A 80FB            287             SJMP    ?C0009
+                     288     ; END OF main
+                     289     
+                     290             END
+A51 MACRO ASSEMBLER  FM_3D8_MAIN                                                          01/19/2012 23:22:24 PAGE     6
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E                  T Y P E  V A L U E   ATTRIBUTES
+
+?C0001. . . . . . . . .  C ADDR   0012H   R   SEG=?PR?TM0_ISR?FM_3D8_MAIN
+?C0002. . . . . . . . .  C ADDR   0028H   R   SEG=?PR?TM0_ISR?FM_3D8_MAIN
+?C0003. . . . . . . . .  C ADDR   0024H   R   SEG=?PR?TM0_ISR?FM_3D8_MAIN
+?C0004. . . . . . . . .  C ADDR   0014H   R   SEG=?PR?TM0_ISR?FM_3D8_MAIN
+?C0008. . . . . . . . .  C ADDR   0040H   R   SEG=?PR?TM0_ISR?FM_3D8_MAIN
+?C0009. . . . . . . . .  C ADDR   0027H   R   SEG=?PR?MAIN?FM_3D8_MAIN
+?C0012. . . . . . . . .  C ADDR   0035H   R   SEG=?PR?TM0_ISR?FM_3D8_MAIN
+?C_INITSEG. . . . . . .  C SEG    0004H       REL=UNIT
+?C_STARTUP. . . . . . .  C ADDR   -----       EXT
+?DT?FM_3D8_MAIN . . . .  D SEG    0042H       REL=UNIT
+?PR?MAIN?FM_3D8_MAIN. .  C SEG    002CH       REL=UNIT
+?PR?TM0_ISR?FM_3D8_MAIN  C SEG    0045H       REL=UNIT
+AC. . . . . . . . . . .  B ADDR   00D0H.6 A   
+ACC . . . . . . . . . .  D ADDR   00E0H   A   
+B . . . . . . . . . . .  D ADDR   00F0H   A   
+COUNT?040 . . . . . . .  D ADDR   0000H   R   SEG=?DT?FM_3D8_MAIN
+CY. . . . . . . . . . .  B ADDR   00D0H.7 A   
+DPH . . . . . . . . . .  D ADDR   0083H   A   
+DPL . . . . . . . . . .  D ADDR   0082H   A   
+EA. . . . . . . . . . .  B ADDR   00A8H.7 A   
+ES. . . . . . . . . . .  B ADDR   00A8H.4 A   
+ET0 . . . . . . . . . .  B ADDR   00A8H.1 A   
+ET1 . . . . . . . . . .  B ADDR   00A8H.3 A   
+EX0 . . . . . . . . . .  B ADDR   00A8H.0 A   
+EX1 . . . . . . . . . .  B ADDR   00A8H.2 A   
+F0. . . . . . . . . . .  B ADDR   00D0H.5 A   
+FM_3D8_MAIN . . . . . .  N NUMB   -----       
+IE. . . . . . . . . . .  D ADDR   00A8H   A   
+IE0 . . . . . . . . . .  B ADDR   0088H.1 A   
+IE1 . . . . . . . . . .  B ADDR   0088H.3 A   
+INT0. . . . . . . . . .  B ADDR   00B0H.2 A   
+INT1. . . . . . . . . .  B ADDR   00B0H.3 A   
+IP. . . . . . . . . . .  D ADDR   00B8H   A   
+IT0 . . . . . . . . . .  B ADDR   0088H.0 A   
+IT1 . . . . . . . . . .  B ADDR   0088H.2 A   
+MAIN. . . . . . . . . .  C ADDR   0000H   R   SEG=?PR?MAIN?FM_3D8_MAIN
+MLED. . . . . . . . . .  D ADDR   0002H   R   SEG=?DT?FM_3D8_MAIN
+OV. . . . . . . . . . .  B ADDR   00D0H.2 A   
+P . . . . . . . . . . .  B ADDR   00D0H.0 A   
+P0. . . . . . . . . . .  D ADDR   0080H   A   
+P1. . . . . . . . . . .  D ADDR   0090H   A   
+P2. . . . . . . . . . .  D ADDR   00A0H   A   
+P3. . . . . . . . . . .  D ADDR   00B0H   A   
+PCON. . . . . . . . . .  D ADDR   0087H   A   
+PS. . . . . . . . . . .  B ADDR   00B8H.4 A   
+PSW . . . . . . . . . .  D ADDR   00D0H   A   
+PT0 . . . . . . . . . .  B ADDR   00B8H.1 A   
+PT1 . . . . . . . . . .  B ADDR   00B8H.3 A   
+PX0 . . . . . . . . . .  B ADDR   00B8H.0 A   
+PX1 . . . . . . . . . .  B ADDR   00B8H.2 A   
+RB8 . . . . . . . . . .  B ADDR   0098H.2 A   
+RD. . . . . . . . . . .  B ADDR   00B0H.7 A   
+REN . . . . . . . . . .  B ADDR   0098H.4 A   
+RI. . . . . . . . . . .  B ADDR   0098H.0 A   
+RS0 . . . . . . . . . .  B ADDR   00D0H.3 A   
+RS1 . . . . . . . . . .  B ADDR   00D0H.4 A   
+RXD . . . . . . . . . .  B ADDR   00B0H.0 A   
+SBUF. . . . . . . . . .  D ADDR   0099H   A   
+SCON. . . . . . . . . .  D ADDR   0098H   A   
+SM0 . . . . . . . . . .  B ADDR   0098H.7 A   
+A51 MACRO ASSEMBLER  FM_3D8_MAIN                                                          01/19/2012 23:22:24 PAGE     7
+
+SM1 . . . . . . . . . .  B ADDR   0098H.6 A   
+SM2 . . . . . . . . . .  B ADDR   0098H.5 A   
+SP. . . . . . . . . . .  D ADDR   0081H   A   
+T0. . . . . . . . . . .  B ADDR   00B0H.4 A   
+T1. . . . . . . . . . .  B ADDR   00B0H.5 A   
+TB8 . . . . . . . . . .  B ADDR   0098H.3 A   
+TCON. . . . . . . . . .  D ADDR   0088H   A   
+TF0 . . . . . . . . . .  B ADDR   0088H.5 A   
+TF1 . . . . . . . . . .  B ADDR   0088H.7 A   
+TH0 . . . . . . . . . .  D ADDR   008CH   A   
+TH1 . . . . . . . . . .  D ADDR   008DH   A   
+TI. . . . . . . . . . .  B ADDR   0098H.1 A   
+TL0 . . . . . . . . . .  D ADDR   008AH   A   
+TL1 . . . . . . . . . .  D ADDR   008BH   A   
+TM0_ISR . . . . . . . .  C ADDR   0000H   R   SEG=?PR?TM0_ISR?FM_3D8_MAIN
+TMOD. . . . . . . . . .  D ADDR   0089H   A   
+TR0 . . . . . . . . . .  B ADDR   0088H.4 A   
+TR1 . . . . . . . . . .  B ADDR   0088H.6 A   
+TXD . . . . . . . . . .  B ADDR   00B0H.1 A   
+WR. . . . . . . . . . .  B ADDR   00B0H.6 A   
+
+
+REGISTER BANK(S) USED: 0 1 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

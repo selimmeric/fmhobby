@@ -1,0 +1,290 @@
+; .\fm_3d8_main.SRC generated from: fm_3d8_main.c
+; COMPILER INVOKED BY:
+;        C:\Keil2\C51\BIN\C51.EXE fm_3d8_main.c BROWSE DEBUG OBJECTEXTEND SRC(.\fm_3d8_main.SRC)
+
+$NOMOD51
+
+NAME	FM_3D8_MAIN
+
+P0	DATA	080H
+P1	DATA	090H
+P2	DATA	0A0H
+P3	DATA	0B0H
+T0	BIT	0B0H.4
+AC	BIT	0D0H.6
+T1	BIT	0B0H.5
+EA	BIT	0A8H.7
+IE	DATA	0A8H
+RD	BIT	0B0H.7
+ES	BIT	0A8H.4
+IP	DATA	0B8H
+RI	BIT	098H.0
+INT0	BIT	0B0H.2
+CY	BIT	0D0H.7
+TI	BIT	098H.1
+INT1	BIT	0B0H.3
+PS	BIT	0B8H.4
+SP	DATA	081H
+OV	BIT	0D0H.2
+WR	BIT	0B0H.6
+SBUF	DATA	099H
+PCON	DATA	087H
+SCON	DATA	098H
+TMOD	DATA	089H
+TCON	DATA	088H
+IE0	BIT	088H.1
+IE1	BIT	088H.3
+B	DATA	0F0H
+ACC	DATA	0E0H
+ET0	BIT	0A8H.1
+ET1	BIT	0A8H.3
+TF0	BIT	088H.5
+TF1	BIT	088H.7
+RB8	BIT	098H.2
+TH0	DATA	08CH
+EX0	BIT	0A8H.0
+IT0	BIT	088H.0
+TH1	DATA	08DH
+TB8	BIT	098H.3
+EX1	BIT	0A8H.2
+IT1	BIT	088H.2
+P	BIT	0D0H.0
+SM0	BIT	098H.7
+TL0	DATA	08AH
+SM1	BIT	098H.6
+TL1	DATA	08BH
+SM2	BIT	098H.5
+PT0	BIT	0B8H.1
+PT1	BIT	0B8H.3
+RS0	BIT	0D0H.3
+TR0	BIT	088H.4
+RS1	BIT	0D0H.4
+TR1	BIT	088H.6
+PX0	BIT	0B8H.0
+PX1	BIT	0B8H.2
+DPH	DATA	083H
+DPL	DATA	082H
+REN	BIT	098H.4
+RXD	BIT	0B0H.0
+TXD	BIT	0B0H.1
+F0	BIT	0D0H.5
+PSW	DATA	0D0H
+?PR?tm0_isr?FM_3D8_MAIN                  SEGMENT CODE 
+?DT?FM_3D8_MAIN      SEGMENT DATA 
+?PR?main?FM_3D8_MAIN SEGMENT CODE 
+?C_INITSEG           SEGMENT CODE 
+	EXTRN	CODE (?C_STARTUP)
+	PUBLIC	mLED
+	PUBLIC	main
+	PUBLIC	tm0_isr
+
+	RSEG  ?DT?FM_3D8_MAIN
+      count?040:   DS   2
+           mLED:   DS   64
+
+	RSEG  ?C_INITSEG
+	DB	002H
+	DB	count?040
+	DW	00000H
+
+; /*------------------------------------------------------------------------------
+; fm_3d8_main.C
+; 
+; ------------------------------------------------------------------------------*/
+; //#pragma SRC
+; 
+; #include <REG51.H>                /* special function register declarations   */
+;                                   /* for the intended 8051 derivative         */
+;                                   /* is enabled		                          */
+; 
+; #include <intrins.h>
+; 
+; #define FOSC 22118400L
+; #define T1MS (65536 - FOSC/12/500)
+; 
+; #define S_CLK\
+; 		P3 |= 0x10;\
+; 		P3 &= ~0x10;
+; 		
+; //#define S_ENA_H P3 |= 0x04;
+; //#define S_ENA_L P3 &= 0x04;
+; 
+; 
+; unsigned char mLED[8][8];			// LED matrix
+; 
+; /* Timer0 interrupt routine */
+; // 1mS interrupt
+CSEG	AT	0000BH
+	LJMP	tm0_isr
+
+; void tm0_isr() interrupt 1 using 1
+
+	RSEG  ?PR?tm0_isr?FM_3D8_MAIN
+	USING	1
+tm0_isr:
+	PUSH 	ACC
+	PUSH 	PSW
+	USING	1
+	MOV  	PSW,#08H
+			; SOURCE LINE # 28
+; {
+; 
+; 	static unsigned int count=0;
+; 	unsigned char i,j;
+; 	TL0 = T1MS;
+			; SOURCE LINE # 33
+	MOV  	TL0,#09AH
+; 	TH0 = T1MS >> 8;
+			; SOURCE LINE # 34
+	MOV  	TH0,#0F1H
+; 
+; 	P3 &= 0xC3;
+			; SOURCE LINE # 36
+	ANL  	P3,#0C3H
+; //	S_ENA_H
+; 	for (i=0; i<=7; i++)
+			; SOURCE LINE # 38
+;---- Variable 'i?041' assigned to Register 'R7' ----
+	CLR  	A
+	MOV  	R7,A
+?C0001:
+; 	{
+			; SOURCE LINE # 39
+; 		for (j=0; j<=7; j++)
+			; SOURCE LINE # 40
+;---- Variable 'j?042' assigned to Register 'R6' ----
+	CLR  	A
+	MOV  	R6,A
+?C0004:
+; 		{
+			; SOURCE LINE # 41
+; 			P3 |= 0x10;
+			; SOURCE LINE # 42
+	ORL  	P3,#010H
+; 			P3 &= ~0x10;
+			; SOURCE LINE # 43
+	ANL  	P3,#0EFH
+; 
+; 			S_CLK
+			; SOURCE LINE # 45
+	ORL  	P3,#010H
+	ANL  	P3,#0EFH
+; 		}
+			; SOURCE LINE # 46
+	INC  	R6
+	CJNE 	R6,#08H,?C0004
+; 	}
+			; SOURCE LINE # 47
+?C0003:
+	INC  	R7
+	CJNE 	R7,#08H,?C0001
+?C0002:
+; //	S_ENA_L
+; 	P3 |= 0x20;
+			; SOURCE LINE # 49
+	ORL  	P3,#020H
+; 
+; 	if (count -- == 0)
+			; SOURCE LINE # 51
+	MOV  	A,count?040+01H
+	DEC  	count?040+01H
+	MOV  	R6,count?040
+	JNZ  	?C0012
+	DEC  	count?040
+?C0012:
+	ORL  	A,R6
+	JNZ  	?C0008
+; 	{
+			; SOURCE LINE # 52
+; 		count = 250;
+			; SOURCE LINE # 53
+	MOV  	count?040,A
+	MOV  	count?040+01H,#0FAH
+; 		P1 ^= 0x02;
+			; SOURCE LINE # 54
+	XRL  	P1,#02H
+; 	}
+			; SOURCE LINE # 55
+; 
+; }
+			; SOURCE LINE # 57
+?C0008:
+	POP  	PSW
+	POP  	ACC
+	RETI 	
+; END OF tm0_isr
+
+; 
+; 
+; 
+; /*------------------------------------------------
+; The main C function.  Program execution starts
+; here after stack initialization.
+; ------------------------------------------------*/
+; void main (void) {
+
+	RSEG  ?PR?main?FM_3D8_MAIN
+main:
+			; SOURCE LINE # 65
+; 
+; 
+; //	Init Timer0 
+; 	TMOD 	= 0x01;				// Set Timer0 to 16bits mode
+			; SOURCE LINE # 69
+	MOV  	TMOD,#01H
+; 	TL0 	= T1MS;				// Init Timer Lower Byte
+			; SOURCE LINE # 70
+	MOV  	TL0,#09AH
+; 	TH0		= T1MS >> 8;		// Init Timer Higher Byte
+			; SOURCE LINE # 71
+	MOV  	TH0,#0F1H
+; 	TR0		= 1;				// Start Timer0
+			; SOURCE LINE # 72
+	SETB 	TR0
+; 	ET0		= 1;				// Enable Timer0 Interrupt
+			; SOURCE LINE # 73
+	SETB 	ET0
+; 	EA		= 1;				// Enable Global Interrupt
+			; SOURCE LINE # 74
+	SETB 	EA
+; 
+; 	mLED[0][0]	= 0x5A;
+			; SOURCE LINE # 76
+	MOV  	mLED,#05AH
+; 	mLED[0][1]  = 0xA5;
+			; SOURCE LINE # 77
+	MOV  	mLED+01H,#0A5H
+; 	mLED[0][2]	= 0xFF;
+			; SOURCE LINE # 78
+	MOV  	mLED+02H,#0FFH
+; 	mLED[0][3]	= 0x00;
+			; SOURCE LINE # 79
+	CLR  	A
+	MOV  	mLED+03H,A
+; 	mLED[0][4]	= 0x01;
+			; SOURCE LINE # 80
+	MOV  	mLED+04H,#01H
+; 	mLED[0][5]	= 0x02;
+			; SOURCE LINE # 81
+	MOV  	mLED+05H,#02H
+; 	mLED[0][6]	= 0x03;
+			; SOURCE LINE # 82
+	MOV  	mLED+06H,#03H
+; 	mLED[0][7]	= 0x04;
+			; SOURCE LINE # 83
+	MOV  	mLED+07H,#04H
+?C0009:
+; 
+;   	while (1) 
+			; SOURCE LINE # 85
+;   	{
+			; SOURCE LINE # 86
+;     	P1 ^= 0x01;     		    /* Toggle P1.0 each time we print */
+			; SOURCE LINE # 87
+	XRL  	P1,#01H
+;   	}
+			; SOURCE LINE # 88
+	SJMP 	?C0009
+; END OF main
+
+	END

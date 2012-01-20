@@ -262,7 +262,7 @@
       <Focus>0</Focus>
       <ColumnNumber>15</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>314</TopLine>
+      <TopLine>305</TopLine>
       <CurrentLine>318</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\Main.c</PathWithFileName>
@@ -1686,9 +1686,9 @@
       <Documents>
         <Doc>
           <Name>.\Main.c</Name>
-          <ColumnNumber>15</ColumnNumber>
-          <TopLine>314</TopLine>
-          <CurrentLine>318</CurrentLine>
+          <ColumnNumber>22</ColumnNumber>
+          <TopLine>359</TopLine>
+          <CurrentLine>374</CurrentLine>
         </Doc>
         <Doc>
           <Name>REG24LE1.H</Name>

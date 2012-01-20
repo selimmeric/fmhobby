@@ -1,0 +1,5 @@
+Dependencies for Project 'WebServer', Target 'Target 1': (DO NOT MODIFY !)
+F (.\Startup.s)(0x4777A470)()
+F (.\WebServer.c)(0x48102AC2)()
+F (.\enc28j60.c)(0x48102EDE)()
+F (.\ip_arp_udp_tcp.c)(0x4777A406)()

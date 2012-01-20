@@ -1,0 +1,10 @@
+.\out\myserver.o: myServer.c
+.\out\myserver.o: C:\Keil\ARM\RV31\INC\stdio.h
+.\out\myserver.o: C:\Keil\ARM\RV31\INC\string.h
+.\out\myserver.o: ip_arp_udp_tcp.h
+.\out\myserver.o: types.h
+.\out\myserver.o: enc28j60.h
+.\out\myserver.o: net.h
+.\out\myserver.o: C:\Keil\ARM\INC\Philips\LPC2103.H
+.\out\myserver.o: utility.h
+.\out\myserver.o: mytypes.h

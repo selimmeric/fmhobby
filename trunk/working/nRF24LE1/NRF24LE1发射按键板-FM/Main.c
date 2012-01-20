@@ -368,8 +368,12 @@ EA = 1;                       /* Global Interrupt Enable */
 						tKey=0;
 					}
 //					id_buf[8] = 0x1e + tKey;
-					id_buf[8] = 0x04 + tKey;
-					id_buf[9] = 0x28;
+					id_buf[8] = 0x2f;
+					id_buf[9] = 0x04 + tKey;
+					id_buf[10] = 0x27;
+					id_buf[11] = 0x1e;
+					id_buf[12] = 0x30;
+					id_buf[13] = 0x28;
 					tKey ++;
 				}
 				else

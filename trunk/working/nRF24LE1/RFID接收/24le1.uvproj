@@ -356,11 +356,6 @@
               <FileType>1</FileType>
               <FilePath>.\main.c</FilePath>
             </File>
-            <File>
-              <FileName>hal_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\hal_uart.c</FilePath>
-            </File>
           </Files>
         </Group>
       </Groups>
