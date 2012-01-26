@@ -1,4 +1,4 @@
-C51 COMPILER V7.06   FM_3D8_MAIN                                                           01/20/2012 18:06:17 PAGE 1   
+C51 COMPILER V7.06   FM_3D8_MAIN                                                           01/27/2012 02:06:29 PAGE 1   
 
 
 C51 COMPILER V7.06, COMPILATION OF MODULE FM_3D8_MAIN
@@ -13,234 +13,200 @@ stmt level    source
    4          ------------------------------------------------------------------------------*/
    5          //#pragma SRC
    6          
-   7          #include <REG51.H>                /* special function register declarations   */
+   7          #include <REG52.H>                /* special function register declarations   */
    8                                            /* for the intended 8051 derivative         */
    9                                            /* is enabled                                   */
   10          
   11          #include <intrins.h>
   12          
-  13          #define FOSC 22118400L
-  14          #define T1MS (65536 - FOSC/12/1000)
-  15          // T1MS = 65536 - 1843
-  16          //#define T500US (65536 - FOSC/12/500)
-  17          //#define T500US (65535 - 1200)
-  18          #define T500US (65535 - (51+(256*7)))
-  19          
-  20          
-  21          #define G_DISABLE       (P1 = 0x00);
-  22          #define G0_H            (P1 = 0x01);
-  23          #define G1_H            (P1 = 0x02);
-  24          #define G2_H            (P1 = 0x04);
-  25          #define G3_H            (P1 = 0x08);
-  26          #define G4_H            (P1 = 0x10);
-  27          #define G5_H            (P1 = 0x20);
-  28          #define G6_H            (P1 = 0x40);
-  29          #define G7_H            (P1 = 0x80);
-  30          
-  31          #define S_ENA_H         (P3 |= 0x04);
-  32          #define S_ENA_L         (P3 &= ~0x04);
-  33          #define S_DATA_H        (P3 |= 0x08);
-  34          #define S_DATA_L        (P3 &= ~0x08);
-  35          #define S_LATCH_H       (P3 |= 0x20);
-  36          #define S_LATCH_L       (P3 &= ~0x20);
-  37          #define S_LATCH\
-  38                          (P3 |= 0x20);\
-  39                          (P3 &= ~0x20);
-  40          #define S_CLK\
-  41                          P3 |= 0x10;\
-  42                          P3 &= ~0x10;
-  43          
-  44          
-  45          
-  46          unsigned char mLED[8][8];                       // LED matrix
-  47          unsigned char mLED_BRIGHTNESS;          // LED brightness global to all
-  48          
-  49          /* Timer0 interrupt routine */
-  50          // 1mS interrupt
-  51          void tm0_isr() interrupt 1 using 1
-  52          {
-  53   1      
-  54   1              TR0             = 0;                            // Stop Timer1
-  55   1              ET0             = 0;                            // Disable Timer1 Interrupt
-C51 COMPILER V7.06   FM_3D8_MAIN                                                           01/20/2012 18:06:17 PAGE 2   
+  13          #include "fm_3d8.h"
+  14          
+  15          // data  = direct data : 1st 128Byte
+  16          // idata = indirect data : all 256 bytes or above
+  17          // code  = program memory
+  18          unsigned char data mLED[8][8];                  // LED matrix
+  19          unsigned char data mLED_BRIGHTNESS[8];  // LED brightness global to each layer
+  20          unsigned char idata mLEDA[8][8];        // LED matrix buffer
+  21          
+  22          /* Timer0 interrupt routine */
+  23          // 1mS interrupt
+  24          void tm0_isr() interrupt 1 using 1
+  25          {
+  26   1      
+  27   1              TR0             = 0;                            // Stop Timer1
+  28   1              ET0             = 0;                            // Disable Timer1 Interrupt
+  29   1              G_DISABLE                                       // Disable LED
+  30   1      
+  31   1      }
+  32          
+  33          /* Timer0 interrupt routine */
+  34          // 1mS interrupt
+  35          void tm1_isr() interrupt 3 using 2
+  36          {
+  37   1      
+  38   1              static unsigned char tLayer=0;
+  39   1              unsigned char i,j;
+  40   1              unsigned char tByte;
+  41   1              unsigned int  tmp=0;
+  42   1      
+  43   1              TL1     = T1MS;                         // Init Timer Lower Byte
+  44   1              TH1             = T1MS >> 8;            // Init Timer Higher Byte
+  45   1      
+  46   1      
+  47   1              TR0             = 0;
+  48   1              ET0             = 0;
+  49   1              SBUF = 'A';
+  50   1      
+  51   1              S_ENA_H         // disable output
+  52   1              G_DISABLE       // Disable LED
+  53   1              S_LATCH         // Latch data
+  54   1              S_ENA_L         // enable output
+  55   1      
+C51 COMPILER V7.06   FM_3D8_MAIN                                                           01/27/2012 02:06:29 PAGE 2   
 
-  56   1              G_DISABLE                                       // Disable LED
-  57   1      
-  58   1      }
-  59          
-  60          /* Timer0 interrupt routine */
-  61          // 1mS interrupt
-  62          void tm1_isr() interrupt 3 using 2
-  63          {
-  64   1      
-  65   1              static unsigned char tLayer=0;
-  66   1              unsigned char i,j;
-  67   1              unsigned char tByte;
-  68   1              unsigned int  tmp=0;
-  69   1      
-  70   1              TL1     = T1MS;                         // Init Timer Lower Byte
-  71   1              TH1             = T1MS >> 8;            // Init Timer Higher Byte
-  72   1      
-  73   1      
-  74   1              TR0             = 0;
-  75   1              ET0             = 0;
+  56   1              // Set brightness of the layer
+  57   1              // Pulse Width = 51 + 7 * mLED_BRIGHTNESS
+  58   1      
+  59   1              if (mLED_BRIGHTNESS[tLayer]!=0)
+  60   1              {
+  61   2                      P1 = (1<< tLayer);      // Change G
+  62   2                      tmp             = 65535 - 51;
+  63   2                      for (i=0; i<=6; i++)
+  64   2                      {
+  65   3                              tmp -= mLED_BRIGHTNESS[tLayer];
+  66   3                      }
+  67   2                      TL0     = tmp;                          // Init Timer Lower Byte
+  68   2                      TH0             = tmp >> 8;                     // Init Timer Higher Byte
+  69   2                      TR0             = 1;                            // Start Timer1
+  70   2                      ET0             = 1;                            // Enable Timer1 Interrupt
+  71   2              }
+  72   1              else
+  73   1              {
+  74   2                      P1 = 0x00;
+  75   2              }
   76   1      
-  77   1              S_ENA_H         // disable output
-  78   1              G_DISABLE       // Disable LED
-  79   1              S_LATCH         // Latch data
-  80   1              P1 = tByte;     // Change G
-  81   1              tLayer ++;
-  82   1              tLayer &= 0x07;
-  83   1              S_ENA_L         // enable output
-  84   1      
-  85   1              tmp             = 65535 - 51;
-  86   1              for (i=0; i<=6; i++)
-  87   1              {
-  88   2                      tmp -= mLED_BRIGHTNESS;
-  89   2              }
-  90   1      
-  91   1      //      tmp = (65535 - (51+(250*7)));
-  92   1              
-  93   1              TL0     = tmp;                          // Init Timer Lower Byte
-  94   1              TH0             = tmp >> 8;                     // Init Timer Higher Byte
-  95   1              TR0             = 1;                            // Start Timer1
-  96   1              ET0             = 1;                            // Enable Timer1 Interrupt
+  77   1              // Prepare next layer of data 8 * 8 bits
+  78   1      
+  79   1              tLayer ++;
+  80   1              tLayer &= 0x07;
+  81   1      
+  82   1              for (i=0; i<=7; i++)
+  83   1              {
+  84   2                      tByte = mLED[tLayer][i];
+  85   2                      for (j=0; j<=7; j++)
+  86   2                      {
+  87   3                              if (tByte & 0x80)
+  88   3                                      S_DATA_H
+  89   3                              else
+  90   3                                      S_DATA_L
+  91   3      
+  92   3                              S_CLK
+  93   3                              tByte = tByte << 1;
+  94   3                              uart_rx();
+  95   3                      }
+  96   2              }
   97   1      
-  98   1              // Prepare 1 layer of data 8 * 8 bits
+  98   1              S_DATA_L
   99   1      
- 100   1              for (i=0; i<=7; i++)
- 101   1              {
- 102   2                      tByte = mLED[tLayer][i];
- 103   2                      for (j=0; j<=7; j++)
- 104   2                      {
- 105   3                              if (tByte & 0x80)
- 106   3                                      S_DATA_H
- 107   3                              else
- 108   3                                      S_DATA_L
- 109   3      
- 110   3                              S_CLK
- 111   3                              tByte = tByte << 1;
- 112   3                      }
- 113   2              }
- 114   1      
- 115   1              S_DATA_L
- 116   1      
- 117   1              switch (tLayer & 0x07)
-C51 COMPILER V7.06   FM_3D8_MAIN                                                           01/20/2012 18:06:17 PAGE 3   
+ 100   1              // Everything is prepared and waiting to latch out at next cycle
+ 101   1      
+ 102   1      }
+ 103          
+ 104          
+ 105          void uart_rx(void)
+ 106          {
+ 107   1              unsigned char tbyte;
+ 108   1      
+ 109   1              if (RI)
+ 110   1              {
+ 111   2                      RI              = 0;            // Clear UART Rx Flag
+ 112   2                      tbyte   = SBUF;         // Read data from UART_RX
+ 113   2                      SBUF    = tbyte;        // echo data back to UART_TX
+ 114   2              }
+ 115   1      
+ 116   1      }
+ 117          /*------------------------------------------------
+C51 COMPILER V7.06   FM_3D8_MAIN                                                           01/27/2012 02:06:29 PAGE 3   
 
- 118   1              {
- 119   2                      case 0:
- 120   2      //                      G0_H
- 121   2                              tByte = 0x01;
- 122   2                              break;
- 123   2                      case 1:
- 124   2      //                      G1_H
- 125   2                              tByte = 0x02;
- 126   2                              break;
- 127   2                      case 2:
- 128   2      //                      G2_H
- 129   2                              tByte = 0x04;
- 130   2                              break;
- 131   2                      case 3:
- 132   2      //                      G3_H
- 133   2                              tByte = 0x08;
- 134   2                              break;
- 135   2                      case 4:
- 136   2      //                      G4_H
- 137   2                              tByte = 0x10;
- 138   2                              break;
- 139   2                      case 5:
- 140   2      //                      G5_H
- 141   2                              tByte = 0x20;
- 142   2                              break;
- 143   2                      case 6:
- 144   2      //                      G6_H
- 145   2                              tByte = 0x40;
- 146   2                              break;
- 147   2                      case 7:
- 148   2      //                      G7_H
- 149   2                              tByte = 0x80;
- 150   2                              break;
- 151   2                      default:
- 152   2                              break;
- 153   2              }       
- 154   1              
- 155   1              // Everything is prepared and waiting for latch out in next cycle
+ 118          The main C function.  Program execution starts
+ 119          here after stack initialization.
+ 120          ------------------------------------------------*/
+ 121          void main (void) {
+ 122   1      
+ 123   1      
+ 124   1      //      Init Timer0
+ 125   1              TMOD    |= 0x01;                        // Set Timer to 16bits mode
+ 126   1              TL0     = T500US;                       // Init Timer Lower Byte
+ 127   1              TH0             = T500US >> 8;          // Init Timer Higher Byte
+ 128   1              TR0             = 0;                            // Start Timer1
+ 129   1              ET0             = 0;                            // Enable Timer1 Interrupt
+ 130   1              IP              |= 0x02;                        // Set interrupt priority to 1
+ 131   1      
+ 132   1      //      Init Timer1
+ 133   1              TMOD    |= 0x10;                        // Set Timer to 16bits mode
+ 134   1              TL1     = T1MS;                         // Init Timer Lower Byte
+ 135   1              TH1             = T1MS >> 8;            // Init Timer Higher Byte
+ 136   1              TR1             = 1;                            // Start Timer1
+ 137   1              ET1             = 1;                            // Enable Timer1 Interrupt
+ 138   1      
+ 139   1      //      Init UART
+ 140   1              SCON = 0x50;                            // 8-bits UART No parity
+ 141   1              TL2  = RCAP2L = (65536-(FOSC/32/BAUD));
+ 142   1              TH2  = RCAP2H = (65536-(FOSC/32/BAUD)) >> 8;
+ 143   1              T2CON = 0x34;
+ 144   1      
+ 145   1      
+ 146   1      //      Init system variable
+ 147   1      
+ 148   1              mLED[0][0]      = 0x5A;
+ 149   1              mLED[0][1]  = 0xA5;
+ 150   1              mLED[0][2]      = 0xFF;
+ 151   1              mLED[0][3]      = 0x00;
+ 152   1              mLED[0][4]      = 0x01;
+ 153   1              mLED[0][5]      = 0x02;
+ 154   1              mLED[0][6]      = 0x03;
+ 155   1              mLED[0][7]      = 0x04;
  156   1      
- 157   1      }
- 158          
- 159          
- 160          
- 161          /*------------------------------------------------
- 162          The main C function.  Program execution starts
- 163          here after stack initialization.
- 164          ------------------------------------------------*/
- 165          void main (void) {
- 166   1      
- 167   1      
- 168   1      //      Init Timer0
- 169   1              TMOD    |= 0x01;                        // Set Timer to 16bits mode
- 170   1              TL0     = T500US;                       // Init Timer Lower Byte
- 171   1              TH0             = T500US >> 8;          // Init Timer Higher Byte
- 172   1              TR0             = 0;                            // Start Timer1
- 173   1              ET0             = 0;                            // Enable Timer1 Interrupt
- 174   1      //      PT0H    = 0;
- 175   1      //      PT0             = 1;
- 176   1      
- 177   1              IP              |= 0x02;
+ 157   1              mLED[1][1]  = 0xff;
+ 158   1              mLED[2][2]  = 0xff;
+ 159   1              mLED[3][3]  = 0xff;
+ 160   1              mLED[4][4]  = 0xff;
+ 161   1              mLED[5][5]  = 0xff;
+ 162   1              mLED[6][6]  = 0xff;
+ 163   1              mLED[7][7]  = 0xff;
+ 164   1      
+ 165   1              mLED_BRIGHTNESS[0] = 0xF0;
+ 166   1              mLED_BRIGHTNESS[1] = 0xC0;
+ 167   1              mLED_BRIGHTNESS[2] = 0xA0;
+ 168   1              mLED_BRIGHTNESS[3] = 0x80;
+ 169   1              mLED_BRIGHTNESS[4] = 0x60;
+ 170   1              mLED_BRIGHTNESS[5] = 0x40;
+ 171   1              mLED_BRIGHTNESS[6] = 0x20;
+ 172   1              mLED_BRIGHTNESS[7] = 0x01;
+ 173   1      
+ 174   1      //      Enable Global Interrupt
+ 175   1      //      Start the system
+ 176   1              EA              = 1;                            // Enable Global Interrupt
+ 177   1      
  178   1      
- 179   1      //      Init Timer1
-C51 COMPILER V7.06   FM_3D8_MAIN                                                           01/20/2012 18:06:17 PAGE 4   
+ 179   1              while (1) 
+C51 COMPILER V7.06   FM_3D8_MAIN                                                           01/27/2012 02:06:29 PAGE 4   
 
- 180   1              TMOD    |= 0x10;                        // Set Timer to 16bits mode
- 181   1              TL1     = T1MS;                         // Init Timer Lower Byte
- 182   1              TH1             = T1MS >> 8;            // Init Timer Higher Byte
- 183   1              TR1             = 1;                            // Start Timer1
- 184   1              ET1             = 1;                            // Enable Timer1 Interrupt
- 185   1      
- 186   1      
- 187   1      //      Init system variable
- 188   1      
- 189   1              mLED[0][0]      = 0x5A;
- 190   1              mLED[0][1]  = 0xA5;
- 191   1              mLED[0][2]      = 0xFF;
- 192   1              mLED[0][3]      = 0x00;
- 193   1              mLED[0][4]      = 0x01;
- 194   1              mLED[0][5]      = 0x02;
- 195   1              mLED[0][6]      = 0x03;
- 196   1              mLED[0][7]      = 0x04;
- 197   1      
- 198   1              mLED[1][1]  = 0xff;
- 199   1              mLED[2][2]  = 0xff;
- 200   1              mLED[3][3]  = 0xff;
- 201   1              mLED[4][4]  = 0xff;
- 202   1              mLED[5][5]  = 0xff;
- 203   1              mLED[6][6]  = 0xff;
- 204   1              mLED[7][7]  = 0xff;
- 205   1      
- 206   1              mLED_BRIGHTNESS = 0xff;
- 207   1      
- 208   1      //      Enable Global Interrupt
- 209   1      //      Start the system
- 210   1              EA              = 1;                            // Enable Global Interrupt
- 211   1      
- 212   1      
- 213   1              while (1) 
- 214   1              {
- 215   2              P2 ^= 0x01;                         /* Toggle P1.0 each time we print */
- 216   2              }
- 217   1      }
- 218          
- 219          
+ 180   1              {
+ 181   2              P2 ^= 0x01;                         /* Toggle P1.0 each time we print */
+ 182   2              }
+ 183   1      }
+ 184          
+ 185          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    293    ----
+   CODE SIZE        =    334    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     66    ----
-   IDATA SIZE       =   ----    ----
+   DATA SIZE        =     73       3
+   IDATA SIZE       =     64    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
 
