@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V5.03                                                        01/19/2012  16:50:27  PAGE 1
+BL51 BANKED LINKER/LOCATER V5.03                                                        01/27/2012  00:41:55  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V5.03, INVOKED BY:
@@ -11,6 +11,7 @@ MEMORY MODEL: SMALL
 INPUT MODULES INCLUDED:
   HELLO.obj (HELLO)
   C:\KEIL2\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL2\C51\LIB\C51S.LIB (?C?SLCMP)
   C:\KEIL2\C51\LIB\C51S.LIB (?C_INIT)
 
 
@@ -32,8 +33,9 @@ LINK MAP OF MODULE:  HELLO (HELLO)
                     0008H     0003H                  *** GAP ***
             CODE    000BH     0003H     ABSOLUTE     
             CODE    000EH     008CH     UNIT         ?C_C51STARTUP
-            CODE    009AH     0027H     UNIT         ?PR?TM0_ISR?HELLO
-            CODE    00C1H     0021H     UNIT         ?PR?MAIN?HELLO
+            CODE    009AH     0032H     UNIT         ?PR?MAIN?HELLO
+            CODE    00CCH     0027H     UNIT         ?PR?TM0_ISR?HELLO
+            CODE    00F3H     0016H     UNIT         ?C?LIB_CODE
 
 
 
@@ -57,59 +59,61 @@ SYMBOL TABLE OF MODULE:  HELLO (HELLO)
   -------         MODULE        HELLO
   C:0000H         SYMBOL        _ICE_DUMMY_
   D:0090H         PUBLIC        P1
+BL51 BANKED LINKER/LOCATER V5.03                                                      01/27/2012  00:41:55  PAGE 2
+
+
   D:00B0H         PUBLIC        P3
-  B:00A8H.7       PUBLIC        EA
-BL51 BANKED LINKER/LOCATER V5.03                                                      01/19/2012  16:50:27  PAGE 2
-
-
   D:00A8H         PUBLIC        IE
   D:00B8H         PUBLIC        IP
-  B:0098H.1       PUBLIC        TI
-  C:00C1H         PUBLIC        main
+  D:00CBH         PUBLIC        RCAP2H
+  D:00CAH         PUBLIC        RCAP2L
+  C:009AH         PUBLIC        main
+  D:0099H         PUBLIC        SBUF
   D:0098H         PUBLIC        SCON
-  D:0089H         PUBLIC        TMOD
   D:0088H         PUBLIC        TCON
-  C:009AH         PUBLIC        tm0_isr
-  B:00A8H.1       PUBLIC        ET0
+  C:00CCH         PUBLIC        tm0_isr
   D:008CH         PUBLIC        TH0
-  D:008DH         PUBLIC        TH1
+  D:00CDH         PUBLIC        TH2
   D:008AH         PUBLIC        TL0
-  B:0088H.4       PUBLIC        TR0
-  B:0088H.6       PUBLIC        TR1
+  D:00CCH         PUBLIC        TL2
   D:00C8H         PUBLIC        T2CON
   D:00D0H         PUBLIC        PSW
   -------         PROC          TM0_ISR
   -------         DO            
   D:0010H         SYMBOL        count
   -------         ENDDO         
-  C:009AH         LINE#         23
-  C:00A1H         LINE#         27
-  C:00A4H         LINE#         28
-  C:00A7H         LINE#         29
-  C:00B4H         LINE#         30
-  C:00B4H         LINE#         31
-  C:00B9H         LINE#         32
-  C:00BCH         LINE#         33
-  C:00BCH         LINE#         35
+  C:00CCH         LINE#         25
+  C:00D3H         LINE#         29
+  C:00D6H         LINE#         30
+  C:00D9H         LINE#         31
+  C:00E6H         LINE#         32
+  C:00E6H         LINE#         33
+  C:00EBH         LINE#         34
+  C:00EEH         LINE#         35
+  C:00EEH         LINE#         37
   -------         ENDPROC       TM0_ISR
   -------         PROC          MAIN
-  C:00C1H         LINE#         43
-  C:00C1H         LINE#         49
-  C:00C4H         LINE#         50
-  C:00C7H         LINE#         51
-  C:00CAH         LINE#         52
-  C:00CCH         LINE#         53
-  C:00CEH         LINE#         57
-  C:00D1H         LINE#         58
-  C:00D4H         LINE#         59
-  C:00D7H         LINE#         60
-  C:00D9H         LINE#         61
-  C:00DBH         LINE#         62
-  C:00DDH         LINE#         69
-  C:00DDH         LINE#         70
-  C:00E0H         LINE#         72
+  -------         DO            
+  D:0082H         SYMBOL        i
+  -------         ENDDO         
+  C:009AH         LINE#         45
+  C:009AH         LINE#         61
+  C:009DH         LINE#         62
+  C:00A3H         LINE#         63
+  C:00A9H         LINE#         64
+  C:00ACH         LINE#         82
+  C:00ACH         LINE#         83
+  C:00AFH         LINE#         86
+  C:00B2H         LINE#         87
+  C:00C8H         LINE#         88
+  C:00C8H         LINE#         89
+  C:00C9H         LINE#         90
   -------         ENDPROC       MAIN
   -------         ENDMOD        HELLO
 
-Program Size: data=19.0 xdata=0 code=223
+  -------         MODULE        ?C?SLCMP
+  C:00F3H         PUBLIC        ?C?SLCMP
+  -------         ENDMOD        ?C?SLCMP
+
+Program Size: data=19.0 xdata=0 code=262
 LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

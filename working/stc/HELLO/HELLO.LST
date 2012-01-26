@@ -1,4 +1,4 @@
-C51 COMPILER V7.06   HELLO                                                                 01/19/2012 16:50:26 PAGE 1   
+C51 COMPILER V7.06   HELLO                                                                 01/27/2012 00:41:54 PAGE 1   
 
 
 C51 COMPILER V7.06, COMPILATION OF MODULE HELLO
@@ -17,77 +17,96 @@ stmt level    source
    8                                            /* for the intended 8051 derivative         */
    9          
   10          #include <stdio.h>                /* prototype declarations for I/O functions */
-  11          
+  11          #include <INTRINS.H>
   12          
-  13          #ifdef MONITOR51                         /* Debugging with Monitor-51 needs   */
-              char code reserve [3] _at_ 0x23;         /* space for serial interrupt if     */
-              #endif                                   /* Stop Exection with Serial Intr.   */
-  16                                                   /* is enabled                        */
-  17          #define FOSC 18432000L
-  18          #define T1MS (65536 - FOSC/12/1000)
+  13          #define MONITOR51 1
+  14          #define FOSC 18432000L
+  15          //#define FOSC 16000000L
+  16          #define BAUD 115200
+  17          
+  18          
   19          
-  20          
-  21          /* Timer0 interrupt routine */
+  20          #define T1MS (65536 - FOSC/12/1000)
+  21          
   22          
-  23          void tm0_isr() interrupt 1 using 1
-  24          {
-  25   1      
-  26   1              static unsigned int count=0;
-  27   1              TL0 = T1MS;
-  28   1              TH0 = T1MS >> 8;
-  29   1              if (count -- == 0)
-  30   1              {
-  31   2                      count = 250;
-  32   2                      P1 ^= 0x02;
-  33   2              }
-  34   1      
-  35   1      }
-  36          
-  37          
+  23          /* Timer0 interrupt routine */
+  24          // 1mS interrupt
+  25          void tm0_isr() interrupt 1 using 1
+  26          {
+  27   1      
+  28   1              static unsigned int count=0;
+  29   1              TL0 = T1MS;
+  30   1              TH0 = T1MS >> 8;
+  31   1              if (count -- == 0)
+  32   1              {
+  33   2                      count = 250;
+  34   2                      P1 ^= 0x02;
+  35   2              }
+  36   1      
+  37   1      }
   38          
-  39          /*------------------------------------------------
-  40          The main C function.  Program execution starts
-  41          here after stack initialization.
-  42          ------------------------------------------------*/
-  43          void main (void) {
-  44   1      
-  45   1      /*------------------------------------------------
-  46   1      Setup the serial port for 1200 baud at 16MHz.
-  47   1      ------------------------------------------------*/
-  48   1      #ifndef MONITOR51
-  49   1          SCON  = 0x50;                       /* SCON: mode 1, 8-bit UART, enable rcvr      */
-  50   1          TMOD |= 0x20;               /* TMOD: timer 1, mode 2, 8-bit reload        */
-  51   1          TH1   = 221;                /* TH1:  reload value for 1200 baud @ 16MHz   */
-  52   1          TR1   = 1;                  /* TR1:  timer 1 run                          */
-  53   1          TI    = 1;                  /* TI:   set TI to send first char of UART    */
-  54   1      #endif
-  55   1      
-C51 COMPILER V7.06   HELLO                                                                 01/19/2012 16:50:26 PAGE 2   
+  39          
+  40          
+  41          /*------------------------------------------------
+  42          The main C function.  Program execution starts
+  43          here after stack initialization.
+  44          ------------------------------------------------*/
+  45          void main (void) {
+  46   1      
+  47   1      unsigned int i;
+  48   1      
+  49   1      /*------------------------------------------------
+  50   1      Setup the serial port for 1200 baud at 16MHz.
+  51   1      ------------------------------------------------*/
+  52   1      #ifndef MONITOR51
+                  SCON  = 0x50;                       /* SCON: mode 1, 8-bit UART, enable rcvr      */
+                  TMOD |= 0x20;               /* TMOD: timer 1, mode 2, 8-bit reload        */
+                  TH1   = 221;                /* TH1:  reload value for 1200 baud @ 16MHz   */
+C51 COMPILER V7.06   HELLO                                                                 01/27/2012 00:41:54 PAGE 2   
 
-  56   1      //      Timer0 : produce 1ms Interrupt
-  57   1              TMOD    = 0x01;                         // Set Timer0 to 16bits mode
-  58   1              TL0     = T1MS;                         // Init Timer Lower Byte
-  59   1              TH0             = T1MS >> 8;            // Init Timer Higher Byte
-  60   1              TR0             = 1;                            // Start Timer0
-  61   1              ET0             = 1;                            // Enable Timer0 Interrupt
-  62   1              EA              = 1;                            // Enable Global Interrupt
-  63   1      
-  64   1      /*------------------------------------------------
-  65   1      Note that an embedded program never exits (because
-  66   1      there is no operating system to return to).  It
-  67   1      must loop and execute forever.
-  68   1      ------------------------------------------------*/
-  69   1        while (1) {
-  70   2          P1 ^= 0x01;                     /* Toggle P1.0 each time we print */
-  71   2      //    printf ("Hello World\n");   /* Print "Hello World" */
-  72   2        }
-  73   1      }
-  74          
-  75          
+                  TR1   = 1;                  /* TR1:  timer 1 run                          */
+                  TI    = 1;                  /* TI:   set TI to send first char of UART    */
+              #endif
+  59   1      
+  60   1      
+  61   1              SCON = 0x50;                            // 8-bits UART No parity
+  62   1              TL2  = RCAP2L = (65536-(FOSC/32/BAUD));
+  63   1              TH2  = RCAP2H = (65536-(FOSC/32/BAUD)) >> 8;
+  64   1              T2CON = 0x34;
+  65   1      
+  66   1      
+  67   1      /*
+  68   1      //      Timer0 : produce 1ms Interrupt
+  69   1              TMOD    = 0x01;                         // Set Timer0 to 16bits mode
+  70   1              TL0     = T1MS;                         // Init Timer Lower Byte
+  71   1              TH0             = T1MS >> 8;            // Init Timer Higher Byte
+  72   1              TR0             = 1;                            // Start Timer0
+  73   1              ET0             = 1;                            // Enable Timer0 Interrupt
+  74   1              EA              = 1;                            // Enable Global Interrupt
+  75   1      
+  76   1      */
+  77   1      /*------------------------------------------------
+  78   1      Note that an embedded program never exits (because
+  79   1      there is no operating system to return to).  It
+  80   1      must loop and execute forever.
+  81   1      ------------------------------------------------*/
+  82   1        while (1) {
+  83   2          P1 ^= 0x01;                     /* Toggle P1.0 each time we print */
+  84   2       //   printf ("Hello World\n");   /* Print "Hello World" */
+  85   2       //   printf ("A");   /* Print "Hello World" */
+  86   2              SBUF = 'A';
+  87   2              for (i=0; i<=50000; i++)
+  88   2          {
+  89   3                      _nop_();
+  90   3              }
+  91   2              }
+  92   1      }
+  93          
+  94          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     72    ----
+   CODE SIZE        =     89    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
