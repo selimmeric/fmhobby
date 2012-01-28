@@ -1,8 +1,8 @@
-BL51 BANKED LINKER/LOCATER V5.03                                                        01/27/2012  02:06:30  PAGE 1
+BL51 BANKED LINKER/LOCATER V5.03                                                        01/28/2012  03:04:06  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V5.03, INVOKED BY:
-C:\KEIL2\C51\BIN\BL51.EXE .\STARTUP.obj, fm_3d8_main.obj TO fm_3d8 RAMSIZE (256)
+C:\KEIL2\C51\BIN\BL51.EXE .\STARTUP.obj, fm_3d8_main.obj, utility.obj TO fm_3d8 RAMSIZE (256)
 
 
 MEMORY MODEL: SMALL
@@ -11,7 +11,10 @@ MEMORY MODEL: SMALL
 INPUT MODULES INCLUDED:
   .\STARTUP.obj (?C_STARTUP)
   fm_3d8_main.obj (FM_3D8_MAIN)
+  utility.obj (UTILITY)
   C:\KEIL2\C51\LIB\C51S.LIB (?C_INIT)
+  C:\KEIL2\C51\LIB\C51S.LIB (?C?CLDPTR)
+  C:\KEIL2\C51\LIB\C51S.LIB (?C?CSTPTR)
 
 
 LINK MAP OF MODULE:  fm_3d8 (?C_STARTUP)
@@ -22,44 +25,72 @@ LINK MAP OF MODULE:  fm_3d8 (?C_STARTUP)
 
             * * * * * * *   D A T A   M E M O R Y   * * * * * * *
             REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
-            DATA    0008H     0003H     UNIT         _DATA_GROUP_
-                    000BH     0005H                  *** GAP ***
+            REG     0008H     0008H     ABSOLUTE     "REG BANK 1"
             REG     0010H     0008H     ABSOLUTE     "REG BANK 2"
-            DATA    0018H     0049H     UNIT         ?DT?FM_3D8_MAIN
-            IDATA   0061H     0040H     UNIT         ?ID?FM_3D8_MAIN
-            IDATA   00A1H     0001H     UNIT         ?STACK
+            DATA    0018H     0011H     UNIT         ?DT?UTILITY
+            DATA    0029H     0007H     UNIT         ?DT?FM_3D8_MAIN
+            DATA    0030H     0004H     UNIT         _DATA_GROUP_
+            DATA    0034H     0003H     UNIT         ?DT?_U_PUTS?UTILITY
+            DATA    0037H     0002H     UNIT         ?DT?_U_PUTHEXBYTE?UTILITY
+            DATA    0039H     0002H     UNIT         ?DT?_U_PUTCH?UTILITY
+            IDATA   003BH     0052H     UNIT         ?ID?FM_3D8_MAIN
+            IDATA   008DH     0001H     UNIT         ?STACK
 
             * * * * * * *   C O D E   M E M O R Y   * * * * * * *
             CODE    0000H     0003H     ABSOLUTE     
             CODE    0003H     0008H     UNIT         ?PR?TM0_ISR?FM_3D8_MAIN
             CODE    000BH     0003H     ABSOLUTE     
-            CODE    000EH     000AH     UNIT         ?PR?UART_RX?FM_3D8_MAIN
-                    0018H     0003H                  *** GAP ***
+            CODE    000EH     000BH     UNIT         ?PR?ISR_UART_RX?FM_3D8_MAIN
+            CODE    0019H     0001H     UNIT         ?PR?PROCESS_UART?FM_3D8_MAIN
+                    001AH     0001H                  *** GAP ***
             CODE    001BH     0003H     ABSOLUTE     
-            CODE    001EH     00C1H     UNIT         ?PR?TM1_ISR?FM_3D8_MAIN
-            CODE    00DFH     008CH     UNIT         ?C_C51STARTUP
-            CODE    016BH     007BH     UNIT         ?PR?MAIN?FM_3D8_MAIN
-            CODE    01E6H     0004H     UNIT         ?C_INITSEG
+                    001EH     0005H                  *** GAP ***
+            CODE    0023H     0003H     ABSOLUTE     
+            CODE    0026H     00CAH     UNIT         ?PR?TM1_ISR?FM_3D8_MAIN
+            CODE    00F0H     008CH     UNIT         ?C_C51STARTUP
+            CODE    017CH     0089H     UNIT         ?PR?MAIN?FM_3D8_MAIN
+            CODE    0205H     0035H     UNIT         ?PR?_U_PUTHEXBYTE?UTILITY
+            CODE    023AH     002FH     UNIT         ?C_INITSEG
+            CODE    0269H     002BH     UNIT         ?C?LIB_CODE
+            CODE    0294H     0025H     UNIT         ?PR?_U_PUTS?UTILITY
+            CODE    02B9H     0024H     UNIT         ?PR?_FIFO_RD?FM_3D8_MAIN
+            CODE    02DDH     001FH     UNIT         ?PR?_FIFO_WR?FM_3D8_MAIN
+            CODE    02FCH     001BH     UNIT         ?PR?PROCESS_TIMER?FM_3D8_MAIN
+            CODE    0317H     0017H     UNIT         ?PR?UART_ISR?FM_3D8_MAIN
+            CODE    032EH     0014H     UNIT         ?PR?_U_PUTCH?UTILITY
+            CODE    0342H     000AH     UNIT         ?PR?UART_RX?FM_3D8_MAIN
+BL51 BANKED LINKER/LOCATER V5.03                                                      01/28/2012  03:04:06  PAGE 2
+
+
 
 
 
 OVERLAY MAP OF MODULE:   fm_3d8 (?C_STARTUP)
 
 
-SEGMENT                           DATA_GROUP 
-  +--> CALLED SEGMENT           START    LENGTH
------------------------------------------------
-?C_C51STARTUP                   -----    -----
+SEGMENT                                 DATA_GROUP 
+  +--> CALLED SEGMENT                 START    LENGTH
+-----------------------------------------------------
+?C_C51STARTUP                         -----    -----
   +--> ?PR?MAIN?FM_3D8_MAIN
   +--> ?C_INITSEG
 
+?PR?MAIN?FM_3D8_MAIN                  0030H    0001H
+  +--> ?PR?PROCESS_TIMER?FM_3D8_MAIN
+  +--> ?PR?PROCESS_UART?FM_3D8_MAIN
+
 *** NEW ROOT ***************************************************
 
-?PR?TM1_ISR?FM_3D8_MAIN         0008H    0003H
+?PR?UART_ISR?FM_3D8_MAIN              -----    -----
+  +--> ?PR?ISR_UART_RX?FM_3D8_MAIN
+
+?PR?ISR_UART_RX?FM_3D8_MAIN           -----    -----
+  +--> ?PR?_FIFO_WR?FM_3D8_MAIN
+
+*** NEW ROOT ***************************************************
+
+?PR?TM1_ISR?FM_3D8_MAIN               0031H    0003H
   +--> ?PR?UART_RX?FM_3D8_MAIN
-
-
-BL51 BANKED LINKER/LOCATER V5.03                                                      01/27/2012  02:06:30  PAGE 2
 
 
 
@@ -69,8 +100,8 @@ SYMBOL TABLE OF MODULE:  fm_3d8 (?C_STARTUP)
   ----------------------------------
 
   -------         MODULE        ?C_STARTUP
-  C:00DFH         SEGMENT       ?C_C51STARTUP
-  I:00A1H         SEGMENT       ?STACK
+  C:00F0H         SEGMENT       ?C_C51STARTUP
+  I:008DH         SEGMENT       ?STACK
   C:0000H         PUBLIC        ?C_STARTUP
   D:00E0H         SYMBOL        ACC
   D:00F0H         SYMBOL        B
@@ -79,7 +110,7 @@ SYMBOL TABLE OF MODULE:  fm_3d8 (?C_STARTUP)
   N:0000H         SYMBOL        IBPSTACK
   N:0100H         SYMBOL        IBPSTACKTOP
   N:0080H         SYMBOL        IDATALEN
-  C:00E2H         SYMBOL        IDATALOOP
+  C:00F3H         SYMBOL        IDATALOOP
   N:0000H         SYMBOL        PBPSTACK
   N:0000H         SYMBOL        PBPSTACKTOP
   N:0000H         SYMBOL        PDATALEN
@@ -88,184 +119,375 @@ SYMBOL TABLE OF MODULE:  fm_3d8 (?C_STARTUP)
   N:0000H         SYMBOL        PPAGEENABLE
   D:00A0H         SYMBOL        PPAGE_SFR
   D:0081H         SYMBOL        SP
-  C:00DFH         SYMBOL        STARTUP1
+BL51 BANKED LINKER/LOCATER V5.03                                                      01/28/2012  03:04:06  PAGE 3
+
+
+  C:00F0H         SYMBOL        STARTUP1
   N:0000H         SYMBOL        XBPSTACK
   N:0000H         SYMBOL        XBPSTACKTOP
   N:0000H         SYMBOL        XDATALEN
   N:0000H         SYMBOL        XDATASTART
   C:0000H         LINE#         92
-  C:00DFH         LINE#         99
-  C:00E1H         LINE#         100
-  C:00E2H         LINE#         101
-  C:00E3H         LINE#         102
-  C:00E5H         LINE#         151
-  C:00E8H         LINE#         155
+  C:00F0H         LINE#         99
+  C:00F2H         LINE#         100
+  C:00F3H         LINE#         101
+  C:00F4H         LINE#         102
+  C:00F6H         LINE#         151
+  C:00F9H         LINE#         155
   -------         ENDMOD        ?C_STARTUP
 
   -------         MODULE        FM_3D8_MAIN
   C:0000H         SYMBOL        _ICE_DUMMY_
+  I:003BH         PUBLIC        mRx_wr_index
   D:0090H         PUBLIC        P1
-  D:00A0H         PUBLIC        P2
   D:00B0H         PUBLIC        P3
-  I:0061H         PUBLIC        mLEDA
   B:00A8H.7       PUBLIC        EA
-  C:000EH         PUBLIC        uart_rx
+  C:0342H         PUBLIC        uart_rx
   D:00A8H         PUBLIC        IE
+  C:000EH         PUBLIC        ISR_UART_RX
+  B:00A8H.4       PUBLIC        ES
+  D:002DH         PUBLIC        m1SCnt
   D:00B8H         PUBLIC        IP
   B:0098H.0       PUBLIC        RI
-  D:0019H         PUBLIC        mLED_BRIGHTNESS
+  B:0098H.1       PUBLIC        TI
+  C:0019H         PUBLIC        process_UART
+  I:003CH         PUBLIC        mLED_BRIGHTNESS
   D:00CBH         PUBLIC        RCAP2H
   D:00CAH         PUBLIC        RCAP2L
-  C:016BH         PUBLIC        main
+  C:017CH         PUBLIC        main
+  C:0317H         PUBLIC        Uart_Isr
   D:0099H         PUBLIC        SBUF
   D:0098H         PUBLIC        SCON
-BL51 BANKED LINKER/LOCATER V5.03                                                      01/27/2012  02:06:30  PAGE 3
-
-
   D:0089H         PUBLIC        TMOD
   D:0088H         PUBLIC        TCON
+  C:02B9H         PUBLIC        _fifo_rd
+  I:0044H         PUBLIC        mRx_fifo
+  D:002EH         PUBLIC        mTx_Busy
   C:0003H         PUBLIC        tm0_isr
-  C:001EH         PUBLIC        tm1_isr
-  D:0021H         PUBLIC        mLED
+  C:0026H         PUBLIC        tm1_isr
+  I:004CH         PUBLIC        mLED
   B:00A8H.1       PUBLIC        ET0
   B:00A8H.3       PUBLIC        ET1
   D:008CH         PUBLIC        TH0
   D:008DH         PUBLIC        TH1
   D:00CDH         PUBLIC        TH2
+  C:02DDH         PUBLIC        _fifo_wr
   D:008AH         PUBLIC        TL0
   D:008BH         PUBLIC        TL1
   D:00CCH         PUBLIC        TL2
   B:0088H.4       PUBLIC        TR0
   B:0088H.6       PUBLIC        TR1
+  C:02FCH         PUBLIC        process_TIMER
   D:00C8H         PUBLIC        T2CON
+BL51 BANKED LINKER/LOCATER V5.03                                                      01/28/2012  03:04:06  PAGE 4
+
+
+  I:008CH         PUBLIC        mRx_rd_index
+  D:002FH         PUBLIC        mTimerFlag
   D:00D0H         PUBLIC        PSW
+  -------         PROC          _FIFO_RD
+  D:0001H         SYMBOL        iByte
+  -------         DO            
+  D:0007H         SYMBOL        tIndex
+  -------         ENDDO         
+  C:02B9H         LINE#         23
+  C:02B9H         LINE#         24
+  C:02B9H         LINE#         26
+  C:02C2H         LINE#         27
+  C:02C4H         LINE#         29
+  C:02C7H         LINE#         30
+  C:02CCH         LINE#         31
+  C:02CEH         LINE#         33
+  C:02D2H         LINE#         34
+  C:02DAH         LINE#         35
+  C:02DCH         LINE#         36
+  -------         ENDPROC       _FIFO_RD
+  -------         PROC          _FIFO_WR
+  D:0007H         SYMBOL        iByte
+  -------         DO            
+  D:0006H         SYMBOL        tIndex
+  -------         ENDDO         
+  C:02DDH         LINE#         38
+  C:02DDH         LINE#         39
+  C:02DDH         LINE#         42
+  C:02E2H         LINE#         43
+  C:02E7H         LINE#         44
+  C:02E9H         LINE#         46
+  C:02EFH         LINE#         47
+  C:02F3H         LINE#         49
+  C:02FBH         LINE#         50
+  -------         ENDPROC       _FIFO_WR
+  -------         PROC          ISR_UART_RX
+  -------         DO            
+  D:0007H         SYMBOL        tByte
+  -------         ENDDO         
+  C:000EH         LINE#         53
+  C:000EH         LINE#         54
+  C:000EH         LINE#         57
+  C:0011H         LINE#         58
+  C:0011H         LINE#         59
+  C:0013H         LINE#         60
+  C:0015H         LINE#         61
+  C:0018H         LINE#         62
+  C:0018H         LINE#         64
+  -------         ENDPROC       ISR_UART_RX
+  -------         PROC          UART_ISR
+  C:0317H         LINE#         66
+  C:031EH         LINE#         69
+  C:0321H         LINE#         71
+  C:0324H         LINE#         72
+  C:0324H         LINE#         73
+  C:0326H         LINE#         74
+  C:0329H         LINE#         75
+BL51 BANKED LINKER/LOCATER V5.03                                                      01/28/2012  03:04:06  PAGE 5
+
+
+  C:0329H         LINE#         77
+  -------         ENDPROC       UART_ISR
   -------         PROC          TM0_ISR
-  C:0003H         LINE#         24
-  C:0003H         LINE#         27
-  C:0005H         LINE#         28
-  C:0007H         LINE#         29
-  C:000AH         LINE#         31
+  C:0003H         LINE#         82
+  C:0003H         LINE#         85
+  C:0005H         LINE#         86
+  C:0007H         LINE#         87
+  C:000AH         LINE#         89
   -------         ENDPROC       TM0_ISR
   -------         PROC          TM1_ISR
   -------         DO            
-  D:0018H         SYMBOL        tLayer
-  D:0008H         SYMBOL        i
-  D:0009H         SYMBOL        j
-  D:000AH         SYMBOL        tByte
+  D:0029H         SYMBOL        tLayer
+  D:002AH         SYMBOL        tCnt_100mS
+  D:0031H         SYMBOL        i
+  D:0032H         SYMBOL        j
+  D:0033H         SYMBOL        tByte
   D:0016H         SYMBOL        tmp
   -------         ENDDO         
-  C:001EH         LINE#         35
-  C:002BH         LINE#         41
-  C:002EH         LINE#         43
-  C:0031H         LINE#         44
-  C:0034H         LINE#         47
-  C:0036H         LINE#         48
-  C:0038H         LINE#         49
-  C:003BH         LINE#         51
-  C:003EH         LINE#         52
-  C:0040H         LINE#         53
-  C:0046H         LINE#         54
-  C:0049H         LINE#         59
-  C:0051H         LINE#         60
-  C:0051H         LINE#         61
-  C:0060H         LINE#         62
-  C:0064H         LINE#         63
-  C:0067H         LINE#         64
-  C:0067H         LINE#         65
-  C:0076H         LINE#         66
-  C:007DH         LINE#         67
-  C:007FH         LINE#         68
-  C:0081H         LINE#         69
-  C:0083H         LINE#         70
-  C:0085H         LINE#         71
-  C:0087H         LINE#         73
-BL51 BANKED LINKER/LOCATER V5.03                                                      01/27/2012  02:06:30  PAGE 4
+  C:0026H         LINE#         93
+  C:0033H         LINE#         100
+  C:0036H         LINE#         103
+  C:0038H         LINE#         104
+  C:003AH         LINE#         107
+  C:003DH         LINE#         108
+  C:0040H         LINE#         112
+  C:0043H         LINE#         113
+  C:0045H         LINE#         114
+  C:004BH         LINE#         115
+  C:004EH         LINE#         120
+  C:0056H         LINE#         121
+  C:0056H         LINE#         122
+  C:0065H         LINE#         123
+  C:0069H         LINE#         124
+  C:006CH         LINE#         125
+  C:006CH         LINE#         126
+  C:007BH         LINE#         127
+  C:0082H         LINE#         128
+  C:0084H         LINE#         129
+  C:0086H         LINE#         130
+  C:0088H         LINE#         131
+  C:008AH         LINE#         132
+  C:008CH         LINE#         134
+  C:008CH         LINE#         135
+  C:008FH         LINE#         136
+  C:008FH         LINE#         140
+  C:0091H         LINE#         141
+  C:0094H         LINE#         143
+  C:0097H         LINE#         144
+  C:0097H         LINE#         145
+  C:00A5H         LINE#         146
+  C:00A8H         LINE#         147
+  C:00A8H         LINE#         148
+  C:00ADH         LINE#         149
+  C:00B2H         LINE#         151
+  C:00B5H         LINE#         153
+  C:00BBH         LINE#         154
+  C:00C1H         LINE#         155
+BL51 BANKED LINKER/LOCATER V5.03                                                      01/28/2012  03:04:06  PAGE 6
 
 
-  C:0087H         LINE#         74
-  C:008AH         LINE#         75
-  C:008AH         LINE#         79
-  C:008CH         LINE#         80
-  C:008FH         LINE#         82
-  C:0092H         LINE#         83
-  C:0092H         LINE#         84
-  C:00A0H         LINE#         85
-  C:00A3H         LINE#         86
-  C:00A3H         LINE#         87
-  C:00A8H         LINE#         88
-  C:00ADH         LINE#         90
-  C:00B0H         LINE#         92
-  C:00B6H         LINE#         93
-  C:00BCH         LINE#         94
-  C:00BFH         LINE#         95
-  C:00C8H         LINE#         96
-  C:00D1H         LINE#         98
-  C:00D4H         LINE#         102
+  C:00C4H         LINE#         156
+  C:00CDH         LINE#         157
+  C:00D6H         LINE#         159
+  C:00D9H         LINE#         164
+  C:00DBH         LINE#         165
+  C:00E2H         LINE#         166
+  C:00E5H         LINE#         168
   -------         ENDPROC       TM1_ISR
   -------         PROC          UART_RX
   -------         DO            
   D:0007H         SYMBOL        tbyte
   -------         ENDDO         
-  C:000EH         LINE#         105
-  C:000EH         LINE#         106
-  C:000EH         LINE#         109
-  C:0011H         LINE#         110
-  C:0011H         LINE#         111
-  C:0013H         LINE#         112
-  C:0015H         LINE#         113
-  C:0017H         LINE#         114
-  C:0017H         LINE#         116
+  C:0342H         LINE#         171
+  C:0342H         LINE#         172
+  C:0342H         LINE#         175
+  C:0345H         LINE#         176
+  C:0345H         LINE#         177
+  C:0347H         LINE#         178
+  C:0349H         LINE#         179
+  C:034BH         LINE#         180
+  C:034BH         LINE#         182
   -------         ENDPROC       UART_RX
+  -------         PROC          PROCESS_TIMER
+  -------         DO            
+  D:002BH         SYMBOL        tCnt
+  D:002CH         SYMBOL        tSec
+  -------         ENDDO         
+  C:02FCH         LINE#         185
+  C:02FCH         LINE#         186
+  C:02FCH         LINE#         190
+  C:0300H         LINE#         191
+  C:0300H         LINE#         192
+  C:0302H         LINE#         193
+  C:0302H         LINE#         194
+  C:0302H         LINE#         197
+  C:0302H         LINE#         199
+  C:0309H         LINE#         200
+  C:0309H         LINE#         201
+  C:030CH         LINE#         202
+  C:030CH         LINE#         203
+  C:030CH         LINE#         205
+  C:030CH         LINE#         207
+  C:0311H         LINE#         208
+  C:0311H         LINE#         209
+  C:0313H         LINE#         210
+  C:0313H         LINE#         211
+  C:0313H         LINE#         213
+  C:0316H         LINE#         215
+  C:0316H         LINE#         217
+  -------         ENDPROC       PROCESS_TIMER
+  -------         PROC          PROCESS_UART
+  C:0019H         LINE#         219
+  C:0019H         LINE#         220
+  C:0019H         LINE#         223
+  -------         ENDPROC       PROCESS_UART
   -------         PROC          MAIN
-  C:016BH         LINE#         121
-  C:016BH         LINE#         125
-  C:016EH         LINE#         126
-  C:0171H         LINE#         127
-  C:0174H         LINE#         128
-  C:0176H         LINE#         129
-  C:0178H         LINE#         130
-  C:017BH         LINE#         133
-  C:017EH         LINE#         134
-  C:0181H         LINE#         135
-  C:0184H         LINE#         136
-  C:0186H         LINE#         137
-  C:0188H         LINE#         140
-  C:018BH         LINE#         141
-  C:0191H         LINE#         142
-  C:0197H         LINE#         143
-  C:019AH         LINE#         148
-  C:019DH         LINE#         149
-  C:01A0H         LINE#         150
-  C:01A3H         LINE#         151
-  C:01A6H         LINE#         152
-  C:01A9H         LINE#         153
-BL51 BANKED LINKER/LOCATER V5.03                                                      01/27/2012  02:06:30  PAGE 5
+  -------         DO            
+BL51 BANKED LINKER/LOCATER V5.03                                                      01/28/2012  03:04:06  PAGE 7
 
 
-  C:01ACH         LINE#         154
-  C:01AFH         LINE#         155
-  C:01B2H         LINE#         157
-  C:01B5H         LINE#         158
-  C:01B8H         LINE#         159
-  C:01BBH         LINE#         160
-  C:01BEH         LINE#         161
-  C:01C1H         LINE#         162
-  C:01C4H         LINE#         163
-  C:01C7H         LINE#         165
-  C:01CAH         LINE#         166
-  C:01CDH         LINE#         167
-  C:01D0H         LINE#         168
-  C:01D3H         LINE#         169
-  C:01D6H         LINE#         170
-  C:01D9H         LINE#         171
-  C:01DCH         LINE#         172
-  C:01DFH         LINE#         176
-  C:01E1H         LINE#         179
-  C:01E1H         LINE#         180
-  C:01E1H         LINE#         181
-  C:01E4H         LINE#         182
+  D:0007H         SYMBOL        i
+  D:0030H         SYMBOL        tByte
+  -------         ENDDO         
+  C:017CH         LINE#         229
+  C:017CH         LINE#         235
+  C:017FH         LINE#         236
+  C:0182H         LINE#         237
+  C:0185H         LINE#         238
+  C:0187H         LINE#         239
+  C:0189H         LINE#         240
+  C:018CH         LINE#         243
+  C:018FH         LINE#         244
+  C:0192H         LINE#         245
+  C:0195H         LINE#         246
+  C:0197H         LINE#         247
+  C:0199H         LINE#         250
+  C:019CH         LINE#         251
+  C:01A2H         LINE#         252
+  C:01A8H         LINE#         253
+  C:01ABH         LINE#         254
+  C:01ADH         LINE#         258
+  C:01B1H         LINE#         259
+  C:01B4H         LINE#         260
+  C:01B7H         LINE#         261
+  C:01BAH         LINE#         262
+  C:01BDH         LINE#         263
+  C:01C0H         LINE#         264
+  C:01C3H         LINE#         265
+  C:01C6H         LINE#         267
+  C:01CAH         LINE#         268
+  C:01CEH         LINE#         269
+  C:01D2H         LINE#         270
+  C:01D6H         LINE#         271
+  C:01DAH         LINE#         272
+  C:01DEH         LINE#         273
+  C:01E2H         LINE#         275
+  C:01E3H         LINE#         276
+  C:01E3H         LINE#         277
+  C:01F7H         LINE#         278
+  C:01FBH         LINE#         285
+  C:01FDH         LINE#         288
+  C:01FDH         LINE#         289
+  C:01FDH         LINE#         291
+  C:0200H         LINE#         294
+  C:0203H         LINE#         295
   -------         ENDPROC       MAIN
   -------         ENDMOD        FM_3D8_MAIN
 
-Program Size: data=157.0 xdata=0 code=487
-LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
+  -------         MODULE        UTILITY
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  D:00B0H         PUBLIC        P3
+  C:0294H         PUBLIC        _u_puts
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  B:0098H.1       PUBLIC        TI
+  D:0099H         PUBLIC        SBUF
+BL51 BANKED LINKER/LOCATER V5.03                                                      01/28/2012  03:04:06  PAGE 8
+
+
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  C:0205H         PUBLIC        _u_putHexByte
+  C:032EH         PUBLIC        _u_putch
+  D:00C8H         PUBLIC        T2CON
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          _U_PUTHEXBYTE
+  D:0037H         SYMBOL        c
+  D:0038H         SYMBOL        t
+  -------         DO            
+  D:0018H         SYMBOL        STR_HEX
+  -------         ENDDO         
+  C:0205H         LINE#         389
+  C:0209H         LINE#         390
+  C:0209H         LINE#         392
+  C:0225H         LINE#         393
+  C:0231H         LINE#         395
+  C:0235H         LINE#         396
+  C:0239H         LINE#         398
+  -------         ENDPROC       _U_PUTHEXBYTE
+  -------         PROC          _U_PUTCH
+  D:0007H         SYMBOL        abyte
+  -------         DO            
+  D:0039H         SYMBOL        tTimeOut
+  -------         ENDDO         
+  C:032EH         LINE#         432
+  C:032EH         LINE#         433
+  C:032EH         LINE#         434
+  C:0333H         LINE#         435
+  C:0336H         LINE#         436
+  C:0338H         LINE#         437
+  C:033CH         LINE#         438
+  C:033CH         LINE#         439
+  C:033DH         LINE#         441
+  C:033FH         LINE#         442
+  C:0341H         LINE#         444
+  -------         ENDPROC       _U_PUTCH
+  -------         PROC          _U_PUTS
+  D:0034H         SYMBOL        sptr
+  C:0294H         LINE#         466
+  C:029AH         LINE#         467
+  C:029AH         LINE#         468
+  C:02A5H         LINE#         469
+  C:02B8H         LINE#         470
+  -------         ENDPROC       _U_PUTS
+  -------         ENDMOD        UTILITY
+
+  -------         MODULE        ?C?CLDPTR
+  C:0269H         PUBLIC        ?C?CLDPTR
+  -------         ENDMOD        ?C?CLDPTR
+
+  -------         MODULE        ?C?CSTPTR
+  C:0282H         PUBLIC        ?C?CSTPTR
+  -------         ENDMOD        ?C?CSTPTR
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_FIFO_RD?FM_3D8_MAIN
+BL51 BANKED LINKER/LOCATER V5.03                                                      01/28/2012  03:04:06  PAGE 9
+
+
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_U_PUTHEXBYTE?UTILITY
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_U_PUTS?UTILITY
+
+Program Size: data=142.0 xdata=0 code=838
+LINK/LOCATE RUN COMPLETE.  3 WARNING(S),  0 ERROR(S)
