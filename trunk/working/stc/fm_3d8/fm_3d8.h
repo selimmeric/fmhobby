@@ -1,9 +1,17 @@
-#define FOSC 1*22118400L
+
+#include <REG52.H>                /* special function register declarations   */
+                                  /* for the intended 8051 derivative         */
+                                  /* is enabled		                          */
+								  
+#include <intrins.h>
+#include "utility.h"
+
+
+#define FOSC 2*22118400L
 #define BAUD 115200
+//#define BAUD 57600
+
 #define T1MS (65536 - FOSC/12/1000)
-// T1MS = 65536 - 1843
-//#define T500US (65536 - FOSC/12/500)
-//#define T500US (65535 - 1200)
 #define T500US (65535 - (51+(256*7)))
 
 

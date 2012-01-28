@@ -8,13 +8,13 @@ Group (Source Main)
 File 1,2,<C:\working\stc\fm_3d8\STARTUP.A51><STARTUP.A51> 0x0 
 File 1,1,<.\fm_3d8_main.c><fm_3d8_main.c> 0x0 
 File 1,2,<.\fm_3d8_main.SRC><fm_3d8_main.SRC> 0x0 
-File 1,5,<.\fm_3d8.h><fm_3d8.h> 0x0 
+File 1,1,<.\utility.c><utility.c> 0x0 
 
 
 Options 1,0,0  // Target 'fm_3d8'
- Device (STC89C51RC)
+ Device (STC89C52RC)
  Vendor (STC89C51RC Series)
- Cpu (IRAM(0-0xFF) XRAM(0-0xFF) IROM(0-0xFFF) CLOCK(45000000) MODP2)
+ Cpu (IRAM(0-0xFF) XRAM(0-0xFF) IROM(0-0x1FFF) CLOCK(45000000) MODP2)
  FlashUt ()
  StupF ("LIB\STARTUP.A51" ("Standard 8051 Startup Code"))
  FlashDR ()
@@ -59,11 +59,11 @@ Options 1,0,0  // Target 'fm_3d8'
  RXB51 { 0,0,0,0,0,0,0,0,0 }
  OCM51 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  OCR51 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
- IRO51 { 1,0,0,0,0,0,16,0,0 }
+ IRO51 { 1,0,0,0,0,0,32,0,0 }
  IRA51 { 0,0,0,0,0,0,1,0,0 }
  XRA51 { 0,0,0,0,0,0,1,0,0 }
  XRA512 { 0,0,0,0,0,0,0,0,0 }
- C51FL=21630224
+ C51FL=21646608
  C51VA=0
  C51MSC ()
  C51DEF ()

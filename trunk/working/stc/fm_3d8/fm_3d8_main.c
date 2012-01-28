@@ -4,20 +4,78 @@ fm_3d8_main.C
 ------------------------------------------------------------------------------*/
 //#pragma SRC
 
-#include <REG52.H>                /* special function register declarations   */
-                                  /* for the intended 8051 derivative         */
-                                  /* is enabled		                          */
-
-#include <intrins.h>
-
 #include "fm_3d8.h"
+#define VERSION "fm-3D8 1.0 @ " __DATE__ "  " __TIME__ "\r\n"
 
 // data  = direct data : 1st 128Byte
 // idata = indirect data : all 256 bytes or above
 // code  = program memory
-unsigned char data mLED[8][8];			// LED matrix
-unsigned char data mLED_BRIGHTNESS[8];	// LED brightness global to each layer
-unsigned char idata mLEDA[8][8];	// LED matrix buffer
+unsigned char idata mLED[8][8];			// LED matrix
+unsigned char idata mLED_BRIGHTNESS[8];	// LED brightness global to each layer
+//unsigned char idata mLEDA[8][8];		// LED matrix buffer
+unsigned char data 	mTimerFlag=0;		// 100mS Flag
+unsigned char data  m1SCnt=0;			// 1Sec counter
+unsigned char idata mRx_fifo[8];		// UART Rx Fifo
+unsigned char idata mRx_rd_index=0;		// read index 
+unsigned char idata mRx_wr_index=0;		// write index
+unsigned char data	mTx_Busy=0;			// TX Flag
+
+unsigned char fifo_rd(char *iByte)
+{
+	unsigned char tIndex;
+	if (mRx_rd_index == mRx_wr_index)
+		return(0);
+
+   	tIndex = mRx_rd_index+1;
+	if (tIndex >= sizeof(mRx_fifo))
+		tIndex = 0;
+
+	mRx_rd_index = tIndex;
+	*iByte = mRx_fifo[mRx_rd_index];
+	return(1);
+}
+
+void fifo_wr(unsigned char iByte)
+{
+	unsigned char tIndex;
+	
+	tIndex = mRx_wr_index + 1;
+	if (tIndex >= sizeof(mRx_fifo))
+		tIndex = 0;
+
+	if (tIndex != mRx_rd_index)
+		mRx_wr_index = tIndex;
+
+	mRx_fifo[mRx_wr_index] = iByte;
+}
+
+// UART Interrupt
+void ISR_UART_RX(void)
+{
+	unsigned char tByte;
+
+	if (RI)
+	{
+		RI = 0;			// 	Clear Rx Flag
+		tByte = SBUF;	//	
+		fifo_wr(tByte);
+	}
+
+}
+
+void Uart_Isr() interrupt 4 using 1
+{
+
+	ISR_UART_RX();		
+
+	if (TI)
+	{
+		TI = 0;			// Clear Tx Flag
+		mTx_Busy = 0;
+	}
+
+}
+
 
 /* Timer0 interrupt routine */
 // 1mS interrupt
@@ -30,23 +88,26 @@ void tm0_isr() interrupt 1 using 1
 
 }
 
-/* Timer0 interrupt routine */
+/* Timer1 interrupt routine */
 // 1mS interrupt
 void tm1_isr() interrupt 3 using 2
 {
 
 	static unsigned char tLayer=0;
+	static unsigned char tCnt_100mS=0;
 	unsigned char i,j;
 	unsigned char tByte;
 	unsigned int  tmp=0;
 
-	TL1 	= T1MS;				// Init Timer Lower Byte
-	TH1		= T1MS >> 8;		// Init Timer Higher Byte
-
-
+	// Stop Timer0
 	TR0		= 0;
 	ET0		= 0;
-	SBUF = 'A';
+
+	// Reload Timer1
+	TL1 	= T1MS;				// Init Timer Lower Byte
+	TH1		= T1MS >> 8;		// Init Timer Higher Byte
+	
+	// Latch 1-layer LED 64bits
 
 	S_ENA_H		// disable output
 	G_DISABLE	// Disable LED
@@ -58,7 +119,7 @@ void tm1_isr() interrupt 3 using 2
 
 	if (mLED_BRIGHTNESS[tLayer]!=0)
 	{
-		P1 = (1<< tLayer);	// Change G
+		P1 = (1<< tLayer);			// Change G
 		tmp		= 65535 - 51;
 		for (i=0; i<=6; i++)
 		{
@@ -71,7 +132,7 @@ void tm1_isr() interrupt 3 using 2
 	}
 	else
 	{
-		P1 = 0x00;
+		P1 = 0x00;					// Brightness = 0x00;
 	}
 
 	// Prepare next layer of data 8 * 8 bits
@@ -99,6 +160,11 @@ void tm1_isr() interrupt 3 using 2
 
 	// Everything is prepared and waiting to latch out at next cycle
 
+	//	Timer Flag
+	tCnt_100mS ++;
+	if (tCnt_100mS>=100)
+		mTimerFlag=1;
+	
 }
 
 
@@ -114,12 +180,56 @@ void uart_rx(void)
 	}
 
 }
+
+
+void process_TIMER(void)
+{
+	static unsigned char tCnt=0;
+	static unsigned char tSec=0;
+
+	if (mTimerFlag)			//	100mS Flag
+	{
+		tCnt ++;
+		if (tSec!=0)
+		{
+//			u_putHexByte(tCnt,0x00);
+//			u_puts("\r\n");
+		}
+
+		if (tCnt>=10)		// 1S
+		{
+			tCnt=0;
+			if (tSec==0)
+			{
+//				u_puts(VERSION);
+			}
+
+			if (tSec !=0xff)
+			{
+				tSec ++;
+			}
+		}
+
+		mTimerFlag = 0;
+
+	}
+
+}
+
+void process_UART(void)
+{
+
+
+}
+
 /*------------------------------------------------
 The main C function.  Program execution starts
 here after stack initialization.
 ------------------------------------------------*/
 void main (void) {
 
+	unsigned char i;
+	unsigned char tByte;
 
 //	Init Timer0
 	TMOD 	|= 0x01;			// Set Timer to 16bits mode
@@ -141,7 +251,7 @@ void main (void) {
 	TL2  = RCAP2L = (65536-(FOSC/32/BAUD));
 	TH2  = RCAP2H = (65536-(FOSC/32/BAUD)) >> 8;
 	T2CON = 0x34;
-
+	ES	 = 1;					// Enable UART interrupt
 
 //	Init system variable
 
@@ -162,23 +272,26 @@ void main (void) {
 	mLED[6][6]  = 0xff;
 	mLED[7][7]  = 0xff;
 
-	mLED_BRIGHTNESS[0] = 0xF0;
-	mLED_BRIGHTNESS[1] = 0xC0;
-	mLED_BRIGHTNESS[2] = 0xA0;
-	mLED_BRIGHTNESS[3] = 0x80;
-	mLED_BRIGHTNESS[4] = 0x60;
-	mLED_BRIGHTNESS[5] = 0x40;
-	mLED_BRIGHTNESS[6] = 0x20;
-	mLED_BRIGHTNESS[7] = 0x01;
+	for (i=0; i<=7; i++)
+	{
+		mLED_BRIGHTNESS[i] = (1<<i)+0x10;
+	}
+
+
 
 //	Enable Global Interrupt
 // 	Start the system
-	EA		= 1;				// Enable Global Interrupt
 
+	EA		= 1;				// Enable Global Interrupt
+//	u_puts(VERSION);
 
   	while (1) 
   	{
-    	P2 ^= 0x01;     		    /* Toggle P1.0 each time we print */
+		// Sync. Task : @ every 100ms
+		process_TIMER();
+
+		// Async. Task : UART
+		process_UART();
   	}
 }
 
