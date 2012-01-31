@@ -1,0 +1,20 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+Receive                                                           0160h        3
+ValStr                                                            0163h        5
+tx_buffer                                                         0168h        8
+p                                                                 0170h        2
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+CodeCnt                                                           R5           1
+IrCode                                                            R6,R7        2
+tx_wr_index                                                       R4           1
+tx_rd_index                                                       R9           1
+tx_counter                                                        R8           1
