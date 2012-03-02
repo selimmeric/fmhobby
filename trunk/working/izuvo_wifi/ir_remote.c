@@ -182,18 +182,6 @@ void decode_pronto_code(char *input)
 void ir_send_pulse(unsigned int ipulse0, unsigned int ipulse1)
 {
 
-
-	//  prepare 36kHz for IR - Communication
-	TCCR1A = 0b01001000;	// Toggle OC1A on compare
-	TCCR1B = 0b00001000;	// CLK=STOP
-	OCR1AH  = 0x00; 		// 12MHz / 40Kz / 2 = 150 = 0x0096
-	OCR1AL  = 0x94; 		// 
-	TCNT1   = 0x0000;
-	TIMSK |= 0x10;	// Turn ON OC1A compare interrupt
-
-	TIMSK  &= ~0b00111100;  // Disable all TIMER1 interupt
-	TIMSK  |=  0b00010000;	// Enable OC1A interrupt
-
 	TCCR1B 		&= 0b11111000;			// Stop Clock
 	PORTC  		|= (1 << LED3);			// Set LED3
 	PORTB  		&= ~(0x02);				// Set OC1A pin to "0"
