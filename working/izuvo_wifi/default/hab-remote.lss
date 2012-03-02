@@ -3,25 +3,25 @@ hab-remote.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         0000146c  00000000  00000000  00000094  2**1
+  0 .text         0000141c  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .data         0000010e  00800060  0000146c  00001500  2**0
+  1 .data         0000010e  00800060  0000141c  000014b0  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  2 .bss          00000269  0080016e  0080016e  0000160e  2**0
+  2 .bss          00000269  0080016e  0080016e  000015be  2**0
                   ALLOC
-  3 .debug_aranges 00000080  00000000  00000000  0000160e  2**0
+  3 .debug_aranges 00000080  00000000  00000000  000015be  2**0
                   CONTENTS, READONLY, DEBUGGING
-  4 .debug_pubnames 00000400  00000000  00000000  0000168e  2**0
+  4 .debug_pubnames 00000400  00000000  00000000  0000163e  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   00000b2c  00000000  00000000  00001a8e  2**0
+  5 .debug_info   00000b29  00000000  00000000  00001a3e  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 00000386  00000000  00000000  000025ba  2**0
+  6 .debug_abbrev 00000386  00000000  00000000  00002567  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000df2  00000000  00000000  00002940  2**0
+  7 .debug_line   00000db2  00000000  00000000  000028ed  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000260  00000000  00000000  00003734  2**2
+  8 .debug_frame  00000260  00000000  00000000  000036a0  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    0000040e  00000000  00000000  00003994  2**0
+  9 .debug_str    0000042a  00000000  00000000  00003900  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -59,7 +59,7 @@ Disassembly of section .text:
       32:	11 e0       	ldi	r17, 0x01	; 1
       34:	a0 e6       	ldi	r26, 0x60	; 96
       36:	b0 e0       	ldi	r27, 0x00	; 0
-      38:	ec e6       	ldi	r30, 0x6C	; 108
+      38:	ec e1       	ldi	r30, 0x1C	; 28
       3a:	f4 e1       	ldi	r31, 0x14	; 20
       3c:	02 c0       	rjmp	.+4      	; 0x42 <.do_copy_data_start>
 
@@ -86,7 +86,7 @@ Disassembly of section .text:
       54:	b1 07       	cpc	r27, r17
       56:	e1 f7       	brne	.-8      	; 0x50 <.do_clear_bss_loop>
       58:	02 d0       	rcall	.+4      	; 0x5e <main>
-      5a:	06 ca       	rjmp	.-3060   	; 0xfffff468 <__eeprom_end+0xff7ef468>
+      5a:	de c9       	rjmp	.-3140   	; 0xfffff418 <__eeprom_end+0xff7ef418>
 
 0000005c <__bad_interrupt>:
       5c:	d1 cf       	rjmp	.-94     	; 0x0 <__vectors>
@@ -852,6 +852,7 @@ void init_hardware(void)
      504:	8c 93       	st	X, r24
 
 
+
 	//  prepare 36kHz for IR - Communication
 	TCCR1A = 0b01001000;	// Toggle OC1A on compare
      506:	ef e4       	ldi	r30, 0x4F	; 79
@@ -877,7 +878,7 @@ void init_hardware(void)
      526:	f0 e0       	ldi	r31, 0x00	; 0
      528:	11 82       	std	Z+1, r1	; 0x01
      52a:	10 82       	st	Z, r1
-	TIMSK |= 0x10;	// Turn ON OC1A compare interrupt
+	TIMSK |= 0x10;	// Turn ON Timer0 Interrup
      52c:	a9 e5       	ldi	r26, 0x59	; 89
      52e:	b0 e0       	ldi	r27, 0x00	; 0
      530:	e9 e5       	ldi	r30, 0x59	; 89
@@ -1051,12 +1052,12 @@ void process_tmr(void)
 				break;
 			case 1:
 				ir_send_pulseEx();
-     62c:	b2 d5       	rcall	.+2916   	; 0x1192 <ir_send_pulseEx>
+     62c:	8a d5       	rcall	.+2836   	; 0x1142 <ir_send_pulseEx>
      62e:	01 c0       	rjmp	.+2      	; 0x632 <process_tmr+0x8a>
 				break;
 			case 2:
 				ir_capture_pulse();
-     630:	ad d6       	rcall	.+3418   	; 0x138c <ir_capture_pulse>
+     630:	85 d6       	rcall	.+3338   	; 0x133c <ir_capture_pulse>
 			default:
 				break;
 		}
@@ -2282,7 +2283,7 @@ void process_remote_command(char *input)
      cd4:	8b 81       	ldd	r24, Y+3	; 0x03
      cd6:	9c 81       	ldd	r25, Y+4	; 0x04
      cd8:	04 96       	adiw	r24, 0x04	; 4
-     cda:	dd d2       	rcall	.+1466   	; 0x1296 <ir_init_send_pulse>
+     cda:	b5 d2       	rcall	.+1386   	; 0x1246 <ir_init_send_pulse>
      cdc:	04 c0       	rjmp	.+8      	; 0xce6 <process_remote_command+0x6a>
 					break;
 				case 'C':
@@ -2290,7 +2291,7 @@ void process_remote_command(char *input)
      cde:	8b 81       	ldd	r24, Y+3	; 0x03
      ce0:	9c 81       	ldd	r25, Y+4	; 0x04
      ce2:	04 96       	adiw	r24, 0x04	; 4
-     ce4:	1d d3       	rcall	.+1594   	; 0x1320 <ir_init_capture_pulse>
+     ce4:	f5 d2       	rcall	.+1514   	; 0x12d0 <ir_init_capture_pulse>
 		default:
 			break;
 	
@@ -2887,657 +2888,605 @@ void ir_send_pulse(unsigned int ipulse0, unsigned int ipulse1)
     10a2:	7c 83       	std	Y+4, r23	; 0x04
     10a4:	6b 83       	std	Y+3, r22	; 0x03
 
-
-	//  prepare 36kHz for IR - Communication
-	TCCR1A = 0b01001000;	// Toggle OC1A on compare
-    10a6:	ef e4       	ldi	r30, 0x4F	; 79
-    10a8:	f0 e0       	ldi	r31, 0x00	; 0
-    10aa:	88 e4       	ldi	r24, 0x48	; 72
-    10ac:	80 83       	st	Z, r24
-	TCCR1B = 0b00001000;	// CLK=STOP
-    10ae:	ee e4       	ldi	r30, 0x4E	; 78
-    10b0:	f0 e0       	ldi	r31, 0x00	; 0
-    10b2:	88 e0       	ldi	r24, 0x08	; 8
-    10b4:	80 83       	st	Z, r24
-	OCR1AH  = 0x00; 		// 12MHz / 40Kz / 2 = 150 = 0x0096
-    10b6:	eb e4       	ldi	r30, 0x4B	; 75
-    10b8:	f0 e0       	ldi	r31, 0x00	; 0
-    10ba:	10 82       	st	Z, r1
-	OCR1AL  = 0x94; 		// 
-    10bc:	ea e4       	ldi	r30, 0x4A	; 74
-    10be:	f0 e0       	ldi	r31, 0x00	; 0
-    10c0:	84 e9       	ldi	r24, 0x94	; 148
-    10c2:	80 83       	st	Z, r24
-	TCNT1   = 0x0000;
-    10c4:	ec e4       	ldi	r30, 0x4C	; 76
-    10c6:	f0 e0       	ldi	r31, 0x00	; 0
-    10c8:	11 82       	std	Z+1, r1	; 0x01
-    10ca:	10 82       	st	Z, r1
-	TIMSK |= 0x10;	// Turn ON OC1A compare interrupt
-    10cc:	a9 e5       	ldi	r26, 0x59	; 89
-    10ce:	b0 e0       	ldi	r27, 0x00	; 0
-    10d0:	e9 e5       	ldi	r30, 0x59	; 89
-    10d2:	f0 e0       	ldi	r31, 0x00	; 0
-    10d4:	80 81       	ld	r24, Z
-    10d6:	80 61       	ori	r24, 0x10	; 16
-    10d8:	8c 93       	st	X, r24
-
-	TIMSK  &= ~0b00111100;  // Disable all TIMER1 interupt
-    10da:	a9 e5       	ldi	r26, 0x59	; 89
-    10dc:	b0 e0       	ldi	r27, 0x00	; 0
-    10de:	e9 e5       	ldi	r30, 0x59	; 89
-    10e0:	f0 e0       	ldi	r31, 0x00	; 0
-    10e2:	80 81       	ld	r24, Z
-    10e4:	83 7c       	andi	r24, 0xC3	; 195
-    10e6:	8c 93       	st	X, r24
-	TIMSK  |=  0b00010000;	// Enable OC1A interrupt
-    10e8:	a9 e5       	ldi	r26, 0x59	; 89
-    10ea:	b0 e0       	ldi	r27, 0x00	; 0
-    10ec:	e9 e5       	ldi	r30, 0x59	; 89
-    10ee:	f0 e0       	ldi	r31, 0x00	; 0
-    10f0:	80 81       	ld	r24, Z
-    10f2:	80 61       	ori	r24, 0x10	; 16
-    10f4:	8c 93       	st	X, r24
-
 	TCCR1B 		&= 0b11111000;			// Stop Clock
-    10f6:	ae e4       	ldi	r26, 0x4E	; 78
-    10f8:	b0 e0       	ldi	r27, 0x00	; 0
-    10fa:	ee e4       	ldi	r30, 0x4E	; 78
-    10fc:	f0 e0       	ldi	r31, 0x00	; 0
-    10fe:	80 81       	ld	r24, Z
-    1100:	88 7f       	andi	r24, 0xF8	; 248
-    1102:	8c 93       	st	X, r24
+    10a6:	ae e4       	ldi	r26, 0x4E	; 78
+    10a8:	b0 e0       	ldi	r27, 0x00	; 0
+    10aa:	ee e4       	ldi	r30, 0x4E	; 78
+    10ac:	f0 e0       	ldi	r31, 0x00	; 0
+    10ae:	80 81       	ld	r24, Z
+    10b0:	88 7f       	andi	r24, 0xF8	; 248
+    10b2:	8c 93       	st	X, r24
 	PORTC  		|= (1 << LED3);			// Set LED3
-    1104:	a5 e3       	ldi	r26, 0x35	; 53
-    1106:	b0 e0       	ldi	r27, 0x00	; 0
-    1108:	e5 e3       	ldi	r30, 0x35	; 53
-    110a:	f0 e0       	ldi	r31, 0x00	; 0
-    110c:	80 81       	ld	r24, Z
-    110e:	84 60       	ori	r24, 0x04	; 4
-    1110:	8c 93       	st	X, r24
+    10b4:	a5 e3       	ldi	r26, 0x35	; 53
+    10b6:	b0 e0       	ldi	r27, 0x00	; 0
+    10b8:	e5 e3       	ldi	r30, 0x35	; 53
+    10ba:	f0 e0       	ldi	r31, 0x00	; 0
+    10bc:	80 81       	ld	r24, Z
+    10be:	84 60       	ori	r24, 0x04	; 4
+    10c0:	8c 93       	st	X, r24
 	PORTB  		&= ~(0x02);				// Set OC1A pin to "0"
-    1112:	a8 e3       	ldi	r26, 0x38	; 56
-    1114:	b0 e0       	ldi	r27, 0x00	; 0
-    1116:	e8 e3       	ldi	r30, 0x38	; 56
-    1118:	f0 e0       	ldi	r31, 0x00	; 0
-    111a:	80 81       	ld	r24, Z
-    111c:	8d 7f       	andi	r24, 0xFD	; 253
-    111e:	8c 93       	st	X, r24
+    10c2:	a8 e3       	ldi	r26, 0x38	; 56
+    10c4:	b0 e0       	ldi	r27, 0x00	; 0
+    10c6:	e8 e3       	ldi	r30, 0x38	; 56
+    10c8:	f0 e0       	ldi	r31, 0x00	; 0
+    10ca:	80 81       	ld	r24, Z
+    10cc:	8d 7f       	andi	r24, 0xFD	; 253
+    10ce:	8c 93       	st	X, r24
 	mTxFlag		= 1;					// Set Tx Flag
-    1120:	81 e0       	ldi	r24, 0x01	; 1
-    1122:	80 93 ae 03 	sts	0x03AE, r24
+    10d0:	81 e0       	ldi	r24, 0x01	; 1
+    10d2:	80 93 ae 03 	sts	0x03AE, r24
 	TCCR1A  	= 0b01001000;			// Toggle OC1A on compare
-    1126:	ef e4       	ldi	r30, 0x4F	; 79
-    1128:	f0 e0       	ldi	r31, 0x00	; 0
-    112a:	88 e4       	ldi	r24, 0x48	; 72
-    112c:	80 83       	st	Z, r24
+    10d6:	ef e4       	ldi	r30, 0x4F	; 79
+    10d8:	f0 e0       	ldi	r31, 0x00	; 0
+    10da:	88 e4       	ldi	r24, 0x48	; 72
+    10dc:	80 83       	st	Z, r24
 	TCNT1  		= 0;					// Clear TIMER 1
-    112e:	ec e4       	ldi	r30, 0x4C	; 76
-    1130:	f0 e0       	ldi	r31, 0x00	; 0
-    1132:	11 82       	std	Z+1, r1	; 0x01
-    1134:	10 82       	st	Z, r1
+    10de:	ec e4       	ldi	r30, 0x4C	; 76
+    10e0:	f0 e0       	ldi	r31, 0x00	; 0
+    10e2:	11 82       	std	Z+1, r1	; 0x01
+    10e4:	10 82       	st	Z, r1
 	mPulseCnt 	= (ipulse0+ipulse1)<<1;	// High Pulse
-    1136:	29 81       	ldd	r18, Y+1	; 0x01
-    1138:	3a 81       	ldd	r19, Y+2	; 0x02
-    113a:	8b 81       	ldd	r24, Y+3	; 0x03
-    113c:	9c 81       	ldd	r25, Y+4	; 0x04
-    113e:	82 0f       	add	r24, r18
-    1140:	93 1f       	adc	r25, r19
-    1142:	88 0f       	add	r24, r24
-    1144:	99 1f       	adc	r25, r25
-    1146:	90 93 1a 02 	sts	0x021A, r25
-    114a:	80 93 19 02 	sts	0x0219, r24
+    10e6:	29 81       	ldd	r18, Y+1	; 0x01
+    10e8:	3a 81       	ldd	r19, Y+2	; 0x02
+    10ea:	8b 81       	ldd	r24, Y+3	; 0x03
+    10ec:	9c 81       	ldd	r25, Y+4	; 0x04
+    10ee:	82 0f       	add	r24, r18
+    10f0:	93 1f       	adc	r25, r19
+    10f2:	88 0f       	add	r24, r24
+    10f4:	99 1f       	adc	r25, r25
+    10f6:	90 93 1a 02 	sts	0x021A, r25
+    10fa:	80 93 19 02 	sts	0x0219, r24
 	mPulse[0] 	= (ipulse0+ipulse1)<<1;	// Low  Pulse
-    114e:	29 81       	ldd	r18, Y+1	; 0x01
-    1150:	3a 81       	ldd	r19, Y+2	; 0x02
-    1152:	8b 81       	ldd	r24, Y+3	; 0x03
-    1154:	9c 81       	ldd	r25, Y+4	; 0x04
-    1156:	82 0f       	add	r24, r18
-    1158:	93 1f       	adc	r25, r19
-    115a:	88 0f       	add	r24, r24
-    115c:	99 1f       	adc	r25, r25
-    115e:	90 93 d4 03 	sts	0x03D4, r25
-    1162:	80 93 d3 03 	sts	0x03D3, r24
+    10fe:	29 81       	ldd	r18, Y+1	; 0x01
+    1100:	3a 81       	ldd	r19, Y+2	; 0x02
+    1102:	8b 81       	ldd	r24, Y+3	; 0x03
+    1104:	9c 81       	ldd	r25, Y+4	; 0x04
+    1106:	82 0f       	add	r24, r18
+    1108:	93 1f       	adc	r25, r19
+    110a:	88 0f       	add	r24, r24
+    110c:	99 1f       	adc	r25, r25
+    110e:	90 93 d4 03 	sts	0x03D4, r25
+    1112:	80 93 d3 03 	sts	0x03D3, r24
 	mPulse[1] 	= (ipulse1) << 1;	
-    1166:	8b 81       	ldd	r24, Y+3	; 0x03
-    1168:	9c 81       	ldd	r25, Y+4	; 0x04
-    116a:	88 0f       	add	r24, r24
-    116c:	99 1f       	adc	r25, r25
-    116e:	90 93 d6 03 	sts	0x03D6, r25
-    1172:	80 93 d5 03 	sts	0x03D5, r24
+    1116:	8b 81       	ldd	r24, Y+3	; 0x03
+    1118:	9c 81       	ldd	r25, Y+4	; 0x04
+    111a:	88 0f       	add	r24, r24
+    111c:	99 1f       	adc	r25, r25
+    111e:	90 93 d6 03 	sts	0x03D6, r25
+    1122:	80 93 d5 03 	sts	0x03D5, r24
 	TCCR1B 		|= 0b00000001;			// Enable CLK : CLK=12MHz
-    1176:	ae e4       	ldi	r26, 0x4E	; 78
-    1178:	b0 e0       	ldi	r27, 0x00	; 0
-    117a:	ee e4       	ldi	r30, 0x4E	; 78
-    117c:	f0 e0       	ldi	r31, 0x00	; 0
-    117e:	80 81       	ld	r24, Z
-    1180:	81 60       	ori	r24, 0x01	; 1
-    1182:	8c 93       	st	X, r24
+    1126:	ae e4       	ldi	r26, 0x4E	; 78
+    1128:	b0 e0       	ldi	r27, 0x00	; 0
+    112a:	ee e4       	ldi	r30, 0x4E	; 78
+    112c:	f0 e0       	ldi	r31, 0x00	; 0
+    112e:	80 81       	ld	r24, Z
+    1130:	81 60       	ori	r24, 0x01	; 1
+    1132:	8c 93       	st	X, r24
 }
-    1184:	0f 90       	pop	r0
-    1186:	0f 90       	pop	r0
-    1188:	0f 90       	pop	r0
-    118a:	0f 90       	pop	r0
-    118c:	cf 91       	pop	r28
-    118e:	df 91       	pop	r29
-    1190:	08 95       	ret
+    1134:	0f 90       	pop	r0
+    1136:	0f 90       	pop	r0
+    1138:	0f 90       	pop	r0
+    113a:	0f 90       	pop	r0
+    113c:	cf 91       	pop	r28
+    113e:	df 91       	pop	r29
+    1140:	08 95       	ret
 
-00001192 <ir_send_pulseEx>:
+00001142 <ir_send_pulseEx>:
 
 
 void ir_send_pulseEx(void)
 {
-    1192:	df 93       	push	r29
-    1194:	cf 93       	push	r28
-    1196:	00 d0       	rcall	.+0      	; 0x1198 <ir_send_pulseEx+0x6>
-    1198:	cd b7       	in	r28, 0x3d	; 61
-    119a:	de b7       	in	r29, 0x3e	; 62
+    1142:	df 93       	push	r29
+    1144:	cf 93       	push	r28
+    1146:	00 d0       	rcall	.+0      	; 0x1148 <ir_send_pulseEx+0x6>
+    1148:	cd b7       	in	r28, 0x3d	; 61
+    114a:	de b7       	in	r29, 0x3e	; 62
 	unsigned char i;
 	unsigned char index;
 
 
 	if (mPulseRepeat==0)
-    119c:	80 91 17 02 	lds	r24, 0x0217
-    11a0:	88 23       	and	r24, r24
-    11a2:	19 f4       	brne	.+6      	; 0x11aa <ir_send_pulseEx+0x18>
+    114c:	80 91 17 02 	lds	r24, 0x0217
+    1150:	88 23       	and	r24, r24
+    1152:	19 f4       	brne	.+6      	; 0x115a <ir_send_pulseEx+0x18>
 	{
 		mFunctionMode = 0;	// Change it to Idle mode
-    11a4:	10 92 73 01 	sts	0x0173, r1
-    11a8:	71 c0       	rjmp	.+226    	; 0x128c <ir_send_pulseEx+0xfa>
+    1154:	10 92 73 01 	sts	0x0173, r1
+    1158:	71 c0       	rjmp	.+226    	; 0x123c <ir_send_pulseEx+0xfa>
 		return;
 	}
 	else if (mPulseRepeat != 0xff)
-    11aa:	80 91 17 02 	lds	r24, 0x0217
-    11ae:	8f 3f       	cpi	r24, 0xFF	; 255
-    11b0:	29 f0       	breq	.+10     	; 0x11bc <ir_send_pulseEx+0x2a>
+    115a:	80 91 17 02 	lds	r24, 0x0217
+    115e:	8f 3f       	cpi	r24, 0xFF	; 255
+    1160:	29 f0       	breq	.+10     	; 0x116c <ir_send_pulseEx+0x2a>
 	{
 		mPulseRepeat --;
-    11b2:	80 91 17 02 	lds	r24, 0x0217
-    11b6:	81 50       	subi	r24, 0x01	; 1
-    11b8:	80 93 17 02 	sts	0x0217, r24
+    1162:	80 91 17 02 	lds	r24, 0x0217
+    1166:	81 50       	subi	r24, 0x01	; 1
+    1168:	80 93 17 02 	sts	0x0217, r24
 	}
 
 	// Set Carrier Frequencey
 	OCR1A   = mPulseFreq; 
-    11bc:	ea e4       	ldi	r30, 0x4A	; 74
-    11be:	f0 e0       	ldi	r31, 0x00	; 0
-    11c0:	80 91 af 03 	lds	r24, 0x03AF
-    11c4:	90 91 b0 03 	lds	r25, 0x03B0
-    11c8:	91 83       	std	Z+1, r25	; 0x01
-    11ca:	80 83       	st	Z, r24
+    116c:	ea e4       	ldi	r30, 0x4A	; 74
+    116e:	f0 e0       	ldi	r31, 0x00	; 0
+    1170:	80 91 af 03 	lds	r24, 0x03AF
+    1174:	90 91 b0 03 	lds	r25, 0x03B0
+    1178:	91 83       	std	Z+1, r25	; 0x01
+    117a:	80 83       	st	Z, r24
 
 	TIMSK &= ~0x01;		// Turn OFF TIMER0 Interrupt
-    11cc:	a9 e5       	ldi	r26, 0x59	; 89
-    11ce:	b0 e0       	ldi	r27, 0x00	; 0
-    11d0:	e9 e5       	ldi	r30, 0x59	; 89
-    11d2:	f0 e0       	ldi	r31, 0x00	; 0
-    11d4:	80 81       	ld	r24, Z
-    11d6:	8e 7f       	andi	r24, 0xFE	; 254
-    11d8:	8c 93       	st	X, r24
+    117c:	a9 e5       	ldi	r26, 0x59	; 89
+    117e:	b0 e0       	ldi	r27, 0x00	; 0
+    1180:	e9 e5       	ldi	r30, 0x59	; 89
+    1182:	f0 e0       	ldi	r31, 0x00	; 0
+    1184:	80 81       	ld	r24, Z
+    1186:	8e 7f       	andi	r24, 0xFE	; 254
+    1188:	8c 93       	st	X, r24
 	UCSRB &= ~0x80;		// Turn OFF UART-RX interrupt
-    11da:	aa e2       	ldi	r26, 0x2A	; 42
-    11dc:	b0 e0       	ldi	r27, 0x00	; 0
-    11de:	ea e2       	ldi	r30, 0x2A	; 42
-    11e0:	f0 e0       	ldi	r31, 0x00	; 0
-    11e2:	80 81       	ld	r24, Z
-    11e4:	8f 77       	andi	r24, 0x7F	; 127
-    11e6:	8c 93       	st	X, r24
+    118a:	aa e2       	ldi	r26, 0x2A	; 42
+    118c:	b0 e0       	ldi	r27, 0x00	; 0
+    118e:	ea e2       	ldi	r30, 0x2A	; 42
+    1190:	f0 e0       	ldi	r31, 0x00	; 0
+    1192:	80 81       	ld	r24, Z
+    1194:	8f 77       	andi	r24, 0x7F	; 127
+    1196:	8c 93       	st	X, r24
 
 	for (i=0; i<mPulseLen; i++)
-    11e8:	1a 82       	std	Y+2, r1	; 0x02
-    11ea:	37 c0       	rjmp	.+110    	; 0x125a <ir_send_pulseEx+0xc8>
+    1198:	1a 82       	std	Y+2, r1	; 0x02
+    119a:	37 c0       	rjmp	.+110    	; 0x120a <ir_send_pulseEx+0xc8>
 	{
 		index = mPulseCode[(i>>1)];
-    11ec:	8a 81       	ldd	r24, Y+2	; 0x02
-    11ee:	86 95       	lsr	r24
-    11f0:	88 2f       	mov	r24, r24
-    11f2:	90 e0       	ldi	r25, 0x00	; 0
-    11f4:	fc 01       	movw	r30, r24
-    11f6:	ee 54       	subi	r30, 0x4E	; 78
-    11f8:	fc 4f       	sbci	r31, 0xFC	; 252
-    11fa:	80 81       	ld	r24, Z
-    11fc:	89 83       	std	Y+1, r24	; 0x01
+    119c:	8a 81       	ldd	r24, Y+2	; 0x02
+    119e:	86 95       	lsr	r24
+    11a0:	88 2f       	mov	r24, r24
+    11a2:	90 e0       	ldi	r25, 0x00	; 0
+    11a4:	fc 01       	movw	r30, r24
+    11a6:	ee 54       	subi	r30, 0x4E	; 78
+    11a8:	fc 4f       	sbci	r31, 0xFC	; 252
+    11aa:	80 81       	ld	r24, Z
+    11ac:	89 83       	std	Y+1, r24	; 0x01
 		if ((i & 0x01)==0)
-    11fe:	8a 81       	ldd	r24, Y+2	; 0x02
-    1200:	88 2f       	mov	r24, r24
-    1202:	90 e0       	ldi	r25, 0x00	; 0
-    1204:	81 70       	andi	r24, 0x01	; 1
-    1206:	90 70       	andi	r25, 0x00	; 0
-    1208:	00 97       	sbiw	r24, 0x00	; 0
-    120a:	21 f4       	brne	.+8      	; 0x1214 <ir_send_pulseEx+0x82>
+    11ae:	8a 81       	ldd	r24, Y+2	; 0x02
+    11b0:	88 2f       	mov	r24, r24
+    11b2:	90 e0       	ldi	r25, 0x00	; 0
+    11b4:	81 70       	andi	r24, 0x01	; 1
+    11b6:	90 70       	andi	r25, 0x00	; 0
+    11b8:	00 97       	sbiw	r24, 0x00	; 0
+    11ba:	21 f4       	brne	.+8      	; 0x11c4 <ir_send_pulseEx+0x82>
 		{
 			index = index >> 4;
-    120c:	89 81       	ldd	r24, Y+1	; 0x01
-    120e:	82 95       	swap	r24
-    1210:	8f 70       	andi	r24, 0x0F	; 15
-    1212:	89 83       	std	Y+1, r24	; 0x01
+    11bc:	89 81       	ldd	r24, Y+1	; 0x01
+    11be:	82 95       	swap	r24
+    11c0:	8f 70       	andi	r24, 0x0F	; 15
+    11c2:	89 83       	std	Y+1, r24	; 0x01
 		}
 		index &= 0x07;
-    1214:	89 81       	ldd	r24, Y+1	; 0x01
-    1216:	87 70       	andi	r24, 0x07	; 7
-    1218:	89 83       	std	Y+1, r24	; 0x01
+    11c4:	89 81       	ldd	r24, Y+1	; 0x01
+    11c6:	87 70       	andi	r24, 0x07	; 7
+    11c8:	89 83       	std	Y+1, r24	; 0x01
 		ir_send_pulse(mPulseTable[index][0],mPulseTable[index][1]);
-    121a:	89 81       	ldd	r24, Y+1	; 0x01
-    121c:	88 2f       	mov	r24, r24
-    121e:	90 e0       	ldi	r25, 0x00	; 0
-    1220:	88 0f       	add	r24, r24
-    1222:	99 1f       	adc	r25, r25
-    1224:	88 0f       	add	r24, r24
-    1226:	99 1f       	adc	r25, r25
-    1228:	fc 01       	movw	r30, r24
-    122a:	e9 50       	subi	r30, 0x09	; 9
-    122c:	fe 4f       	sbci	r31, 0xFE	; 254
-    122e:	40 81       	ld	r20, Z
-    1230:	51 81       	ldd	r21, Z+1	; 0x01
-    1232:	89 81       	ldd	r24, Y+1	; 0x01
-    1234:	88 2f       	mov	r24, r24
-    1236:	90 e0       	ldi	r25, 0x00	; 0
-    1238:	88 0f       	add	r24, r24
-    123a:	99 1f       	adc	r25, r25
-    123c:	01 96       	adiw	r24, 0x01	; 1
-    123e:	88 0f       	add	r24, r24
-    1240:	99 1f       	adc	r25, r25
-    1242:	fc 01       	movw	r30, r24
-    1244:	e9 50       	subi	r30, 0x09	; 9
-    1246:	fe 4f       	sbci	r31, 0xFE	; 254
-    1248:	20 81       	ld	r18, Z
-    124a:	31 81       	ldd	r19, Z+1	; 0x01
-    124c:	ca 01       	movw	r24, r20
-    124e:	b9 01       	movw	r22, r18
-    1250:	20 df       	rcall	.-448    	; 0x1092 <ir_send_pulse>
+    11ca:	89 81       	ldd	r24, Y+1	; 0x01
+    11cc:	88 2f       	mov	r24, r24
+    11ce:	90 e0       	ldi	r25, 0x00	; 0
+    11d0:	88 0f       	add	r24, r24
+    11d2:	99 1f       	adc	r25, r25
+    11d4:	88 0f       	add	r24, r24
+    11d6:	99 1f       	adc	r25, r25
+    11d8:	fc 01       	movw	r30, r24
+    11da:	e9 50       	subi	r30, 0x09	; 9
+    11dc:	fe 4f       	sbci	r31, 0xFE	; 254
+    11de:	40 81       	ld	r20, Z
+    11e0:	51 81       	ldd	r21, Z+1	; 0x01
+    11e2:	89 81       	ldd	r24, Y+1	; 0x01
+    11e4:	88 2f       	mov	r24, r24
+    11e6:	90 e0       	ldi	r25, 0x00	; 0
+    11e8:	88 0f       	add	r24, r24
+    11ea:	99 1f       	adc	r25, r25
+    11ec:	01 96       	adiw	r24, 0x01	; 1
+    11ee:	88 0f       	add	r24, r24
+    11f0:	99 1f       	adc	r25, r25
+    11f2:	fc 01       	movw	r30, r24
+    11f4:	e9 50       	subi	r30, 0x09	; 9
+    11f6:	fe 4f       	sbci	r31, 0xFE	; 254
+    11f8:	20 81       	ld	r18, Z
+    11fa:	31 81       	ldd	r19, Z+1	; 0x01
+    11fc:	ca 01       	movw	r24, r20
+    11fe:	b9 01       	movw	r22, r18
+    1200:	48 df       	rcall	.-368    	; 0x1092 <ir_send_pulse>
 		ir_wait_tx();
-    1252:	33 d0       	rcall	.+102    	; 0x12ba <ir_wait_tx>
+    1202:	33 d0       	rcall	.+102    	; 0x126a <ir_wait_tx>
 	OCR1A   = mPulseFreq; 
 
 	TIMSK &= ~0x01;		// Turn OFF TIMER0 Interrupt
 	UCSRB &= ~0x80;		// Turn OFF UART-RX interrupt
 
 	for (i=0; i<mPulseLen; i++)
-    1254:	8a 81       	ldd	r24, Y+2	; 0x02
-    1256:	8f 5f       	subi	r24, 0xFF	; 255
-    1258:	8a 83       	std	Y+2, r24	; 0x02
-    125a:	90 91 ad 03 	lds	r25, 0x03AD
-    125e:	8a 81       	ldd	r24, Y+2	; 0x02
-    1260:	89 17       	cp	r24, r25
-    1262:	20 f2       	brcs	.-120    	; 0x11ec <ir_send_pulseEx+0x5a>
+    1204:	8a 81       	ldd	r24, Y+2	; 0x02
+    1206:	8f 5f       	subi	r24, 0xFF	; 255
+    1208:	8a 83       	std	Y+2, r24	; 0x02
+    120a:	90 91 ad 03 	lds	r25, 0x03AD
+    120e:	8a 81       	ldd	r24, Y+2	; 0x02
+    1210:	89 17       	cp	r24, r25
+    1212:	20 f2       	brcs	.-120    	; 0x119c <ir_send_pulseEx+0x5a>
 		index &= 0x07;
 		ir_send_pulse(mPulseTable[index][0],mPulseTable[index][1]);
 		ir_wait_tx();
 	}
 
 	UCSRB |= 0x80;		// Turn ON UART-RX interrupt
-    1264:	aa e2       	ldi	r26, 0x2A	; 42
-    1266:	b0 e0       	ldi	r27, 0x00	; 0
-    1268:	ea e2       	ldi	r30, 0x2A	; 42
-    126a:	f0 e0       	ldi	r31, 0x00	; 0
-    126c:	80 81       	ld	r24, Z
-    126e:	80 68       	ori	r24, 0x80	; 128
-    1270:	8c 93       	st	X, r24
+    1214:	aa e2       	ldi	r26, 0x2A	; 42
+    1216:	b0 e0       	ldi	r27, 0x00	; 0
+    1218:	ea e2       	ldi	r30, 0x2A	; 42
+    121a:	f0 e0       	ldi	r31, 0x00	; 0
+    121c:	80 81       	ld	r24, Z
+    121e:	80 68       	ori	r24, 0x80	; 128
+    1220:	8c 93       	st	X, r24
 	TIMSK |= 0x01;		// Turn ON TIMER0 Interrupt
-    1272:	a9 e5       	ldi	r26, 0x59	; 89
-    1274:	b0 e0       	ldi	r27, 0x00	; 0
-    1276:	e9 e5       	ldi	r30, 0x59	; 89
-    1278:	f0 e0       	ldi	r31, 0x00	; 0
-    127a:	80 81       	ld	r24, Z
-    127c:	81 60       	ori	r24, 0x01	; 1
-    127e:	8c 93       	st	X, r24
+    1222:	a9 e5       	ldi	r26, 0x59	; 89
+    1224:	b0 e0       	ldi	r27, 0x00	; 0
+    1226:	e9 e5       	ldi	r30, 0x59	; 89
+    1228:	f0 e0       	ldi	r31, 0x00	; 0
+    122a:	80 81       	ld	r24, Z
+    122c:	81 60       	ori	r24, 0x01	; 1
+    122e:	8c 93       	st	X, r24
 
 	if (mPulseRepeat==0)
-    1280:	80 91 17 02 	lds	r24, 0x0217
-    1284:	88 23       	and	r24, r24
-    1286:	11 f4       	brne	.+4      	; 0x128c <ir_send_pulseEx+0xfa>
+    1230:	80 91 17 02 	lds	r24, 0x0217
+    1234:	88 23       	and	r24, r24
+    1236:	11 f4       	brne	.+4      	; 0x123c <ir_send_pulseEx+0xfa>
 	{
 		mFunctionMode = 0;	// Change it to Idle mode
-    1288:	10 92 73 01 	sts	0x0173, r1
+    1238:	10 92 73 01 	sts	0x0173, r1
 	}
 
 }
-    128c:	0f 90       	pop	r0
-    128e:	0f 90       	pop	r0
-    1290:	cf 91       	pop	r28
-    1292:	df 91       	pop	r29
-    1294:	08 95       	ret
+    123c:	0f 90       	pop	r0
+    123e:	0f 90       	pop	r0
+    1240:	cf 91       	pop	r28
+    1242:	df 91       	pop	r29
+    1244:	08 95       	ret
 
-00001296 <ir_init_send_pulse>:
+00001246 <ir_init_send_pulse>:
 
 
 void ir_init_send_pulse(char *input)
 {
-    1296:	df 93       	push	r29
-    1298:	cf 93       	push	r28
-    129a:	00 d0       	rcall	.+0      	; 0x129c <ir_init_send_pulse+0x6>
-    129c:	cd b7       	in	r28, 0x3d	; 61
-    129e:	de b7       	in	r29, 0x3e	; 62
-    12a0:	9a 83       	std	Y+2, r25	; 0x02
-    12a2:	89 83       	std	Y+1, r24	; 0x01
+    1246:	df 93       	push	r29
+    1248:	cf 93       	push	r28
+    124a:	00 d0       	rcall	.+0      	; 0x124c <ir_init_send_pulse+0x6>
+    124c:	cd b7       	in	r28, 0x3d	; 61
+    124e:	de b7       	in	r29, 0x3e	; 62
+    1250:	9a 83       	std	Y+2, r25	; 0x02
+    1252:	89 83       	std	Y+1, r24	; 0x01
 	mFunctionMode = 1;					// Send Pulse Function
-    12a4:	81 e0       	ldi	r24, 0x01	; 1
-    12a6:	80 93 73 01 	sts	0x0173, r24
+    1254:	81 e0       	ldi	r24, 0x01	; 1
+    1256:	80 93 73 01 	sts	0x0173, r24
 
 	// decode pronto_code from CmdQ
 	decode_cpronto_code(input);
-    12aa:	89 81       	ldd	r24, Y+1	; 0x01
-    12ac:	9a 81       	ldd	r25, Y+2	; 0x02
-    12ae:	24 dd       	rcall	.-1464   	; 0xcf8 <decode_cpronto_code>
+    125a:	89 81       	ldd	r24, Y+1	; 0x01
+    125c:	9a 81       	ldd	r25, Y+2	; 0x02
+    125e:	4c dd       	rcall	.-1384   	; 0xcf8 <decode_cpronto_code>
 //	decode_pronto_code(input);
 
 }
-    12b0:	0f 90       	pop	r0
-    12b2:	0f 90       	pop	r0
-    12b4:	cf 91       	pop	r28
-    12b6:	df 91       	pop	r29
-    12b8:	08 95       	ret
+    1260:	0f 90       	pop	r0
+    1262:	0f 90       	pop	r0
+    1264:	cf 91       	pop	r28
+    1266:	df 91       	pop	r29
+    1268:	08 95       	ret
 
-000012ba <ir_wait_tx>:
+0000126a <ir_wait_tx>:
 
 void ir_wait_tx(void)
 {
-    12ba:	df 93       	push	r29
-    12bc:	cf 93       	push	r28
-    12be:	00 d0       	rcall	.+0      	; 0x12c0 <ir_wait_tx+0x6>
-    12c0:	cd b7       	in	r28, 0x3d	; 61
-    12c2:	de b7       	in	r29, 0x3e	; 62
+    126a:	df 93       	push	r29
+    126c:	cf 93       	push	r28
+    126e:	00 d0       	rcall	.+0      	; 0x1270 <ir_wait_tx+0x6>
+    1270:	cd b7       	in	r28, 0x3d	; 61
+    1272:	de b7       	in	r29, 0x3e	; 62
 	unsigned int x=0;
-    12c4:	1a 82       	std	Y+2, r1	; 0x02
-    12c6:	19 82       	std	Y+1, r1	; 0x01
-    12c8:	19 c0       	rjmp	.+50     	; 0x12fc <ir_wait_tx+0x42>
+    1274:	1a 82       	std	Y+2, r1	; 0x02
+    1276:	19 82       	std	Y+1, r1	; 0x01
+    1278:	19 c0       	rjmp	.+50     	; 0x12ac <ir_wait_tx+0x42>
 
 	while (x<15000)					// Time Out
 	{
 
 		if ((TIFR & 0x01)==0x01)	// TIMER0 Overflow
-    12ca:	e8 e5       	ldi	r30, 0x58	; 88
-    12cc:	f0 e0       	ldi	r31, 0x00	; 0
-    12ce:	80 81       	ld	r24, Z
-    12d0:	88 2f       	mov	r24, r24
-    12d2:	90 e0       	ldi	r25, 0x00	; 0
-    12d4:	81 70       	andi	r24, 0x01	; 1
-    12d6:	90 70       	andi	r25, 0x00	; 0
-    12d8:	88 23       	and	r24, r24
-    12da:	09 f0       	breq	.+2      	; 0x12de <ir_wait_tx+0x24>
+    127a:	e8 e5       	ldi	r30, 0x58	; 88
+    127c:	f0 e0       	ldi	r31, 0x00	; 0
+    127e:	80 81       	ld	r24, Z
+    1280:	88 2f       	mov	r24, r24
+    1282:	90 e0       	ldi	r25, 0x00	; 0
+    1284:	81 70       	andi	r24, 0x01	; 1
+    1286:	90 70       	andi	r25, 0x00	; 0
+    1288:	88 23       	and	r24, r24
+    128a:	09 f0       	breq	.+2      	; 0x128e <ir_wait_tx+0x24>
 		{
 			POLL_TIMER0_OVR();
-    12dc:	25 d8       	rcall	.-4022   	; 0x328 <POLL_TIMER0_OVR>
+    128c:	4d d8       	rcall	.-3942   	; 0x328 <POLL_TIMER0_OVR>
 		}
 
 		if ((UCSRA & 0x80)==0x80)	// UART RX data ready for recieve
-    12de:	eb e2       	ldi	r30, 0x2B	; 43
-    12e0:	f0 e0       	ldi	r31, 0x00	; 0
-    12e2:	80 81       	ld	r24, Z
-    12e4:	88 23       	and	r24, r24
-    12e6:	0c f4       	brge	.+2      	; 0x12ea <ir_wait_tx+0x30>
+    128e:	eb e2       	ldi	r30, 0x2B	; 43
+    1290:	f0 e0       	ldi	r31, 0x00	; 0
+    1292:	80 81       	ld	r24, Z
+    1294:	88 23       	and	r24, r24
+    1296:	0c f4       	brge	.+2      	; 0x129a <ir_wait_tx+0x30>
 		{
 	 		POLL_UART_RECV();
-    12e8:	67 d7       	rcall	.+3790   	; 0x21b8 <__data_load_end+0xc3e>
+    1298:	8f d7       	rcall	.+3870   	; 0x21b8 <__data_load_end+0xc8e>
 		}
 
 		x++;
-    12ea:	89 81       	ldd	r24, Y+1	; 0x01
-    12ec:	9a 81       	ldd	r25, Y+2	; 0x02
-    12ee:	01 96       	adiw	r24, 0x01	; 1
-    12f0:	9a 83       	std	Y+2, r25	; 0x02
-    12f2:	89 83       	std	Y+1, r24	; 0x01
+    129a:	89 81       	ldd	r24, Y+1	; 0x01
+    129c:	9a 81       	ldd	r25, Y+2	; 0x02
+    129e:	01 96       	adiw	r24, 0x01	; 1
+    12a0:	9a 83       	std	Y+2, r25	; 0x02
+    12a2:	89 83       	std	Y+1, r24	; 0x01
 //		asm volatile ("nop");
 		if (mTxFlag==0)
-    12f4:	80 91 ae 03 	lds	r24, 0x03AE
-    12f8:	88 23       	and	r24, r24
-    12fa:	31 f0       	breq	.+12     	; 0x1308 <ir_wait_tx+0x4e>
+    12a4:	80 91 ae 03 	lds	r24, 0x03AE
+    12a8:	88 23       	and	r24, r24
+    12aa:	31 f0       	breq	.+12     	; 0x12b8 <ir_wait_tx+0x4e>
 
 void ir_wait_tx(void)
 {
 	unsigned int x=0;
 
 	while (x<15000)					// Time Out
-    12fc:	89 81       	ldd	r24, Y+1	; 0x01
-    12fe:	9a 81       	ldd	r25, Y+2	; 0x02
-    1300:	2a e3       	ldi	r18, 0x3A	; 58
-    1302:	88 39       	cpi	r24, 0x98	; 152
-    1304:	92 07       	cpc	r25, r18
-    1306:	08 f3       	brcs	.-62     	; 0x12ca <ir_wait_tx+0x10>
+    12ac:	89 81       	ldd	r24, Y+1	; 0x01
+    12ae:	9a 81       	ldd	r25, Y+2	; 0x02
+    12b0:	2a e3       	ldi	r18, 0x3A	; 58
+    12b2:	88 39       	cpi	r24, 0x98	; 152
+    12b4:	92 07       	cpc	r25, r18
+    12b6:	08 f3       	brcs	.-62     	; 0x127a <ir_wait_tx+0x10>
 		if (mTxFlag==0)
 		{
 			break;
 		}
 	}
 	TCCR1B &= 0b11111000;	// Stop Clock
-    1308:	ae e4       	ldi	r26, 0x4E	; 78
-    130a:	b0 e0       	ldi	r27, 0x00	; 0
-    130c:	ee e4       	ldi	r30, 0x4E	; 78
-    130e:	f0 e0       	ldi	r31, 0x00	; 0
-    1310:	80 81       	ld	r24, Z
-    1312:	88 7f       	andi	r24, 0xF8	; 248
-    1314:	8c 93       	st	X, r24
+    12b8:	ae e4       	ldi	r26, 0x4E	; 78
+    12ba:	b0 e0       	ldi	r27, 0x00	; 0
+    12bc:	ee e4       	ldi	r30, 0x4E	; 78
+    12be:	f0 e0       	ldi	r31, 0x00	; 0
+    12c0:	80 81       	ld	r24, Z
+    12c2:	88 7f       	andi	r24, 0xF8	; 248
+    12c4:	8c 93       	st	X, r24
 
 }
-    1316:	0f 90       	pop	r0
-    1318:	0f 90       	pop	r0
-    131a:	cf 91       	pop	r28
-    131c:	df 91       	pop	r29
-    131e:	08 95       	ret
+    12c6:	0f 90       	pop	r0
+    12c8:	0f 90       	pop	r0
+    12ca:	cf 91       	pop	r28
+    12cc:	df 91       	pop	r29
+    12ce:	08 95       	ret
 
-00001320 <ir_init_capture_pulse>:
+000012d0 <ir_init_capture_pulse>:
 
 void ir_init_capture_pulse(char *input)
 {
-    1320:	df 93       	push	r29
-    1322:	cf 93       	push	r28
-    1324:	00 d0       	rcall	.+0      	; 0x1326 <ir_init_capture_pulse+0x6>
-    1326:	cd b7       	in	r28, 0x3d	; 61
-    1328:	de b7       	in	r29, 0x3e	; 62
-    132a:	9a 83       	std	Y+2, r25	; 0x02
-    132c:	89 83       	std	Y+1, r24	; 0x01
+    12d0:	df 93       	push	r29
+    12d2:	cf 93       	push	r28
+    12d4:	00 d0       	rcall	.+0      	; 0x12d6 <ir_init_capture_pulse+0x6>
+    12d6:	cd b7       	in	r28, 0x3d	; 61
+    12d8:	de b7       	in	r29, 0x3e	; 62
+    12da:	9a 83       	std	Y+2, r25	; 0x02
+    12dc:	89 83       	std	Y+1, r24	; 0x01
 
 	// Set TIMER1 WGM to Mode 0
 	TCCR1B = 0b00000000;	// Disable Input Capture
-    132e:	ee e4       	ldi	r30, 0x4E	; 78
-    1330:	f0 e0       	ldi	r31, 0x00	; 0
-    1332:	10 82       	st	Z, r1
+    12de:	ee e4       	ldi	r30, 0x4E	; 78
+    12e0:	f0 e0       	ldi	r31, 0x00	; 0
+    12e2:	10 82       	st	Z, r1
 	TCNT1  = 0;
-    1334:	ec e4       	ldi	r30, 0x4C	; 76
-    1336:	f0 e0       	ldi	r31, 0x00	; 0
-    1338:	11 82       	std	Z+1, r1	; 0x01
-    133a:	10 82       	st	Z, r1
+    12e4:	ec e4       	ldi	r30, 0x4C	; 76
+    12e6:	f0 e0       	ldi	r31, 0x00	; 0
+    12e8:	11 82       	std	Z+1, r1	; 0x01
+    12ea:	10 82       	st	Z, r1
 	mCaptureIndex = 0;
-    133c:	10 92 1c 02 	sts	0x021C, r1
-    1340:	10 92 1b 02 	sts	0x021B, r1
+    12ec:	10 92 1c 02 	sts	0x021C, r1
+    12f0:	10 92 1b 02 	sts	0x021B, r1
 	mCaptureState = 1;
-    1344:	81 e0       	ldi	r24, 0x01	; 1
-    1346:	80 93 18 02 	sts	0x0218, r24
+    12f4:	81 e0       	ldi	r24, 0x01	; 1
+    12f6:	80 93 18 02 	sts	0x0218, r24
 	mFunctionMode = 2;		// Change it to Capture Mode
-    134a:	82 e0       	ldi	r24, 0x02	; 2
-    134c:	80 93 73 01 	sts	0x0173, r24
+    12fa:	82 e0       	ldi	r24, 0x02	; 2
+    12fc:	80 93 73 01 	sts	0x0173, r24
 	mCaptureRepeat =  u_asc2uint(2,(char *) (input));
-    1350:	29 81       	ldd	r18, Y+1	; 0x01
-    1352:	3a 81       	ldd	r19, Y+2	; 0x02
-    1354:	82 e0       	ldi	r24, 0x02	; 2
-    1356:	b9 01       	movw	r22, r18
-    1358:	8b db       	rcall	.-2282   	; 0xa70 <u_asc2uint>
-    135a:	80 93 b1 03 	sts	0x03B1, r24
+    1300:	29 81       	ldd	r18, Y+1	; 0x01
+    1302:	3a 81       	ldd	r19, Y+2	; 0x02
+    1304:	82 e0       	ldi	r24, 0x02	; 2
+    1306:	b9 01       	movw	r22, r18
+    1308:	b3 db       	rcall	.-2202   	; 0xa70 <u_asc2uint>
+    130a:	80 93 b1 03 	sts	0x03B1, r24
 
 	TCCR1B  = 0b11000011;	// Enable Input Capture
-    135e:	ee e4       	ldi	r30, 0x4E	; 78
-    1360:	f0 e0       	ldi	r31, 0x00	; 0
-    1362:	83 ec       	ldi	r24, 0xC3	; 195
-    1364:	80 83       	st	Z, r24
+    130e:	ee e4       	ldi	r30, 0x4E	; 78
+    1310:	f0 e0       	ldi	r31, 0x00	; 0
+    1312:	83 ec       	ldi	r24, 0xC3	; 195
+    1314:	80 83       	st	Z, r24
 	TIMSK  &= ~0b00111100;  // Disable all TIMER1 interupt
-    1366:	a9 e5       	ldi	r26, 0x59	; 89
-    1368:	b0 e0       	ldi	r27, 0x00	; 0
-    136a:	e9 e5       	ldi	r30, 0x59	; 89
-    136c:	f0 e0       	ldi	r31, 0x00	; 0
-    136e:	80 81       	ld	r24, Z
-    1370:	83 7c       	andi	r24, 0xC3	; 195
-    1372:	8c 93       	st	X, r24
+    1316:	a9 e5       	ldi	r26, 0x59	; 89
+    1318:	b0 e0       	ldi	r27, 0x00	; 0
+    131a:	e9 e5       	ldi	r30, 0x59	; 89
+    131c:	f0 e0       	ldi	r31, 0x00	; 0
+    131e:	80 81       	ld	r24, Z
+    1320:	83 7c       	andi	r24, 0xC3	; 195
+    1322:	8c 93       	st	X, r24
 	TIMSK  |=  0b00100000;	// Enable Input Capture1 Interrupt
-    1374:	a9 e5       	ldi	r26, 0x59	; 89
-    1376:	b0 e0       	ldi	r27, 0x00	; 0
-    1378:	e9 e5       	ldi	r30, 0x59	; 89
-    137a:	f0 e0       	ldi	r31, 0x00	; 0
-    137c:	80 81       	ld	r24, Z
-    137e:	80 62       	ori	r24, 0x20	; 32
-    1380:	8c 93       	st	X, r24
+    1324:	a9 e5       	ldi	r26, 0x59	; 89
+    1326:	b0 e0       	ldi	r27, 0x00	; 0
+    1328:	e9 e5       	ldi	r30, 0x59	; 89
+    132a:	f0 e0       	ldi	r31, 0x00	; 0
+    132c:	80 81       	ld	r24, Z
+    132e:	80 62       	ori	r24, 0x20	; 32
+    1330:	8c 93       	st	X, r24
 
 }
-    1382:	0f 90       	pop	r0
-    1384:	0f 90       	pop	r0
-    1386:	cf 91       	pop	r28
-    1388:	df 91       	pop	r29
-    138a:	08 95       	ret
+    1332:	0f 90       	pop	r0
+    1334:	0f 90       	pop	r0
+    1336:	cf 91       	pop	r28
+    1338:	df 91       	pop	r29
+    133a:	08 95       	ret
 
-0000138c <ir_capture_pulse>:
+0000133c <ir_capture_pulse>:
 
 void ir_capture_pulse(void)
 {
-    138c:	df 93       	push	r29
-    138e:	cf 93       	push	r28
-    1390:	00 d0       	rcall	.+0      	; 0x1392 <ir_capture_pulse+0x6>
-    1392:	00 d0       	rcall	.+0      	; 0x1394 <ir_capture_pulse+0x8>
-    1394:	cd b7       	in	r28, 0x3d	; 61
-    1396:	de b7       	in	r29, 0x3e	; 62
+    133c:	df 93       	push	r29
+    133e:	cf 93       	push	r28
+    1340:	00 d0       	rcall	.+0      	; 0x1342 <ir_capture_pulse+0x6>
+    1342:	00 d0       	rcall	.+0      	; 0x1344 <ir_capture_pulse+0x8>
+    1344:	cd b7       	in	r28, 0x3d	; 61
+    1346:	de b7       	in	r29, 0x3e	; 62
 //	When Capture Pulse is enabled
 //	This function should be call @ every 200mS
 
 	unsigned char i;
 	unsigned char index;
 	mCaptureState ++;
-    1398:	80 91 18 02 	lds	r24, 0x0218
-    139c:	8f 5f       	subi	r24, 0xFF	; 255
-    139e:	80 93 18 02 	sts	0x0218, r24
+    1348:	80 91 18 02 	lds	r24, 0x0218
+    134c:	8f 5f       	subi	r24, 0xFF	; 255
+    134e:	80 93 18 02 	sts	0x0218, r24
 	unsigned int tPulse;
 
 	// 2second time out OR buffer full
 	if ((mCaptureState>mCaptureRepeat) || (mCaptureIndex==sizeof(mCapturePulse)/2))
-    13a2:	90 91 18 02 	lds	r25, 0x0218
-    13a6:	80 91 b1 03 	lds	r24, 0x03B1
-    13aa:	89 17       	cp	r24, r25
-    13ac:	40 f0       	brcs	.+16     	; 0x13be <ir_capture_pulse+0x32>
-    13ae:	80 91 1b 02 	lds	r24, 0x021B
-    13b2:	90 91 1c 02 	lds	r25, 0x021C
-    13b6:	88 3c       	cpi	r24, 0xC8	; 200
-    13b8:	91 05       	cpc	r25, r1
-    13ba:	09 f0       	breq	.+2      	; 0x13be <ir_capture_pulse+0x32>
-    13bc:	4e c0       	rjmp	.+156    	; 0x145a <ir_capture_pulse+0xce>
+    1352:	90 91 18 02 	lds	r25, 0x0218
+    1356:	80 91 b1 03 	lds	r24, 0x03B1
+    135a:	89 17       	cp	r24, r25
+    135c:	40 f0       	brcs	.+16     	; 0x136e <ir_capture_pulse+0x32>
+    135e:	80 91 1b 02 	lds	r24, 0x021B
+    1362:	90 91 1c 02 	lds	r25, 0x021C
+    1366:	88 3c       	cpi	r24, 0xC8	; 200
+    1368:	91 05       	cpc	r25, r1
+    136a:	09 f0       	breq	.+2      	; 0x136e <ir_capture_pulse+0x32>
+    136c:	4e c0       	rjmp	.+156    	; 0x140a <ir_capture_pulse+0xce>
 	{
 		TCCR1B = 0b00000000;	// Disable Input Capture
-    13be:	ee e4       	ldi	r30, 0x4E	; 78
-    13c0:	f0 e0       	ldi	r31, 0x00	; 0
-    13c2:	10 82       	st	Z, r1
+    136e:	ee e4       	ldi	r30, 0x4E	; 78
+    1370:	f0 e0       	ldi	r31, 0x00	; 0
+    1372:	10 82       	st	Z, r1
 		index = mCaptureIndex & 0xff;
-    13c4:	80 91 1b 02 	lds	r24, 0x021B
-    13c8:	90 91 1c 02 	lds	r25, 0x021C
-    13cc:	8b 83       	std	Y+3, r24	; 0x03
+    1374:	80 91 1b 02 	lds	r24, 0x021B
+    1378:	90 91 1c 02 	lds	r25, 0x021C
+    137c:	8b 83       	std	Y+3, r24	; 0x03
 		mFunctionMode = 0;	// Change it to Idle mode
-    13ce:	10 92 73 01 	sts	0x0173, r1
+    137e:	10 92 73 01 	sts	0x0173, r1
 		u_puts(LinuxCmd);
-    13d2:	8e e4       	ldi	r24, 0x4E	; 78
-    13d4:	91 e0       	ldi	r25, 0x01	; 1
-    13d6:	1d dc       	rcall	.-1990   	; 0xc12 <u_puts>
+    1382:	8e e4       	ldi	r24, 0x4E	; 78
+    1384:	91 e0       	ldi	r25, 0x01	; 1
+    1386:	45 dc       	rcall	.-1910   	; 0xc12 <u_puts>
 		u_puts("'C0' '");		// Capture data
-    13d8:	8c e5       	ldi	r24, 0x5C	; 92
-    13da:	91 e0       	ldi	r25, 0x01	; 1
-    13dc:	1a dc       	rcall	.-1996   	; 0xc12 <u_puts>
+    1388:	8c e5       	ldi	r24, 0x5C	; 92
+    138a:	91 e0       	ldi	r25, 0x01	; 1
+    138c:	42 dc       	rcall	.-1916   	; 0xc12 <u_puts>
 		u_putHexWord(CaptureFreq);
-    13de:	8b e1       	ldi	r24, 0x1B	; 27
-    13e0:	97 eb       	ldi	r25, 0xB7	; 183
-    13e2:	be db       	rcall	.-2180   	; 0xb60 <u_putHexWord>
+    138e:	8b e1       	ldi	r24, 0x1B	; 27
+    1390:	97 eb       	ldi	r25, 0xB7	; 183
+    1392:	e6 db       	rcall	.-2100   	; 0xb60 <u_putHexWord>
 		u_puts("' '");		// Capture data
-    13e4:	83 e6       	ldi	r24, 0x63	; 99
-    13e6:	91 e0       	ldi	r25, 0x01	; 1
-    13e8:	14 dc       	rcall	.-2008   	; 0xc12 <u_puts>
+    1394:	83 e6       	ldi	r24, 0x63	; 99
+    1396:	91 e0       	ldi	r25, 0x01	; 1
+    1398:	3c dc       	rcall	.-1928   	; 0xc12 <u_puts>
 		u_putHexByte(index,0x00);
-    13ea:	8b 81       	ldd	r24, Y+3	; 0x03
-    13ec:	60 e0       	ldi	r22, 0x00	; 0
-    13ee:	cd db       	rcall	.-2150   	; 0xb8a <u_putHexByte>
+    139a:	8b 81       	ldd	r24, Y+3	; 0x03
+    139c:	60 e0       	ldi	r22, 0x00	; 0
+    139e:	f5 db       	rcall	.-2070   	; 0xb8a <u_putHexByte>
 		u_puts("' '");		// Capture data
-    13f0:	83 e6       	ldi	r24, 0x63	; 99
-    13f2:	91 e0       	ldi	r25, 0x01	; 1
-    13f4:	0e dc       	rcall	.-2020   	; 0xc12 <u_puts>
+    13a0:	83 e6       	ldi	r24, 0x63	; 99
+    13a2:	91 e0       	ldi	r25, 0x01	; 1
+    13a4:	36 dc       	rcall	.-1940   	; 0xc12 <u_puts>
 		for (i=0; i<index; i++)
-    13f6:	1c 82       	std	Y+4, r1	; 0x04
-    13f8:	25 c0       	rjmp	.+74     	; 0x1444 <ir_capture_pulse+0xb8>
+    13a6:	1c 82       	std	Y+4, r1	; 0x04
+    13a8:	25 c0       	rjmp	.+74     	; 0x13f4 <ir_capture_pulse+0xb8>
 		{
 			tPulse = mCapturePulse[i];
-    13fa:	8c 81       	ldd	r24, Y+4	; 0x04
-    13fc:	88 2f       	mov	r24, r24
-    13fe:	90 e0       	ldi	r25, 0x00	; 0
-    1400:	88 0f       	add	r24, r24
-    1402:	99 1f       	adc	r25, r25
-    1404:	fc 01       	movw	r30, r24
-    1406:	e3 5e       	subi	r30, 0xE3	; 227
-    1408:	fd 4f       	sbci	r31, 0xFD	; 253
-    140a:	80 81       	ld	r24, Z
-    140c:	91 81       	ldd	r25, Z+1	; 0x01
-    140e:	9a 83       	std	Y+2, r25	; 0x02
-    1410:	89 83       	std	Y+1, r24	; 0x01
+    13aa:	8c 81       	ldd	r24, Y+4	; 0x04
+    13ac:	88 2f       	mov	r24, r24
+    13ae:	90 e0       	ldi	r25, 0x00	; 0
+    13b0:	88 0f       	add	r24, r24
+    13b2:	99 1f       	adc	r25, r25
+    13b4:	fc 01       	movw	r30, r24
+    13b6:	e3 5e       	subi	r30, 0xE3	; 227
+    13b8:	fd 4f       	sbci	r31, 0xFD	; 253
+    13ba:	80 81       	ld	r24, Z
+    13bc:	91 81       	ldd	r25, Z+1	; 0x01
+    13be:	9a 83       	std	Y+2, r25	; 0x02
+    13c0:	89 83       	std	Y+1, r24	; 0x01
 			tPulse = tPulse >> 1;
-    1412:	89 81       	ldd	r24, Y+1	; 0x01
-    1414:	9a 81       	ldd	r25, Y+2	; 0x02
-    1416:	96 95       	lsr	r25
-    1418:	87 95       	ror	r24
-    141a:	9a 83       	std	Y+2, r25	; 0x02
-    141c:	89 83       	std	Y+1, r24	; 0x01
+    13c2:	89 81       	ldd	r24, Y+1	; 0x01
+    13c4:	9a 81       	ldd	r25, Y+2	; 0x02
+    13c6:	96 95       	lsr	r25
+    13c8:	87 95       	ror	r24
+    13ca:	9a 83       	std	Y+2, r25	; 0x02
+    13cc:	89 83       	std	Y+1, r24	; 0x01
 			if (tPulse >= 0x0100)
-    141e:	89 81       	ldd	r24, Y+1	; 0x01
-    1420:	9a 81       	ldd	r25, Y+2	; 0x02
-    1422:	8f 3f       	cpi	r24, 0xFF	; 255
-    1424:	91 05       	cpc	r25, r1
-    1426:	29 f0       	breq	.+10     	; 0x1432 <ir_capture_pulse+0xa6>
-    1428:	20 f0       	brcs	.+8      	; 0x1432 <ir_capture_pulse+0xa6>
+    13ce:	89 81       	ldd	r24, Y+1	; 0x01
+    13d0:	9a 81       	ldd	r25, Y+2	; 0x02
+    13d2:	8f 3f       	cpi	r24, 0xFF	; 255
+    13d4:	91 05       	cpc	r25, r1
+    13d6:	29 f0       	breq	.+10     	; 0x13e2 <ir_capture_pulse+0xa6>
+    13d8:	20 f0       	brcs	.+8      	; 0x13e2 <ir_capture_pulse+0xa6>
 			{
 				u_putHexWord(tPulse);
-    142a:	89 81       	ldd	r24, Y+1	; 0x01
-    142c:	9a 81       	ldd	r25, Y+2	; 0x02
-    142e:	98 db       	rcall	.-2256   	; 0xb60 <u_putHexWord>
-    1430:	03 c0       	rjmp	.+6      	; 0x1438 <ir_capture_pulse+0xac>
+    13da:	89 81       	ldd	r24, Y+1	; 0x01
+    13dc:	9a 81       	ldd	r25, Y+2	; 0x02
+    13de:	c0 db       	rcall	.-2176   	; 0xb60 <u_putHexWord>
+    13e0:	03 c0       	rjmp	.+6      	; 0x13e8 <ir_capture_pulse+0xac>
 			}
 			else
 			{
 				u_putHexByte(tPulse & 0xff,0x00);
-    1432:	89 81       	ldd	r24, Y+1	; 0x01
-    1434:	60 e0       	ldi	r22, 0x00	; 0
-    1436:	a9 db       	rcall	.-2222   	; 0xb8a <u_putHexByte>
+    13e2:	89 81       	ldd	r24, Y+1	; 0x01
+    13e4:	60 e0       	ldi	r22, 0x00	; 0
+    13e6:	d1 db       	rcall	.-2142   	; 0xb8a <u_putHexByte>
 			}
 			u_puts(" ");		
-    1438:	87 e6       	ldi	r24, 0x67	; 103
-    143a:	91 e0       	ldi	r25, 0x01	; 1
-    143c:	ea db       	rcall	.-2092   	; 0xc12 <u_puts>
+    13e8:	87 e6       	ldi	r24, 0x67	; 103
+    13ea:	91 e0       	ldi	r25, 0x01	; 1
+    13ec:	12 dc       	rcall	.-2012   	; 0xc12 <u_puts>
 		u_puts("'C0' '");		// Capture data
 		u_putHexWord(CaptureFreq);
 		u_puts("' '");		// Capture data
 		u_putHexByte(index,0x00);
 		u_puts("' '");		// Capture data
 		for (i=0; i<index; i++)
-    143e:	8c 81       	ldd	r24, Y+4	; 0x04
-    1440:	8f 5f       	subi	r24, 0xFF	; 255
-    1442:	8c 83       	std	Y+4, r24	; 0x04
-    1444:	9c 81       	ldd	r25, Y+4	; 0x04
-    1446:	8b 81       	ldd	r24, Y+3	; 0x03
-    1448:	98 17       	cp	r25, r24
-    144a:	b8 f2       	brcs	.-82     	; 0x13fa <ir_capture_pulse+0x6e>
+    13ee:	8c 81       	ldd	r24, Y+4	; 0x04
+    13f0:	8f 5f       	subi	r24, 0xFF	; 255
+    13f2:	8c 83       	std	Y+4, r24	; 0x04
+    13f4:	9c 81       	ldd	r25, Y+4	; 0x04
+    13f6:	8b 81       	ldd	r24, Y+3	; 0x03
+    13f8:	98 17       	cp	r25, r24
+    13fa:	b8 f2       	brcs	.-82     	; 0x13aa <ir_capture_pulse+0x6e>
 			{
 				u_putHexByte(tPulse & 0xff,0x00);
 			}
 			u_puts(" ");		
 		}
 		u_puts("'\r\n");
-    144c:	89 e6       	ldi	r24, 0x69	; 105
-    144e:	91 e0       	ldi	r25, 0x01	; 1
-    1450:	e0 db       	rcall	.-2112   	; 0xc12 <u_puts>
+    13fc:	89 e6       	ldi	r24, 0x69	; 105
+    13fe:	91 e0       	ldi	r25, 0x01	; 1
+    1400:	08 dc       	rcall	.-2032   	; 0xc12 <u_puts>
 		mCaptureIndex = 0;
-    1452:	10 92 1c 02 	sts	0x021C, r1
-    1456:	10 92 1b 02 	sts	0x021B, r1
+    1402:	10 92 1c 02 	sts	0x021C, r1
+    1406:	10 92 1b 02 	sts	0x021B, r1
 	}
 	
 }
-    145a:	0f 90       	pop	r0
-    145c:	0f 90       	pop	r0
-    145e:	0f 90       	pop	r0
-    1460:	0f 90       	pop	r0
-    1462:	cf 91       	pop	r28
-    1464:	df 91       	pop	r29
-    1466:	08 95       	ret
+    140a:	0f 90       	pop	r0
+    140c:	0f 90       	pop	r0
+    140e:	0f 90       	pop	r0
+    1410:	0f 90       	pop	r0
+    1412:	cf 91       	pop	r28
+    1414:	df 91       	pop	r29
+    1416:	08 95       	ret
 
-00001468 <_exit>:
-    1468:	f8 94       	cli
+00001418 <_exit>:
+    1418:	f8 94       	cli
 
-0000146a <__stop_program>:
-    146a:	ff cf       	rjmp	.-2      	; 0x146a <__stop_program>
+0000141a <__stop_program>:
+    141a:	ff cf       	rjmp	.-2      	; 0x141a <__stop_program>
