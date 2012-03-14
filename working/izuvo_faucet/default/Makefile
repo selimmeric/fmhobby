@@ -5,7 +5,7 @@
 ## General Flags
 PROJECT = hab-remote
 MCU = atmega8
-TARGET = izuvo.elf
+TARGET = izuvo_faucet.elf
 CC = avr-gcc
 
 CPP = avr-g++
@@ -25,7 +25,7 @@ ASMFLAGS += -x assembler-with-cpp -Wa,-gdwarf2
 
 ## Linker flags
 LDFLAGS = $(COMMON)
-LDFLAGS +=  -Wl,-Map=izuvo.map
+LDFLAGS +=  -Wl,-Map=izuvo_faucet.map
 
 
 ## Intel Hex file production flags
@@ -43,7 +43,7 @@ OBJECTS = main.o utility.o izuvo.o izuvo_mcu.o
 LINKONLYOBJECTS = 
 
 ## Build
-all: $(TARGET) izuvo.hex izuvo.eep izuvo.lss## Compile
+all: $(TARGET) izuvo_faucet.hex izuvo_faucet.eep izuvo_faucet.lss## Compile
 main.o: ../main.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
@@ -72,7 +72,7 @@ $(TARGET): $(OBJECTS)
 ## Clean target
 .PHONY: clean
 clean:
-	-rm -rf $(OBJECTS) izuvo.elf dep/* izuvo.hex izuvo.eep izuvo.lss izuvo.map
+	-rm -rf $(OBJECTS) izuvo_faucet.elf dep/* izuvo_faucet.hex izuvo_faucet.eep izuvo_faucet.lss izuvo_faucet.map
 
 
 ## Other dependencies

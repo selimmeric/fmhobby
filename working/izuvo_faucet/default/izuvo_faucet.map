@@ -1,0 +1,491 @@
+Archive member included because of file (symbol)
+
+c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_exit.o)
+                              c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm8.o (exit)
+c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_copy_data.o)
+                              utility.o (__do_copy_data)
+c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_clear_bss.o)
+                              izuvo.o (__do_clear_bss)
+
+Allocating common symbols
+Common symbol       size              file
+
+mZuvoPulse          0x3               izuvo_mcu.o
+mPulseTable         0x20              izuvo_mcu.o
+mPulseRepeat        0x1               izuvo_mcu.o
+mCaptureState       0x1               izuvo_mcu.o
+mDecodeData         0x1e              izuvo_mcu.o
+mCmdQ               0x80              izuvo.o
+mPulseCnt           0x2               izuvo_mcu.o
+mCaptureIndex       0x2               izuvo_mcu.o
+mCapturePulse       0x190             izuvo_mcu.o
+mPulseLen           0x1               izuvo_mcu.o
+mTxFlag             0x1               izuvo_mcu.o
+mDecodeIndex        0x2               izuvo_mcu.o
+mZuvoData           0x1e              izuvo_mcu.o
+mPulseFreq          0x2               izuvo_mcu.o
+mCaptureRepeat      0x1               izuvo_mcu.o
+mpUART              0x1               izuvo.o
+mPulse              0x4               izuvo_mcu.o
+mDecodeBit          0x2               izuvo_mcu.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+text             0x00000000         0x00002000         xr
+data             0x00800060         0x0000ffa0         rw !x
+eeprom           0x00810000         0x00010000         rw !x
+fuse             0x00820000         0x00000400         rw !x
+lock             0x00830000         0x00000400         rw !x
+signature        0x00840000         0x00000400         rw !x
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm8.o
+LOAD main.o
+LOAD utility.o
+LOAD izuvo.o
+LOAD izuvo_mcu.o
+LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a
+LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4\libc.a
+LOAD c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a
+
+.hash
+ *(.hash)
+
+.dynsym
+ *(.dynsym)
+
+.dynstr
+ *(.dynstr)
+
+.gnu.version
+ *(.gnu.version)
+
+.gnu.version_d
+ *(.gnu.version_d)
+
+.gnu.version_r
+ *(.gnu.version_r)
+
+.rel.init
+ *(.rel.init)
+
+.rela.init
+ *(.rela.init)
+
+.rel.text
+ *(.rel.text)
+ *(.rel.text.*)
+ *(.rel.gnu.linkonce.t*)
+
+.rela.text
+ *(.rela.text)
+ *(.rela.text.*)
+ *(.rela.gnu.linkonce.t*)
+
+.rel.fini
+ *(.rel.fini)
+
+.rela.fini
+ *(.rela.fini)
+
+.rel.rodata
+ *(.rel.rodata)
+ *(.rel.rodata.*)
+ *(.rel.gnu.linkonce.r*)
+
+.rela.rodata
+ *(.rela.rodata)
+ *(.rela.rodata.*)
+ *(.rela.gnu.linkonce.r*)
+
+.rel.data
+ *(.rel.data)
+ *(.rel.data.*)
+ *(.rel.gnu.linkonce.d*)
+
+.rela.data
+ *(.rela.data)
+ *(.rela.data.*)
+ *(.rela.gnu.linkonce.d*)
+
+.rel.ctors
+ *(.rel.ctors)
+
+.rela.ctors
+ *(.rela.ctors)
+
+.rel.dtors
+ *(.rel.dtors)
+
+.rela.dtors
+ *(.rela.dtors)
+
+.rel.got
+ *(.rel.got)
+
+.rela.got
+ *(.rela.got)
+
+.rel.bss
+ *(.rel.bss)
+
+.rela.bss
+ *(.rela.bss)
+
+.rel.plt
+ *(.rel.plt)
+
+.rela.plt
+ *(.rela.plt)
+
+.text           0x00000000     0x1818
+ *(.vectors)
+ .vectors       0x00000000       0x26 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm8.o
+                0x00000000                __vectors
+                0x00000000                __vector_default
+ *(.vectors)
+ *(.progmem.gcc*)
+ *(.progmem*)
+                0x00000026                . = ALIGN (0x2)
+                0x00000026                __trampolines_start = .
+ *(.trampolines)
+ .trampolines   0x00000026        0x0 linker stubs
+ *(.trampolines*)
+                0x00000026                __trampolines_end = .
+ *(.jumptables)
+ *(.jumptables*)
+ *(.lowtext)
+ *(.lowtext*)
+                0x00000026                __ctors_start = .
+ *(.ctors)
+                0x00000026                __ctors_end = .
+                0x00000026                __dtors_start = .
+ *(.dtors)
+                0x00000026                __dtors_end = .
+ SORT(*)(.ctors)
+ SORT(*)(.dtors)
+ *(.init0)
+ .init0         0x00000026        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm8.o
+                0x00000026                __init
+ *(.init0)
+ *(.init1)
+ *(.init1)
+ *(.init2)
+ .init2         0x00000026        0xc c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm8.o
+ *(.init2)
+ *(.init3)
+ *(.init3)
+ *(.init4)
+ .init4         0x00000032       0x16 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_copy_data.o)
+                0x00000032                __do_copy_data
+ .init4         0x00000048       0x10 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_clear_bss.o)
+                0x00000048                __do_clear_bss
+ *(.init4)
+ *(.init5)
+ *(.init5)
+ *(.init6)
+ *(.init6)
+ *(.init7)
+ *(.init7)
+ *(.init8)
+ *(.init8)
+ *(.init9)
+ .init9         0x00000058        0x4 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm8.o
+ *(.init9)
+ *(.text)
+ .text          0x0000005c        0x2 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm8.o
+                0x0000005c                __vector_1
+                0x0000005c                __vector_12
+                0x0000005c                __bad_interrupt
+                0x0000005c                __vector_3
+                0x0000005c                __vector_13
+                0x0000005c                __vector_17
+                0x0000005c                __vector_7
+                0x0000005c                __vector_4
+                0x0000005c                __vector_2
+                0x0000005c                __vector_15
+                0x0000005c                __vector_8
+                0x0000005c                __vector_14
+                0x0000005c                __vector_10
+                0x0000005c                __vector_16
+                0x0000005c                __vector_18
+ .text          0x0000005e       0x14 main.o
+                0x0000005e                main
+ .text          0x00000072      0x2f4 utility.o
+                0x0000015a                u_asc2uint
+                0x000002fc                u_puts
+                0x0000024a                u_putHexWord
+                0x000001ee                u_hex2dec
+                0x000002c0                u_putch
+                0x000000dc                u_abs
+                0x00000072                u_delay
+                0x00000274                u_putHexByte
+                0x0000011e                u_sign
+                0x00000334                u_toupper
+ .text          0x00000366      0xcc0 izuvo.o
+                0x000005f2                ISR_TIMER0_OVR
+                0x00000d04                process_cmd_hal
+                0x00000654                __vector_6
+                0x00000a0e                process_tmr
+                0x00000366                __vector_11
+                0x00000c9e                process_cmd_linux
+                0x000006f6                __vector_5
+                0x00000c28                process_cmd
+                0x000003b8                ISR_UART_RECV
+                0x000004ac                POLL_UART_RECV
+                0x000005a0                __vector_9
+                0x0000085a                init_hardware
+                0x0000061c                POLL_TIMER0_OVR
+                0x000008f4                init_system
+ .text          0x00001026      0x7ee izuvo_mcu.o
+                0x00001084                ir_wait_tx
+                0x000017c2                ir_capture_pulse
+                0x00001156                izuvo_init_capture_pulse
+                0x00001026                process_remote_command
+                0x0000148e                izuvo_rx_unit
+                0x000012c4                izuvo_rx_pulse
+                0x00001706                izuvo_decode_data
+                0x00001534                izuvo_decode_byte
+                0x00001268                swapByte
+                0x000010ea                ir_init_capture_pulse
+                0x000011b0                izuvo_search_header
+ .text          0x00001814        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_exit.o)
+ .text          0x00001814        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_copy_data.o)
+ .text          0x00001814        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_clear_bss.o)
+                0x00001814                . = ALIGN (0x2)
+ *(.text.*)
+ .text.libgcc   0x00001814        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_exit.o)
+ .text.libgcc   0x00001814        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_copy_data.o)
+ .text.libgcc   0x00001814        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_clear_bss.o)
+                0x00001814                . = ALIGN (0x2)
+ *(.fini9)
+ .fini9         0x00001814        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_exit.o)
+                0x00001814                exit
+                0x00001814                _exit
+ *(.fini9)
+ *(.fini8)
+ *(.fini8)
+ *(.fini7)
+ *(.fini7)
+ *(.fini6)
+ *(.fini6)
+ *(.fini5)
+ *(.fini5)
+ *(.fini4)
+ *(.fini4)
+ *(.fini3)
+ *(.fini3)
+ *(.fini2)
+ *(.fini2)
+ *(.fini1)
+ *(.fini1)
+ *(.fini0)
+ .fini0         0x00001814        0x4 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_exit.o)
+ *(.fini0)
+                0x00001818                _etext = .
+
+.data           0x00800060      0x13e load address 0x00001818
+                0x00800060                PROVIDE (__data_start, .)
+ *(.data)
+ .data          0x00800060        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm8.o
+ .data          0x00800060        0x0 main.o
+ .data          0x00800060       0x11 utility.o
+ .data          0x00800071       0xf7 izuvo.o
+                0x00800081                mLinux_passwd
+                0x00800091                T_PRONTO_CODE
+                0x00800071                mLinux_user
+                0x008000e8                mLinuxMode
+ .data          0x00800168       0x36 izuvo_mcu.o
+                0x00800168                mZuvoIndex
+ .data          0x0080019e        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_exit.o)
+ .data          0x0080019e        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_copy_data.o)
+ .data          0x0080019e        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_clear_bss.o)
+ *(.data*)
+ *(.rodata)
+ *(.rodata*)
+ *(.gnu.linkonce.d*)
+                0x0080019e                . = ALIGN (0x2)
+                0x0080019e                _edata = .
+                0x0080019e                PROVIDE (__data_end, .)
+
+.bss            0x0080019e      0x2a3
+                0x0080019e                PROVIDE (__bss_start, .)
+ *(.bss)
+ .bss           0x0080019e        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr4/crtm8.o
+ .bss           0x0080019e        0x0 main.o
+ .bss           0x0080019e        0x0 utility.o
+ .bss           0x0080019e       0x14 izuvo.o
+                0x0080019f                mCmdCnt
+                0x0080019e                mCmdQFlag
+                0x008001a4                mPulseT
+                0x008001a2                mTimer0_Cnt
+                0x008001ab                mFaucetMode
+                0x008001ac                mFaucetBL
+                0x008001a1                mTimer0_Flag
+                0x008001a3                mFunctionMode
+                0x008001aa                mPulseIndex
+ .bss           0x008001b2        0xc izuvo_mcu.o
+                0x008001b8                mZuvoByteCnt
+                0x008001b2                mZuvoHeader
+                0x008001b9                mZuvoUartByte
+                0x008001b6                mZuvoBit
+                0x008001b7                mZuvoBitCnt
+                0x008001bb                mZuvoAuto
+ .bss           0x008001be        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_exit.o)
+ .bss           0x008001be        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_copy_data.o)
+ .bss           0x008001be        0x0 c:/winavr-20100110/bin/../lib/gcc/avr/4.3.3/avr4\libgcc.a(_clear_bss.o)
+ *(.bss*)
+ *(COMMON)
+ COMMON         0x008001be       0x81 izuvo.o
+                0x008001be                mCmdQ
+                0x0080023e                mpUART
+ COMMON         0x0080023f      0x202 izuvo_mcu.o
+                0x0080023f                mZuvoPulse
+                0x00800242                mPulseTable
+                0x00800262                mPulseRepeat
+                0x00800263                mCaptureState
+                0x00800264                mDecodeData
+                0x00800282                mPulseCnt
+                0x00800284                mCaptureIndex
+                0x00800286                mCapturePulse
+                0x00800416                mPulseLen
+                0x00800417                mTxFlag
+                0x00800418                mDecodeIndex
+                0x0080041a                mZuvoData
+                0x00800438                mPulseFreq
+                0x0080043a                mCaptureRepeat
+                0x0080043b                mPulse
+                0x0080043f                mDecodeBit
+                0x00800441                PROVIDE (__bss_end, .)
+                0x00001818                __data_load_start = LOADADDR (.data)
+                0x00001956                __data_load_end = (__data_load_start + SIZEOF (.data))
+
+.noinit         0x00800441        0x0
+                0x00800441                PROVIDE (__noinit_start, .)
+ *(.noinit*)
+                0x00800441                PROVIDE (__noinit_end, .)
+                0x00800441                _end = .
+                0x00800441                PROVIDE (__heap_start, .)
+
+.eeprom         0x00810000        0x0
+ *(.eeprom*)
+                0x00810000                __eeprom_end = .
+
+.fuse
+ *(.fuse)
+ *(.lfuse)
+ *(.hfuse)
+ *(.efuse)
+
+.lock
+ *(.lock*)
+
+.signature
+ *(.signature*)
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment
+ *(.comment)
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges  0x00000000       0x80
+ *(.debug_aranges)
+ .debug_aranges
+                0x00000000       0x20 main.o
+ .debug_aranges
+                0x00000020       0x20 utility.o
+ .debug_aranges
+                0x00000040       0x20 izuvo.o
+ .debug_aranges
+                0x00000060       0x20 izuvo_mcu.o
+
+.debug_pubnames
+                0x00000000      0x50c
+ *(.debug_pubnames)
+ .debug_pubnames
+                0x00000000       0x1b main.o
+ .debug_pubnames
+                0x0000001b       0x97 utility.o
+ .debug_pubnames
+                0x000000b2      0x1e6 izuvo.o
+ .debug_pubnames
+                0x00000298      0x274 izuvo_mcu.o
+
+.debug_info     0x00000000      0xd70
+ *(.debug_info)
+ .debug_info    0x00000000       0x92 main.o
+ .debug_info    0x00000092      0x2a2 utility.o
+ .debug_info    0x00000334      0x4a8 izuvo.o
+ .debug_info    0x000007dc      0x594 izuvo_mcu.o
+ *(.gnu.linkonce.wi.*)
+
+.debug_abbrev   0x00000000      0x3cd
+ *(.debug_abbrev)
+ .debug_abbrev  0x00000000       0x41 main.o
+ .debug_abbrev  0x00000041      0x12b utility.o
+ .debug_abbrev  0x0000016c      0x11b izuvo.o
+ .debug_abbrev  0x00000287      0x146 izuvo_mcu.o
+
+.debug_line     0x00000000     0x1151
+ *(.debug_line)
+ .debug_line    0x00000000       0x7b main.o
+ .debug_line    0x0000007b      0x20d utility.o
+ .debug_line    0x00000288      0x84b izuvo.o
+ .debug_line    0x00000ad3      0x67e izuvo_mcu.o
+
+.debug_frame    0x00000000      0x280
+ *(.debug_frame)
+ .debug_frame   0x00000000       0x20 main.o
+ .debug_frame   0x00000020       0xb0 utility.o
+ .debug_frame   0x000000d0       0xf0 izuvo.o
+ .debug_frame   0x000001c0       0xc0 izuvo_mcu.o
+
+.debug_str      0x00000000      0x4e1
+ *(.debug_str)
+ .debug_str     0x00000000       0x91 main.o
+                                 0xca (size before relaxing)
+ .debug_str     0x00000091       0x9d utility.o
+                                0x158 (size before relaxing)
+ .debug_str     0x0000012e      0x1db izuvo.o
+                                0x2a5 (size before relaxing)
+ .debug_str     0x00000309      0x1d8 izuvo_mcu.o
+                                0x308 (size before relaxing)
+
+.debug_loc
+ *(.debug_loc)
+
+.debug_macinfo
+ *(.debug_macinfo)
+OUTPUT(izuvo_faucet.elf elf32-avr)
+LOAD linker stubs

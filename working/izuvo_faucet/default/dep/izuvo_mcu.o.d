@@ -1,4 +1,4 @@
-main.o: ../main.c ../izuvo.h \
+izuvo_mcu.o: ../izuvo_mcu.c ../izuvo_mcu.h ../izuvo.h \
   c:/winavr-20100110/lib/gcc/../../avr/include/avr/io.h \
   c:/winavr-20100110/lib/gcc/../../avr/include/avr/sfr_defs.h \
   c:/winavr-20100110/lib/gcc/../../avr/include/inttypes.h \
@@ -11,6 +11,8 @@ main.o: ../main.c ../izuvo.h \
   c:/winavr-20100110/lib/gcc/../../avr/include/avr/lock.h \
   c:/winavr-20100110/lib/gcc/../../avr/include/avr/interrupt.h \
   ../avr_types.h ../utility.h
+
+../izuvo_mcu.h:
 
 ../izuvo.h:
 

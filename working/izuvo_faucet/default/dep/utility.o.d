@@ -1,4 +1,4 @@
-main.o: ../main.c ../izuvo.h \
+utility.o: ../utility.c ../avr_types.h ../utility.h ../remote.h \
   c:/winavr-20100110/lib/gcc/../../avr/include/avr/io.h \
   c:/winavr-20100110/lib/gcc/../../avr/include/avr/sfr_defs.h \
   c:/winavr-20100110/lib/gcc/../../avr/include/inttypes.h \
@@ -9,10 +9,13 @@ main.o: ../main.c ../izuvo.h \
   c:/winavr-20100110/lib/gcc/../../avr/include/avr/version.h \
   c:/winavr-20100110/lib/gcc/../../avr/include/avr/fuse.h \
   c:/winavr-20100110/lib/gcc/../../avr/include/avr/lock.h \
-  c:/winavr-20100110/lib/gcc/../../avr/include/avr/interrupt.h \
-  ../avr_types.h ../utility.h
+  c:/winavr-20100110/lib/gcc/../../avr/include/avr/interrupt.h
 
-../izuvo.h:
+../avr_types.h:
+
+../utility.h:
+
+../remote.h:
 
 c:/winavr-20100110/lib/gcc/../../avr/include/avr/io.h:
 
@@ -35,7 +38,3 @@ c:/winavr-20100110/lib/gcc/../../avr/include/avr/fuse.h:
 c:/winavr-20100110/lib/gcc/../../avr/include/avr/lock.h:
 
 c:/winavr-20100110/lib/gcc/../../avr/include/avr/interrupt.h:
-
-../avr_types.h:
-
-../utility.h:
