@@ -5,9 +5,10 @@ Target (iZuVo_Faucet), 0x0000 // Tools: 'MCS-51'
 
 Group (Source Group 1)
 
-File 1,2,<C:\working\stc\iZuVo_Faucet\STARTUP.A51><STARTUP.A51> 0x0 
 File 1,1,<.\src\izuvo_faucet_main.c><izuvo_faucet_main.c> 0x0 
-File 1,5,<.\src\izuvo_faucet_main.h><izuvo_faucet_main.h> 0x0 
+File 1,2,<.\STARTUP.A51><STARTUP.A51> 0x0 
+File 1,1,<.\src\utility.c><utility.c> 0x0 
+File 1,1,<.\src\izuvo_stc.c><izuvo_stc.c> 0x0 
 
 
 Options 1,0,0  // Target 'iZuVo_Faucet'
@@ -29,12 +30,12 @@ Options 1,0,0  // Target 'iZuVo_Faucet'
  EnvLib ()
  EnvReg ()
  OrgReg ()
- TgStat=0
+ TgStat=9
  OutDir (.\)
  OutName (iZuVo_Faucet)
  GenApp=1
  GenLib=0
- GenHex=0
+ GenHex=1
  Debug=1
  Browse=1
  LstDir (.\)
@@ -54,7 +55,7 @@ Options 1,0,0  // Target 'iZuVo_Faucet'
  T51FL=624
  CBANKS5=0
  XBANKS5=0
- RCB51 { 0,0,0,0,0,0,0,0,0 }
+ RCB51 { 0,0,0,0,0,255,255,0,0 }
  RXB51 { 0,0,0,0,0,0,0,0,0 }
  OCM51 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
  OCR51 { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }

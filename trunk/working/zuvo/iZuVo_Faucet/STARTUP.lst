@@ -1,10 +1,9 @@
-A51 MACRO ASSEMBLER  STARTUP                                                              03/14/2012 17:28:54 PAGE     1
+A51 MACRO ASSEMBLER  STARTUP                                                              03/18/2012 16:08:17 PAGE     1
 
 
 MACRO ASSEMBLER A51 V7.07
-OBJECT MODULE PLACED IN .\STARTUP.obj
-ASSEMBLER INVOKED BY: C:\Keil2\C51\BIN\A51.EXE C:\working\stc\iZuVo_Faucet\STARTUP.A51 SET(SMALL) DEBUG PRINT(.\STARTUP.
-                      lst) OBJECT(.\STARTUP.obj) EP
+OBJECT MODULE PLACED IN STARTUP.OBJ
+ASSEMBLER INVOKED BY: C:\Keil2\C51\BIN\A51.EXE STARTUP.A51 SET(SMALL) DEBUG EP
 
 LOC  OBJ            LINE     SOURCE
 
@@ -65,9 +64,9 @@ LOC  OBJ            LINE     SOURCE
                       55     ;------------------------------------------------------------------------------
                       56     ;
                       57     ;  Page Definition for Using the Compact Model with 64 KByte xdata RAM
-A51 MACRO ASSEMBLER  STARTUP                                                              03/14/2012 17:28:54 PAGE     2
-
                       58     ;
+A51 MACRO ASSEMBLER  STARTUP                                                              03/18/2012 16:08:17 PAGE     2
+
                       59     ;  The following EQU statements define the xdata page used for pdata
                       60     ;  variables. The EQU PPAGE must conform with the PPAGE control used
                       61     ;  in the linker invocation.
@@ -133,9 +132,9 @@ LOC  OBJ            LINE     SOURCE
                                              MOV     PPAGE_SFR,#PPAGE
                              ENDIF
                      123     
-A51 MACRO ASSEMBLER  STARTUP                                                              03/14/2012 17:28:54 PAGE     3
-
                      124     IF PDATALEN <> 0
+A51 MACRO ASSEMBLER  STARTUP                                                              03/18/2012 16:08:17 PAGE     3
+
                                              MOV     R0,#LOW (PDATASTART)
                                              MOV     R7,#LOW (PDATALEN)
                                              CLR     A
@@ -169,7 +168,7 @@ LOC  OBJ            LINE     SOURCE
 0009 020000   F      155                     LJMP    ?C_START
                      156     
                      157                     END
-A51 MACRO ASSEMBLER  STARTUP                                                              03/14/2012 17:28:54 PAGE     4
+A51 MACRO ASSEMBLER  STARTUP                                                              03/18/2012 16:08:17 PAGE     4
 
 SYMBOL TABLE LISTING
 ------ ----- -------

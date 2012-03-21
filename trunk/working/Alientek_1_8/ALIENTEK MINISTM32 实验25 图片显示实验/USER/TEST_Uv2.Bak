@@ -1,0 +1,124 @@
+### uVision2 Project, (C) Keil Software
+### Do not modify !
+
+Target (Target 1), 0x0004 // Tools: 'ARM-ADS'
+
+Group (Source Group 1)
+Group (USER)
+Group (SYSTEM)
+Group (HARDWARE)
+Group (FAT)
+Group (TEXT)
+Group (JPEG)
+Group (SYSFILE)
+
+File 1,2,<.\STM32F10x.s><STM32F10x.s> 0x4B30AA72 
+File 2,1,<.\test.c><test.c> 0x4D2DB190 
+File 3,1,<..\SYSTEM\delay\delay.c><delay.c> 0x4D2D9FC0 
+File 3,1,<..\SYSTEM\sys\sys.c><sys.c> 0x4D2D9FC0 
+File 3,1,<..\SYSTEM\usart\usart.c><usart.c> 0x4DAA99F6 
+File 4,1,<..\HARDWARE\LED\led.c><led.c> 0x4D2D9FC0 
+File 4,1,<..\HARDWARE\KEY\key.c><key.c> 0x4D2DA2A4 
+File 4,1,<..\HARDWARE\WDG\wdg.c><wdg.c> 0x4D2DA4F6 
+File 4,1,<..\HARDWARE\TIMER\timer.c><timer.c> 0x4D2DA5C2 
+File 4,1,<..\HARDWARE\LCD\ILI93xx.c><ILI93xx.c> 0x4DBAFBC6 
+File 4,1,<..\HARDWARE\RTC\rtc.c><rtc.c> 0x4D2DB4DE 
+File 4,1,<..\HARDWARE\WKUP\wkup.c><wkup.c> 0x4D2DAA0E 
+File 4,1,<..\HARDWARE\ADC\adc.c><adc.c> 0x4D2DAAAE 
+File 4,1,<..\HARDWARE\DMA\dma.c><dma.c> 0x4D2DAADC 
+File 4,1,<..\HARDWARE\24CXX\24cxx.c><24cxx.c> 0x4D2DAB78 
+File 4,1,<..\HARDWARE\24CXX\myiic.c><myiic.c> 0x4D2DAB78 
+File 4,1,<..\HARDWARE\SPI\spi.c><spi.c> 0x4D2DB6CC 
+File 4,1,<..\HARDWARE\FLASH\flash.c><flash.c> 0x4D2DC3E6 
+File 4,1,<..\HARDWARE\NRF24L01\24l01.c><24l01.c> 0x4D2DACB2 
+File 4,1,<..\HARDWARE\SD\MMC_SD.C><MMC_SD.C> 0x4D2DAD1E 
+File 4,1,<..\HARDWARE\REMOTE\remote.c><remote.c> 0x4D2DADE4 
+File 4,1,<..\HARDWARE\DS18B20\ds18b20.c><ds18b20.c> 0x4D2DAEEE 
+File 4,1,<..\HARDWARE\PS2\mouse.c><mouse.c> 0x4D2DAF40 
+File 4,1,<..\HARDWARE\PS2\ps2.c><ps2.c> 0x4D2DAF6C 
+File 5,1,<..\FAT\FAT.C><FAT.C> 0x4D2DD890 
+File 6,1,<..\TEXT\fontupd.c><fontupd.c> 0x4D2DB89C 
+File 6,1,<..\TEXT\text.c><text.c> 0x4D2DB042 
+File 6,1,<..\TEXT\untogb.c><untogb.c> 0x4D2DB042 
+File 7,1,<..\JPEG\jpegdecode.c><jpegdecode.c> 0x4D2DDC52 
+File 8,1,<..\SYSFILE\sysfile.c><sysfile.c> 0x4D2DB17A 
+
+
+Options 1,0,0  // Target 'Target 1'
+ Device (STM32F103RB)
+ Vendor (STMicroelectronics)
+ Cpu (IRAM(0x20000000-0x20004FFF) IROM(0x8000000-0x801FFFF) CLOCK(8000000) CPUTYPE("Cortex-M3"))
+ FlashUt ()
+ StupF ("STARTUP\ST\STM32F10x.s" ("STM32 Startup Code"))
+ FlashDR (UL2CM3(-O14 -S0 -C0 -N00("ARM Cortex-M3") -D00(1BA00477) -L00(4) -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F10x_128 -FS08000000 -FL020000))
+ Rgf (stm32f10x_lib.h)
+ Mem ()
+ C ()
+ A ()
+ RL ()
+ OH ()
+ UseEnv=0
+ EnvBin ()
+ EnvInc ()
+ EnvLib ()
+ EnvReg (ST\STM32F10x\)
+ OrgReg (ST\STM32F10x\)
+ TgStat=16
+ OutDir (.\)
+ OutName (TEST)
+ GenApp=1
+ GenLib=0
+ GenHex=1
+ Debug=1
+ Browse=1
+ LstDir (.\)
+ HexSel=1
+ MG32K=0
+ TGMORE=0
+ RunUsr 0 0 <>
+ RunUsr 1 0 <>
+ BrunUsr 0 0 <>
+ BrunUsr 1 0 <>
+ SVCSID <>
+ GLFLAGS=1790
+ ADSFLGA { 243,31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ACPUTYP (Cortex-M3)
+ ADSTFLGA=1190148
+ OCMADSOCM { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ OCMADSIRAM { 0,0,0,0,32,0,80,0,0 }
+ OCMADSIROM { 1,0,0,0,8,0,0,2,0 }
+ OCMADSXRAM { 0,0,0,0,0,0,0,0,0 }
+ ADSCCFLG { 5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCMISC ()
+ ADSCDEFN ()
+ ADSCUDEF ()
+ ADSCINCD (..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\HARDWARE\LED;..\HARDWARE\KEY;..\HARDWARE\EXTI;..\HARDWARE\WDG;..\HARDWARE\TIMER;..\HARDWARE\OLED;..\HARDWARE\LCD;..\HARDWARE\RTC;..\HARDWARE\WKUP;..\HARDWARE\ADC;..\HARDWARE\DMA;..\HARDWARE\24CXX;..\HARDWARE\FLASH;..\HARDWARE\SPI;..\HARDWARE\TOUCH;..\HARDWARE\NRF24L01;..\HARDWARE\SD;..\HARDWARE\REMOTE;..\HARDWARE\DS18B20;..\HARDWARE\PS2;..\TEXT;..\FAT;..\SYSFILE;..\JPEG)
+ ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSAMISC ()
+ ADSADEFN ()
+ ADSAUDEF ()
+ ADSAINCD ()
+ PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=1
+ AlwaysBuild=0
+ GenAsm=0
+ AsmAsm=0
+ PublicsOnly=0
+ StopCode=3
+ CustArgs ()
+ LibMods ()
+ ADSLDFG { 17,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSLDTA (0x08000000)
+ ADSLDDA (0x20000000)
+ ADSLDSC ()
+ ADSLDIB ()
+ ADSLDIC ()
+ ADSLDMC ()
+ ADSLDIF ()
+  OPTDL (SARMCM3.DLL)()(DARMSTM.DLL)(-pSTM32F103RB)(SARMCM3.DLL)()(TARMSTM.DLL)(-pSTM32F103RB)
+  OPTDBG 48126,7,()()()()()()()()()() (Segger\JL2CM3.dll)()()()
+ FLASH1 { 9,0,0,0,1,0,0,0,6,16,0,0,0,0,0,0,0,0,0,0 }
+ FLASH2 (Segger\JL2CM3.dll)
+ FLASH3 ("" ())
+EndOpt
+

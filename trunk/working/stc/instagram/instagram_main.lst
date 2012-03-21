@@ -1,0 +1,129 @@
+C51 COMPILER V7.06   INSTAGRAM_MAIN                                                        03/21/2012 23:16:36 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE INSTAGRAM_MAIN
+OBJECT MODULE PLACED IN instagram_main.obj
+COMPILER INVOKED BY: C:\Keil2\C51\BIN\C51.EXE src\instagram_main.c OPTIMIZE(9,SPEED) BROWSE ORDER DEBUG OBJECTEXTEND PRI
+                    -NT(.\instagram_main.lst) OBJECT(instagram_main.obj)
+
+stmt level    source
+
+   1          /*******************************************************************************
+   2          Include Section
+   3          *******************************************************************************/
+   4          
+   5          #include "instagram_main.h"
+   6          #include "stc_mcu.h"
+   7          #include "utility.h"
+   8          
+   9          
+  10          
+  11          /*****************************************************************************
+  12          Global Variale Section
+  13          ******************************************************************************/
+  14          
+  15          extern unsigned char mCmdQ[32];
+  16          
+  17          unsigned char mLED=0;
+  18          
+  19          
+  20          /*****************************************************************************
+  21          Main Section
+  22          ******************************************************************************/
+  23          main()
+  24          {
+  25   1              unsigned char idata *idata_point;
+  26   1              unsigned char i,j;
+  27   1      
+  28   1              init_hardware();
+  29   1              init_timer();
+  30   1              UART_one_init();
+  31   1      
+  32   1              init_system();
+  33   1      
+  34   1      //      mLED = 0x03;
+  35   1      //      mLED |= 0x04;   // Red
+  36   1      //      mLED |= 0x08;   // Common Anode
+  37   1      //      mLED |= 0x10;   // Blue
+  38   1      //      mLED |= 0x20;   // Green
+  39   1              mLED = 0xff;
+  40   1      //      mLED ^= 0x02;
+  41   1              P1 = mLED;
+  42   1      
+  43   1              EA      = 1;
+  44   1      
+  45   1              u_puts(VERSION);
+  46   1              u_puts("ID=");
+  47   1              idata_point = 0xf1;
+  48   1              for (i=0; i<=6; i++)
+  49   1              {
+  50   2                      j = *(idata_point+i);
+  51   2                      u_putHexByte(j & 0xff,0x00);
+  52   2              }
+  53   1      
+  54   1              u_puts("\r\n");
+C51 COMPILER V7.06   INSTAGRAM_MAIN                                                        03/21/2012 23:16:36 PAGE 2   
+
+  55   1      
+  56   1              while(1)
+  57   1              {
+  58   2                      process_uart();
+  59   2                      process_timer();
+  60   2              }
+  61   1      
+  62   1      }
+  63          
+  64          // 
+  65          // Function start here
+  66          //
+  67          
+  68          void process_timer(void)
+  69          {
+  70   1      
+  71   1      
+  72   1      }
+  73          
+  74          
+  75          void process_uart(void)
+  76          {
+  77   1              unsigned char i;
+  78   1      
+  79   1              if (mCmdQ[0]>0x80)      
+  80   1              {
+  81   2                      for (i=1; i<=(mCmdQ[0] & 0x7f); i++)
+  82   2                      {
+  83   3                              u_putch(mCmdQ[i]);      
+  84   3                      }
+  85   2                      u_puts("\r\n");
+  86   2                      mCmdQ[0] = 0x00;
+  87   2              }
+  88   1      
+  89   1      }
+  90          
+  91          
+  92          void delayms(unsigned char ms)
+  93          {
+  94   1              unsigned int i;
+  95   1              while(ms--)
+  96   1              {
+  97   2                      for(i = 0; i < 2000; i++)
+  98   2                      {
+  99   3                              _nop_();
+ 100   3                      }
+ 101   2              }
+ 102   1      }
+ 103          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    160    ----
+   CONSTANT SIZE    =     47    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1       4
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
