@@ -1,0 +1,392 @@
+BL51 BANKED LINKER/LOCATER V5.03                                                        03/16/2012  15:02:43  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V5.03, INVOKED BY:
+C:\KEIL2\C51\BIN\BL51.EXE .\STARTUP.obj, stc_uart.obj TO stc_uart RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\STARTUP.obj (?C_STARTUP)
+  stc_uart.obj (STC_UART)
+  C:\KEIL2\C51\LIB\C51S.LIB (?C?COPY)
+  C:\KEIL2\C51\LIB\C51S.LIB (?C?SLCMP)
+
+
+LINK MAP OF MODULE:  stc_uart (?C_STARTUP)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     000CH     UNIT         _DATA_GROUP_
+            IDATA   0014H     0001H     UNIT         ?STACK
+
+            * * * * * * *  X D A T A   M E M O R Y  * * * * * * *
+            XDATA   0000H     0200H     UNIT         _XDATA_GROUP_
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     001BH     UNIT         ?PR?DISPLAY_MCU_START_LED?STC_UART
+            CODE    001EH     0004H     UNIT         ?PR?SOFT_RESET_TO_ISP_MONITOR?STC_UART
+                    0022H     0001H                  *** GAP ***
+            CODE    0023H     0003H     ABSOLUTE     
+            CODE    0026H     0017H     UNIT         ?PR?_SEND_UART_TWO?STC_UART
+                    003DH     0006H                  *** GAP ***
+            CODE    0043H     0003H     ABSOLUTE     
+            CODE    0046H     0200H     UNIT         ?CO?STC_UART
+            CODE    0246H     010CH     UNIT         ?C?LIB_CODE
+            CODE    0352H     0068H     UNIT         ?PR?UART_TWO_INTERRUPT_RECEIVE?STC_UART
+            CODE    03BAH     005FH     UNIT         ?PR?MAIN?STC_UART
+            CODE    0419H     005CH     UNIT         ?PR?UART_ONE_INTERRUPT_RECEIVE?STC_UART
+            CODE    0475H     003CH     UNIT         ?PR?DELAY?STC_UART
+            CODE    04B1H     0013H     UNIT         ?PR?SEND_PWM?STC_UART
+            CODE    04C4H     0011H     UNIT         ?PR?SERIAL_PORT_ONE_INITIAL?STC_UART
+            CODE    04D5H     000FH     UNIT         ?PR?SERIAL_PORT_TWO_INITIAL?STC_UART
+            CODE    04E4H     000EH     UNIT         ?PR?_SEND_UART_ONE?STC_UART
+            CODE    04F2H     000CH     UNIT         ?C_C51STARTUP
+
+
+
+OVERLAY MAP OF MODULE:   stc_uart (?C_STARTUP)
+
+
+SEGMENT                                           DATA_GROUP          XDATA_GROUP
+  +--> CALLED SEGMENT                           START    LENGTH     START    LENGTH
+-----------------------------------------------------------------------------------
+?C_C51STARTUP                                   -----    -----      -----    -----
+BL51 BANKED LINKER/LOCATER V5.03                                                      03/16/2012  15:02:43  PAGE 2
+
+
+  +--> ?PR?MAIN?STC_UART
+
+?PR?MAIN?STC_UART                               0008H    0003H      0000H    0200H
+  +--> ?CO?STC_UART
+  +--> ?PR?SERIAL_PORT_ONE_INITIAL?STC_UART
+  +--> ?PR?DISPLAY_MCU_START_LED?STC_UART
+  +--> ?PR?_SEND_UART_ONE?STC_UART
+
+?PR?DISPLAY_MCU_START_LED?STC_UART              000BH    0001H      -----    -----
+  +--> ?PR?DELAY?STC_UART
+
+?PR?DELAY?STC_UART                              0012H    0002H      -----    -----
+
+*** NEW ROOT ***************************************************
+
+?PR?UART_ONE_INTERRUPT_RECEIVE?STC_UART         000EH    0001H      -----    -----
+  +--> ?PR?DELAY?STC_UART
+  +--> ?PR?SOFT_RESET_TO_ISP_MONITOR?STC_UART
+  +--> ?PR?_SEND_UART_ONE?STC_UART
+
+*** NEW ROOT ***************************************************
+
+?PR?UART_TWO_INTERRUPT_RECEIVE?STC_UART         0011H    0001H      -----    -----
+  +--> ?PR?DELAY?STC_UART
+  +--> ?PR?SOFT_RESET_TO_ISP_MONITOR?STC_UART
+  +--> ?PR?_SEND_UART_TWO?STC_UART
+
+
+
+SYMBOL TABLE OF MODULE:  stc_uart (?C_STARTUP)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ?C_STARTUP
+  C:04F2H         SEGMENT       ?C_C51STARTUP
+  I:0014H         SEGMENT       ?STACK
+  C:0000H         PUBLIC        ?C_STARTUP
+  D:00E0H         SYMBOL        ACC
+  D:00F0H         SYMBOL        B
+  D:0083H         SYMBOL        DPH
+  D:0082H         SYMBOL        DPL
+  N:0000H         SYMBOL        IBPSTACK
+  N:0100H         SYMBOL        IBPSTACKTOP
+  N:0080H         SYMBOL        IDATALEN
+  C:04F5H         SYMBOL        IDATALOOP
+  N:0000H         SYMBOL        PBPSTACK
+  N:0000H         SYMBOL        PBPSTACKTOP
+  N:0000H         SYMBOL        PDATALEN
+  N:0000H         SYMBOL        PDATASTART
+  N:0000H         SYMBOL        PPAGE
+  N:0000H         SYMBOL        PPAGEENABLE
+  D:00A0H         SYMBOL        PPAGE_SFR
+  D:0081H         SYMBOL        SP
+  C:04F2H         SYMBOL        STARTUP1
+  N:0000H         SYMBOL        XBPSTACK
+  N:0000H         SYMBOL        XBPSTACKTOP
+BL51 BANKED LINKER/LOCATER V5.03                                                      03/16/2012  15:02:43  PAGE 3
+
+
+  N:0000H         SYMBOL        XDATALEN
+  N:0000H         SYMBOL        XDATASTART
+  C:0000H         LINE#         92
+  C:04F2H         LINE#         99
+  C:04F4H         LINE#         100
+  C:04F5H         LINE#         101
+  C:04F6H         LINE#         102
+  C:04F8H         LINE#         151
+  C:04FBH         LINE#         155
+  -------         ENDMOD        ?C_STARTUP
+
+  -------         MODULE        STC_UART
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  C:04B1H         PUBLIC        send_PWM
+  B:00A8H.7       PUBLIC        EA
+  D:00F9H         PUBLIC        CH
+  D:00E9H         PUBLIC        CL
+  D:00FAH         PUBLIC        CCAP0H
+  C:0475H         PUBLIC        delay
+  B:00D8H.6       PUBLIC        CR
+  D:00EAH         PUBLIC        CCAP0L
+  D:00DAH         PUBLIC        CCAPM0
+  B:00A8H.4       PUBLIC        ES
+  B:0098H.0       PUBLIC        RI
+  B:0098H.1       PUBLIC        TI
+  C:04C4H         PUBLIC        serial_port_one_initial
+  D:00D9H         PUBLIC        CMOD
+  C:001EH         PUBLIC        soft_reset_to_ISP_Monitor
+  C:03BAH         PUBLIC        main
+  C:0003H         PUBLIC        display_MCU_Start_Led
+  D:0099H         PUBLIC        SBUF
+  D:0098H         PUBLIC        SCON
+  C:04D5H         PUBLIC        serial_port_two_initial
+  C:0419H         PUBLIC        UART_one_Interrupt_Receive
+  D:00AFH         PUBLIC        IE2
+  D:008EH         PUBLIC        AUXR
+  C:0046H         SYMBOL        _?ix1000
+  D:00C7H         PUBLIC        IAP_CONTR
+  C:04E4H         PUBLIC        _send_UART_one
+  B:0090H.7       PUBLIC        MCU_Start_Led
+  C:0352H         PUBLIC        UART_two_Interrupt_Receive
+  B:0090H.4       PUBLIC        S2_Interrupt_Receive_Led
+  D:009BH         PUBLIC        S2BUF
+  C:0026H         PUBLIC        _send_UART_two
+  D:009AH         PUBLIC        S2CON
+  D:009CH         PUBLIC        BRT
+  -------         PROC          MAIN
+  -------         DO            
+  D:0008H         SYMBOL        array_point
+  X:0000H         SYMBOL        Test_array_one
+  D:000AH         SYMBOL        i
+  -------         ENDDO         
+  C:03BAH         LINE#         49
+  C:03BAH         LINE#         50
+  C:03BAH         LINE#         51
+  C:03BFH         LINE#         52
+BL51 BANKED LINKER/LOCATER V5.03                                                      03/16/2012  15:02:43  PAGE 4
+
+
+  C:03D1H         LINE#         119
+  C:03D4H         LINE#         121
+  C:03D7H         LINE#         123
+  C:03DAH         LINE#         133
+  C:03DFH         LINE#         134
+  C:03E4H         LINE#         139
+  C:03E9H         LINE#         140
+  C:03E9H         LINE#         141
+  C:03FCH         LINE#         142
+  C:040DH         LINE#         144
+  C:0412H         LINE#         145
+  C:0417H         LINE#         147
+  -------         ENDPROC       MAIN
+  -------         PROC          SERIAL_PORT_ONE_INITIAL
+  C:04C4H         LINE#         149
+  C:04C4H         LINE#         150
+  C:04C4H         LINE#         151
+  C:04C7H         LINE#         156
+  C:04CAH         LINE#         158
+  C:04CDH         LINE#         159
+  C:04D0H         LINE#         160
+  C:04D2H         LINE#         161
+  C:04D4H         LINE#         162
+  -------         ENDPROC       SERIAL_PORT_ONE_INITIAL
+  -------         PROC          SERIAL_PORT_TWO_INITIAL
+  C:04D5H         LINE#         164
+  C:04D5H         LINE#         165
+  C:04D5H         LINE#         175
+  C:04D8H         LINE#         177
+  C:04DBH         LINE#         179
+  C:04DEH         LINE#         182
+  C:04E1H         LINE#         183
+  C:04E3H         LINE#         184
+  -------         ENDPROC       SERIAL_PORT_TWO_INITIAL
+  -------         PROC          _SEND_UART_ONE
+  D:0007H         SYMBOL        i
+  C:04E4H         LINE#         186
+  C:04E4H         LINE#         187
+  C:04E4H         LINE#         188
+  C:04E6H         LINE#         189
+  C:04E8H         LINE#         190
+  C:04EAH         LINE#         191
+  C:04EDH         LINE#         192
+  C:04EFH         LINE#         193
+  C:04F1H         LINE#         194
+  -------         ENDPROC       _SEND_UART_ONE
+  -------         PROC          _SEND_UART_TWO
+  D:0007H         SYMBOL        i
+  -------         DO            
+  D:0006H         SYMBOL        temp
+  -------         ENDDO         
+  C:0026H         LINE#         196
+  C:0026H         LINE#         197
+  C:0026H         LINE#         207
+  C:0027H         LINE#         210
+  C:0029H         LINE#         212
+  C:002CH         LINE#         214
+BL51 BANKED LINKER/LOCATER V5.03                                                      03/16/2012  15:02:43  PAGE 5
+
+
+  C:002EH         LINE#         217
+  C:002EH         LINE#         218
+  C:0030H         LINE#         219
+  C:0033H         LINE#         220
+  C:0036H         LINE#         224
+  C:0039H         LINE#         227
+  C:003CH         LINE#         228
+  -------         ENDPROC       _SEND_UART_TWO
+  -------         PROC          UART_ONE_INTERRUPT_RECEIVE
+  -------         DO            
+  D:000EH         SYMBOL        k
+  -------         ENDDO         
+  C:0419H         LINE#         230
+  C:0436H         LINE#         232
+  C:0439H         LINE#         233
+  C:043CH         LINE#         234
+  C:043CH         LINE#         235
+  C:043EH         LINE#         236
+  C:0441H         LINE#         237
+  C:0446H         LINE#         238
+  C:0446H         LINE#         239
+  C:0449H         LINE#         240
+  C:044CH         LINE#         241
+  C:044FH         LINE#         242
+  C:044FH         LINE#         243
+  C:0456H         LINE#         244
+  C:0458H         LINE#         246
+  C:0458H         LINE#         247
+  C:045AH         LINE#         248
+  C:045AH         LINE#         249
+  -------         ENDPROC       UART_ONE_INTERRUPT_RECEIVE
+  -------         PROC          UART_TWO_INTERRUPT_RECEIVE
+  -------         DO            
+  D:0011H         SYMBOL        k
+  -------         ENDDO         
+  C:0352H         LINE#         251
+  C:036FH         LINE#         262
+  C:0372H         LINE#         263
+  C:0375H         LINE#         264
+  C:0378H         LINE#         266
+  C:037DH         LINE#         267
+  C:037DH         LINE#         269
+  C:0380H         LINE#         270
+  C:0382H         LINE#         272
+  C:0385H         LINE#         273
+  C:038AH         LINE#         274
+  C:038AH         LINE#         276
+  C:038DH         LINE#         277
+  C:0390H         LINE#         279
+  C:0393H         LINE#         280
+  C:0393H         LINE#         281
+  C:039AH         LINE#         282
+  C:039CH         LINE#         284
+  C:039CH         LINE#         286
+  C:039FH         LINE#         287
+  C:039FH         LINE#         288
+  -------         ENDPROC       UART_TWO_INTERRUPT_RECEIVE
+BL51 BANKED LINKER/LOCATER V5.03                                                      03/16/2012  15:02:43  PAGE 6
+
+
+  -------         PROC          SOFT_RESET_TO_ISP_MONITOR
+  C:001EH         LINE#         289
+  C:001EH         LINE#         290
+  C:001EH         LINE#         291
+  C:0021H         LINE#         292
+  -------         ENDPROC       SOFT_RESET_TO_ISP_MONITOR
+  -------         PROC          DELAY
+  -------         DO            
+  D:0012H         SYMBOL        j
+  D:0082H         SYMBOL        g
+  -------         ENDDO         
+  C:0475H         LINE#         293
+  C:0475H         LINE#         294
+  C:0475H         LINE#         295
+  C:047AH         LINE#         296
+  C:047EH         LINE#         297
+  C:0482H         LINE#         298
+  C:0482H         LINE#         299
+  C:049AH         LINE#         300
+  C:049AH         LINE#         301
+  C:049BH         LINE#         302
+  C:049CH         LINE#         303
+  C:049DH         LINE#         304
+  C:049EH         LINE#         305
+  C:049FH         LINE#         306
+  C:04A2H         LINE#         307
+  C:04B0H         LINE#         308
+  -------         ENDPROC       DELAY
+  -------         PROC          DISPLAY_MCU_START_LED
+  -------         DO            
+  D:000BH         SYMBOL        i
+  -------         ENDDO         
+  C:0003H         LINE#         310
+  C:0003H         LINE#         311
+  C:0003H         LINE#         313
+  C:0006H         LINE#         314
+  C:0008H         LINE#         315
+  C:0008H         LINE#         316
+  C:000AH         LINE#         317
+  C:000DH         LINE#         318
+  C:000FH         LINE#         319
+  C:0012H         LINE#         320
+  C:0014H         LINE#         321
+  C:001DH         LINE#         322
+  -------         ENDPROC       DISPLAY_MCU_START_LED
+  -------         PROC          SEND_PWM
+  C:04B1H         LINE#         324
+  C:04B1H         LINE#         325
+  C:04B1H         LINE#         326
+  C:04B4H         LINE#         329
+  C:04B6H         LINE#         330
+  C:04B8H         LINE#         331
+  C:04BBH         LINE#         332
+  C:04BEH         LINE#         333
+  C:04C1H         LINE#         334
+  C:04C3H         LINE#         335
+  -------         ENDPROC       SEND_PWM
+BL51 BANKED LINKER/LOCATER V5.03                                                      03/16/2012  15:02:43  PAGE 7
+
+
+  -------         ENDMOD        STC_UART
+
+  -------         MODULE        ?C?COPY
+  C:0316H         PUBLIC        ?C?COPY
+  -------         ENDMOD        ?C?COPY
+
+  -------         MODULE        ?C?SLCMP
+  C:033CH         PUBLIC        ?C?SLCMP
+  -------         ENDMOD        ?C?SLCMP
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SERIAL_PORT_TWO_INITIAL?STC_UART
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SEND_PWM?STC_UART
+
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?DELAY?STC_UART
+    CALLER1: ?C_C51STARTUP
+    CALLER2: ?PR?UART_ONE_INTERRUPT_RECEIVE?STC_UART
+
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?DELAY?STC_UART
+    CALLER1: ?PR?UART_ONE_INTERRUPT_RECEIVE?STC_UART
+    CALLER2: ?PR?UART_TWO_INTERRUPT_RECEIVE?STC_UART
+
+Program Size: data=21.0 xdata=512 code=1271
+LINK/LOCATE RUN COMPLETE.  4 WARNING(S),  0 ERROR(S)

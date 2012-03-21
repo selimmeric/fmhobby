@@ -7,7 +7,7 @@
 #include "utility.h"
 
 
-#define FOSC 2*22118400L
+#define FOSC 11080373L
 #define BAUD 115200
 //#define BAUD 57600
 

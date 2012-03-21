@@ -1,0 +1,51 @@
+<html>
+<body>
+<pre>
+<h1>µVision2 Build Log</h1>
+<h2>Project:</h2>
+D:\working\stc\instagram\instagram.uv2
+Project File Date:  03/21/2012
+
+<h2>Output:</h2>
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling instagram_main.c...
+compiling stc_mcu.c...
+compiling utility.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAYMS?INSTAGRAM_MAIN
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_U_DELAY?UTILITY
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_U_ABS?UTILITY
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_U_SIGN?UTILITY
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_U_ASC2UINT?UTILITY
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_U_PUTHEXWORD?UTILITY
+Program Size: data=75.0 xdata=0 code=859
+creating hex file from "instagram"...
+"instagram" - 0 Error(s), 6 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling instagram_main.c...
+compiling stc_mcu.c...
+compiling utility.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_DELAYMS?INSTAGRAM_MAIN
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_U_DELAY?UTILITY
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_U_ABS?UTILITY
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_U_SIGN?UTILITY
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_U_ASC2UINT?UTILITY
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_U_PUTHEXWORD?UTILITY
+Program Size: data=75.0 xdata=0 code=859
+creating hex file from "instagram"...
+"instagram" - 0 Error(s), 6 Warning(s).

@@ -1,0 +1,202 @@
+<html>
+<body>
+<pre>
+<h1>µVision2 Build Log</h1>
+<h2>Project:</h2>
+D:\working\stc\stc_uart\stc_uart.uv2
+Project File Date:  03/16/2012
+
+<h2>Output:</h2>
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling stc_uart.c...
+linking...
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  MAIN
+    MODULE:  C:\KEIL2\C51\LIB\C51S.LIB (?C_INIT)
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  MAIN
+    MODULE:  C:\KEIL2\C51\LIB\C51S.LIB (?C_INIT)
+    ADDRESS: 0010H
+Program Size: data=9.0 xdata=0 code=144
+"stc_uart" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling stc_uart.c...
+SRC\STC_UART.C(41): error C141: syntax error near 'BRT'
+SRC\STC_UART.C(42): error C141: syntax error near 'AUXR'
+SRC\STC_UART.C(47): error C141: syntax error near 'while'
+SRC\STC_UART.C(56): error C202: 'PO': undefined identifier
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling stc_uart.c...
+SRC\STC_UART.C(47): error C141: syntax error near 'while'
+SRC\STC_UART.C(56): error C202: 'PO': undefined identifier
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling stc_uart.c...
+SRC\STC_UART.C(56): error C202: 'PO': undefined identifier
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling stc_uart.c...
+SRC\STC_UART.C(56): error C202: 'PO': undefined identifier
+Target not created
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling stc_uart.c...
+linking...
+Program Size: data=12.1 xdata=0 code=176
+"stc_uart" - 0 Error(s), 0 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling stc_uart.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SERIAL_PORT_TWO_INITIAL?STC_UART
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SEND_PWM?STC_UART
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?DELAY?STC_UART
+    CALLER1: ?C_C51STARTUP
+    CALLER2: ?PR?UART_ONE_INTERRUPT_RECEIVE?STC_UART
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?DELAY?STC_UART
+    CALLER1: ?PR?UART_ONE_INTERRUPT_RECEIVE?STC_UART
+    CALLER2: ?PR?UART_TWO_INTERRUPT_RECEIVE?STC_UART
+Program Size: data=21.0 xdata=512 code=1254
+"stc_uart" - 0 Error(s), 4 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling stc_uart.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SERIAL_PORT_TWO_INITIAL?STC_UART
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SEND_PWM?STC_UART
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?DELAY?STC_UART
+    CALLER1: ?C_C51STARTUP
+    CALLER2: ?PR?UART_ONE_INTERRUPT_RECEIVE?STC_UART
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?DELAY?STC_UART
+    CALLER1: ?PR?UART_ONE_INTERRUPT_RECEIVE?STC_UART
+    CALLER2: ?PR?UART_TWO_INTERRUPT_RECEIVE?STC_UART
+Program Size: data=21.0 xdata=512 code=1254
+"stc_uart" - 0 Error(s), 4 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling stc_uart.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SERIAL_PORT_TWO_INITIAL?STC_UART
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SEND_PWM?STC_UART
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?DELAY?STC_UART
+    CALLER1: ?C_C51STARTUP
+    CALLER2: ?PR?UART_ONE_INTERRUPT_RECEIVE?STC_UART
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?DELAY?STC_UART
+    CALLER1: ?PR?UART_ONE_INTERRUPT_RECEIVE?STC_UART
+    CALLER2: ?PR?UART_TWO_INTERRUPT_RECEIVE?STC_UART
+Program Size: data=21.0 xdata=512 code=1254
+creating hex file from "stc_uart"...
+"stc_uart" - 0 Error(s), 4 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling stc_uart.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SERIAL_PORT_TWO_INITIAL?STC_UART
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SEND_PWM?STC_UART
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?DELAY?STC_UART
+    CALLER1: ?C_C51STARTUP
+    CALLER2: ?PR?UART_ONE_INTERRUPT_RECEIVE?STC_UART
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?DELAY?STC_UART
+    CALLER1: ?PR?UART_ONE_INTERRUPT_RECEIVE?STC_UART
+    CALLER2: ?PR?UART_TWO_INTERRUPT_RECEIVE?STC_UART
+Program Size: data=21.0 xdata=512 code=1256
+creating hex file from "stc_uart"...
+"stc_uart" - 0 Error(s), 4 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling stc_uart.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SERIAL_PORT_TWO_INITIAL?STC_UART
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SEND_PWM?STC_UART
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?DELAY?STC_UART
+    CALLER1: ?C_C51STARTUP
+    CALLER2: ?PR?UART_ONE_INTERRUPT_RECEIVE?STC_UART
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?DELAY?STC_UART
+    CALLER1: ?PR?UART_ONE_INTERRUPT_RECEIVE?STC_UART
+    CALLER2: ?PR?UART_TWO_INTERRUPT_RECEIVE?STC_UART
+Program Size: data=21.0 xdata=512 code=1256
+creating hex file from "stc_uart"...
+"stc_uart" - 0 Error(s), 4 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling stc_uart.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SERIAL_PORT_TWO_INITIAL?STC_UART
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SEND_PWM?STC_UART
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?DELAY?STC_UART
+    CALLER1: ?C_C51STARTUP
+    CALLER2: ?PR?UART_ONE_INTERRUPT_RECEIVE?STC_UART
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?DELAY?STC_UART
+    CALLER1: ?PR?UART_ONE_INTERRUPT_RECEIVE?STC_UART
+    CALLER2: ?PR?UART_TWO_INTERRUPT_RECEIVE?STC_UART
+Program Size: data=21.0 xdata=512 code=1259
+creating hex file from "stc_uart"...
+"stc_uart" - 0 Error(s), 4 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling stc_uart.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SERIAL_PORT_TWO_INITIAL?STC_UART
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SEND_PWM?STC_UART
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?DELAY?STC_UART
+    CALLER1: ?C_C51STARTUP
+    CALLER2: ?PR?UART_ONE_INTERRUPT_RECEIVE?STC_UART
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?DELAY?STC_UART
+    CALLER1: ?PR?UART_ONE_INTERRUPT_RECEIVE?STC_UART
+    CALLER2: ?PR?UART_TWO_INTERRUPT_RECEIVE?STC_UART
+Program Size: data=21.0 xdata=512 code=1261
+creating hex file from "stc_uart"...
+"stc_uart" - 0 Error(s), 4 Warning(s).
+Build target 'Target 1'
+assembling STARTUP.A51...
+compiling stc_uart.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SERIAL_PORT_TWO_INITIAL?STC_UART
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?SEND_PWM?STC_UART
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?DELAY?STC_UART
+    CALLER1: ?C_C51STARTUP
+    CALLER2: ?PR?UART_ONE_INTERRUPT_RECEIVE?STC_UART
+*** WARNING L15: MULTIPLE CALL TO SEGMENT
+    SEGMENT: ?PR?DELAY?STC_UART
+    CALLER1: ?PR?UART_ONE_INTERRUPT_RECEIVE?STC_UART
+    CALLER2: ?PR?UART_TWO_INTERRUPT_RECEIVE?STC_UART
+Program Size: data=21.0 xdata=512 code=1271
+creating hex file from "stc_uart"...
+"stc_uart" - 0 Error(s), 4 Warning(s).
