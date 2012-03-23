@@ -1,5 +1,6 @@
 
 #include "stc_mcu.h"
+#include "instagram_main.h"
 
 // STC register
 
@@ -16,6 +17,28 @@ sfr	BRT	 = 0x9c;
 //****************************************************
 
 unsigned char mCmdQ[32];	 		// mCmdQ[0] = index
+unsigned char mTMR0_Flag=0;
+
+// ***************************************************
+// STC Timer0 Interrupt Routine
+//****************************************************
+
+// Interrupt @ 1ms
+// Set TMR0_Flag @ 100mS
+void tm0_isr() interrupt 1 using 1
+{
+	static unsigned char tCnt=0;
+
+	TL0 = T1MS;
+	TH0 = T1MS >> 8;
+	if (tCnt ++ >=100)
+	{
+		tCnt = 0;
+		mTMR0_Flag=1;
+	}
+
+}
+
 
 // ***************************************************
 // STC UART 1 Routine
@@ -85,6 +108,12 @@ void init_hardware(void)
 void init_timer(void)
 {
 
+	TMOD = 0x01;
+	TL0  = T1MS;
+	TH0  = T1MS>>8;
+	TR0  = 1;
+	ET0  = 1;
+
 }
 
 void init_system(void)
@@ -96,7 +125,4 @@ void init_system(void)
 	{
 		mCmdQ[i]=0;
 	}
-
-
-
 }

@@ -1,4 +1,4 @@
-C51 COMPILER V7.06   INSTAGRAM_MAIN                                                        03/21/2012 23:16:36 PAGE 1   
+C51 COMPILER V7.06   INSTAGRAM_MAIN                                                        03/22/2012 18:07:48 PAGE 1   
 
 
 C51 COMPILER V7.06, COMPILATION OF MODULE INSTAGRAM_MAIN
@@ -15,112 +15,230 @@ stmt level    source
    5          #include "instagram_main.h"
    6          #include "stc_mcu.h"
    7          #include "utility.h"
-   8          
+   8          #include "lcd.h"
    9          
   10          
-  11          /*****************************************************************************
-  12          Global Variale Section
-  13          ******************************************************************************/
-  14          
-  15          extern unsigned char mCmdQ[32];
-  16          
-  17          unsigned char mLED=0;
-  18          
+  11          
+  12          /*****************************************************************************
+  13          Global Variale Section
+  14          ******************************************************************************/
+  15          
+  16          extern unsigned char mCmdQ[32];
+  17          
+  18          extern unsigned char mTMR0_Flag;
   19          
-  20          /*****************************************************************************
-  21          Main Section
-  22          ******************************************************************************/
-  23          main()
-  24          {
-  25   1              unsigned char idata *idata_point;
-  26   1              unsigned char i,j;
-  27   1      
-  28   1              init_hardware();
-  29   1              init_timer();
-  30   1              UART_one_init();
-  31   1      
-  32   1              init_system();
+  20          
+  21          /*****************************************************************************
+  22          Main Section
+  23          ******************************************************************************/
+  24          main()
+  25          {
+  26   1              unsigned char idata *idata_point;
+  27   1              unsigned char i,j;
+  28   1      
+  29   1              init_hardware();
+  30   1              init_timer();
+  31   1              UART_one_init();
+  32   1              P1 = 0xff;
   33   1      
-  34   1      //      mLED = 0x03;
-  35   1      //      mLED |= 0x04;   // Red
-  36   1      //      mLED |= 0x08;   // Common Anode
-  37   1      //      mLED |= 0x10;   // Blue
-  38   1      //      mLED |= 0x20;   // Green
-  39   1              mLED = 0xff;
-  40   1      //      mLED ^= 0x02;
-  41   1              P1 = mLED;
-  42   1      
-  43   1              EA      = 1;
-  44   1      
-  45   1              u_puts(VERSION);
-  46   1              u_puts("ID=");
-  47   1              idata_point = 0xf1;
-  48   1              for (i=0; i<=6; i++)
-  49   1              {
-  50   2                      j = *(idata_point+i);
-  51   2                      u_putHexByte(j & 0xff,0x00);
-  52   2              }
-  53   1      
-  54   1              u_puts("\r\n");
-C51 COMPILER V7.06   INSTAGRAM_MAIN                                                        03/21/2012 23:16:36 PAGE 2   
+  34   1              init_system();
+  35   1              lcd_initial();
+  36   1              dsp_single_colour(0xf8,0x00);
+  37   1      
+  38   1              P1 = 0xff;
+  39   1      
+  40   1              EA      = 1;
+  41   1      
+  42   1              u_puts(VERSION);
+  43   1              u_puts("ID=");
+  44   1              idata_point = 0xf1;
+  45   1              for (i=0; i<=6; i++)
+  46   1              {
+  47   2                      j = *(idata_point+i);
+  48   2                      u_putHexByte(j & 0xff,0x00);
+  49   2              }
+  50   1      
+  51   1              u_puts("\r\n");
+  52   1      
+  53   1              mTMR0_Flag=1;
+  54   1      
+C51 COMPILER V7.06   INSTAGRAM_MAIN                                                        03/22/2012 18:07:48 PAGE 2   
 
-  55   1      
-  56   1              while(1)
-  57   1              {
-  58   2                      process_uart();
-  59   2                      process_timer();
-  60   2              }
-  61   1      
-  62   1      }
-  63          
-  64          // 
-  65          // Function start here
-  66          //
-  67          
-  68          void process_timer(void)
-  69          {
-  70   1      
+  55   1              while(1)
+  56   1              {
+  57   2                      process_uart();
+  58   2                      process_timer();
+  59   2              }
+  60   1      
+  61   1      }
+  62          
+  63          // 
+  64          // Function start here
+  65          //
+  66          
+  67          void process_timer(void)
+  68          {
+  69   1              static unsigned char tCnt=0;
+  70   1              static unsigned char tDebugCnt=0;
   71   1      
-  72   1      }
-  73          
-  74          
-  75          void process_uart(void)
-  76          {
-  77   1              unsigned char i;
-  78   1      
-  79   1              if (mCmdQ[0]>0x80)      
-  80   1              {
-  81   2                      for (i=1; i<=(mCmdQ[0] & 0x7f); i++)
-  82   2                      {
-  83   3                              u_putch(mCmdQ[i]);      
-  84   3                      }
-  85   2                      u_puts("\r\n");
-  86   2                      mCmdQ[0] = 0x00;
-  87   2              }
-  88   1      
-  89   1      }
-  90          
-  91          
-  92          void delayms(unsigned char ms)
-  93          {
-  94   1              unsigned int i;
-  95   1              while(ms--)
-  96   1              {
-  97   2                      for(i = 0; i < 2000; i++)
-  98   2                      {
-  99   3                              _nop_();
- 100   3                      }
- 101   2              }
- 102   1      }
- 103          
+  72   1              if (mTMR0_Flag)         // @ 100mS
+  73   1              {
+  74   2                      mTMR0_Flag = 0;
+  75   2                      tCnt ++;
+  76   2                      if (tCnt >=10)
+  77   2                      {
+  78   3                              task_1s();
+  79   3                              tCnt = 0;
+  80   3                              tDebugCnt++;
+  81   3      //                      u_putHexByte(tDebugCnt,0x00);
+  82   3      //                      u_puts("\r\n");
+  83   3                      }
+  84   2              
+  85   2              }
+  86   1      
+  87   1      
+  88   1      }
+  89          
+  90          #define test_bl 
+  91          //#define test_rgb 
+  92          
+  93          void task_led_test(void)
+  94          {
+  95   1      
+  96   1              static unsigned char tCnt=0;
+  97   1      
+  98   1      #ifdef test_bl
+  99   1              tCnt &=0x01;
+ 100   1              switch (tCnt)
+ 101   1              {
+ 102   2                      case 0:
+ 103   2                              LED_BL_ON();
+ 104   2                              break;
+ 105   2                      case 1:
+ 106   2                              LED_BL_OFF();
+ 107   2                              break;                  
+ 108   2              }
+ 109   1      #endif
+ 110   1      
+ 111   1      #ifdef test_rbb
+              
+                      tCnt &=0x07;
+                      switch (tCnt)
+                      {
+                              case 0:
+C51 COMPILER V7.06   INSTAGRAM_MAIN                                                        03/22/2012 18:07:48 PAGE 3   
+
+                                      LED_R_ON();
+                                      LED_G_OFF();
+                                      LED_B_OFF();
+                                      break;
+                              case 1:
+                                      LED_R_OFF();
+                                      LED_G_ON();
+                                      LED_B_OFF();
+                                      break;
+                              case 2:
+                                      LED_R_OFF();
+                                      LED_G_OFF();
+                                      LED_B_ON();                     
+                                      break;
+                              case 3:
+                                      LED_R_ON();
+                                      LED_G_ON();
+                                      LED_B_ON();                     
+                                      break;
+                              case 4:
+                                      LED_R_OFF();
+                                      LED_G_OFF();
+                                      LED_B_OFF();    
+                                      break;
+                              case 5:
+                                      LED_R_ON();
+                                      LED_G_ON();
+                                      LED_B_OFF();                    
+                                      break;
+                              case 6:
+                                      LED_R_ON();
+                                      LED_G_OFF();
+                                      LED_B_ON();                     
+                                      break;
+                              case 7:
+                                      LED_R_OFF();
+                                      LED_G_ON();
+                                      LED_B_ON();                     
+                                      break;
+                              default:
+                                      break;
+                      }
+              #endif
+ 160   1              tCnt++;
+ 161   1      
+ 162   1      }
+ 163          
+ 164          void task_lcd_test(void)
+ 165          {
+ 166   1      
+ 167   1              static unsigned char tCnt=0;
+ 168   1      
+ 169   1              tCnt &= 0x03;
+ 170   1              switch (tCnt)
+ 171   1              {
+ 172   2                      case 0:
+ 173   2                              dsp_single_colour(0x00,0x00);   //Black
+ 174   2      //                      dsp_image();    //White                 
+ 175   2                              break;
+ 176   2                      case 1:
+ 177   2      //              dsp_single_colour(0x00,0x00);   //Black
+ 178   2                      dsp_single_colour(0xf8,0x00);   //Red
+C51 COMPILER V7.06   INSTAGRAM_MAIN                                                        03/22/2012 18:07:48 PAGE 4   
+
+ 179   2                              break;                  
+ 180   2                      case 2:
+ 181   2                      dsp_single_colour(0x07,0xe0);   //Green
+ 182   2                              break;
+ 183   2                      case 3:
+ 184   2              dsp_single_colour(0x00,0x1f);           //Blue
+ 185   2                              break;                  
+ 186   2              }
+ 187   1      
+ 188   1              tCnt++;
+ 189   1      }
+ 190          
+ 191          void task_1s(void)
+ 192          {
+ 193   1      
+ 194   1              task_led_test();
+ 195   1              task_lcd_test();
+ 196   1      
+ 197   1      
+ 198   1      }
+ 199          
+ 200          void process_uart(void)
+ 201          {
+ 202   1              unsigned char i;
+ 203   1      
+ 204   1              if (mCmdQ[0]>0x80)      
+ 205   1              {
+ 206   2                      for (i=1; i<=(mCmdQ[0] & 0x7f); i++)
+ 207   2                      {
+ 208   3                              u_putch(mCmdQ[i]);      
+ 209   3                      }
+ 210   2                      u_puts("\r\n");
+ 211   2                      mCmdQ[0] = 0x00;
+ 212   2              }
+ 213   1      
+ 214   1      }
+ 215          
+ 216          
+ 217          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    160    ----
-   CONSTANT SIZE    =     47    ----
+   CODE SIZE        =    253    ----
+   CONSTANT SIZE    =     49    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =      1       4
+   DATA SIZE        =      4       4
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.

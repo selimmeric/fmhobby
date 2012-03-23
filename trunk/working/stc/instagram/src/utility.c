@@ -50,7 +50,7 @@ void    u_Delay(INT8U iDelay);
 */
 
 
-#if (1)
+#if (0)
 //----------------------------------------------------------------------------
 // Function name	: u_delay(int a)
 //    returns		: void
