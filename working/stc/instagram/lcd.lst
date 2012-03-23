@@ -1,0 +1,612 @@
+C51 COMPILER V7.06   LCD                                                                   03/22/2012 18:07:49 PAGE 1   
+
+
+C51 COMPILER V7.06, COMPILATION OF MODULE LCD
+OBJECT MODULE PLACED IN lcd.obj
+COMPILER INVOKED BY: C:\Keil2\C51\BIN\C51.EXE src\lcd.c OPTIMIZE(9,SPEED) BROWSE ORDER DEBUG OBJECTEXTEND PRINT(.\lcd.ls
+                    -t) OBJECT(lcd.obj)
+
+stmt level    source
+
+   1          
+   2          //     
+   3          /***************************************************/
+   4          
+   5          #include<reg51.h>
+   6          #include<absacc.h>
+   7          #include<intrins.h>
+   8          #include<string.h>
+   9          #include "lcd.h"
+  10          
+  11          #define uchar unsigned char
+  12          #define uint unsigned int
+  13          
+  14          
+  15          
+  16          void  write_command(uchar c);
+  17          void  write_data(uchar d);
+  18          void LCD_DataWrite(uchar LCD_DataH,uchar LCD_DataL);
+  19          
+  20          //sbit cs        =P3^5;
+  21          //sbit rs        =P2^3;
+  22          //sbit sda       =P2^2;
+  23          //sbit scl       =P2^1;
+  24          //sbit reset     =P3^4;
+  25          
+  26          sbit sda       =P1^0;
+  27          sbit scl       =P1^1;
+  28          sbit reset     =P1^2;
+  29          sbit cs        =P1^3;
+  30          sbit cs1       =P1^4;
+  31          sbit cs2       =P1^5;
+  32          sbit cs3       =P1^6;
+  33          
+  34          
+  35          uchar bdata bitdata;
+  36          sbit bit7=bitdata^7;
+  37          sbit bit6=bitdata^6;
+  38          sbit bit5=bitdata^5;
+  39          sbit bit4=bitdata^4;
+  40          sbit bit3=bitdata^3;
+  41          sbit bit2=bitdata^2;
+  42          sbit bit1=bitdata^1;
+  43          sbit bit0=bitdata^0;
+  44          
+  45          unsigned char code image[3200];
+  46          unsigned char code image[3200]=
+  47          { 
+  48           /* 0X00,0X10,0X28,0X00,0X28,0X00,0X01,0X1B,*/
+  49          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+  50          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XBE,0XF7,0X7D,0XEF,
+  51          0XBA,0XD6,0XB6,0XB5,0XF3,0X9C,0XB2,0X94,0XB3,0X9C,0XB2,0X94,0X34,0XA5,0XF7,0XBD,
+  52          0XFB,0XDE,0X7D,0XEF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+  53          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+  54          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+C51 COMPILER V7.06   LCD                                                                   03/22/2012 18:07:49 PAGE 2   
+
+  55          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XBE,0XF7,0XFB,0XDE,0XF3,0X9C,0XCB,0X5A,
+  56          0XC7,0X39,0X04,0X21,0X82,0X10,0X42,0X10,0X42,0X10,0X41,0X08,0X83,0X18,0X45,0X29,
+  57          0XC7,0X39,0X0C,0X63,0X75,0XAD,0X3C,0XE7,0XBE,0XF7,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+  58          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+  59          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+  60          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0X3C,0XE7,0XB2,0X94,0X08,0X42,0XC3,0X18,0X82,0X10,
+  61          0X04,0X21,0X45,0X29,0X86,0X31,0X86,0X31,0X86,0X31,0X86,0X31,0X45,0X29,0X04,0X21,
+  62          0X82,0X10,0X41,0X08,0XC3,0X18,0X08,0X42,0XF3,0X9C,0X3C,0XE7,0XFF,0XFF,0XFF,0XFF,
+  63          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+  64          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+  65          0XFF,0XFF,0XFF,0XFF,0XFB,0XDE,0X0C,0X63,0XC3,0X18,0XC3,0X18,0X45,0X29,0XC7,0X39,
+  66          0X08,0X42,0X08,0X42,0X08,0X42,0X08,0X42,0X08,0X42,0X08,0X42,0XC7,0X39,0XC7,0X39,
+  67          0X86,0X31,0X86,0X31,0X04,0X21,0X41,0X08,0X82,0X10,0XCB,0X5A,0XBA,0XD6,0XFF,0XFF,
+  68          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+  69          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+  70          0XFF,0XFF,0XFB,0XDE,0XCB,0X5A,0X82,0X10,0X45,0X29,0XC7,0X39,0X08,0X42,0X08,0X42,
+  71          0X09,0X4A,0X49,0X4A,0X49,0X4A,0X49,0X4A,0X49,0X4A,0X49,0X4A,0X08,0X42,0XC7,0X39,
+  72          0XC7,0X39,0XC7,0X39,0X86,0X31,0X45,0X29,0X83,0X18,0X00,0X00,0XC8,0X41,0X38,0XC6,
+  73          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+  74          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+  75          0X7D,0XEF,0X8E,0X73,0X82,0X10,0X45,0X29,0XC7,0X39,0X08,0X42,0X09,0X4A,0X8A,0X52,
+  76          0X30,0X84,0XCF,0X7B,0X8A,0X52,0X49,0X4A,0X4A,0X52,0X49,0X4A,0XCB,0X5A,0XCF,0X7B,
+  77          0X0C,0X63,0X08,0X42,0XC7,0X39,0X86,0X31,0X45,0X29,0XC3,0X18,0X00,0X00,0X49,0X4A,
+  78          0XBA,0XD6,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+  79          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+  80          0XF3,0X9C,0XC3,0X18,0X04,0X21,0XC7,0X39,0X08,0X42,0X49,0X4A,0X49,0X4A,0X72,0X94,
+  81          0X7D,0XEF,0X7D,0XEF,0XB2,0X94,0X4A,0X52,0X49,0X4A,0X8A,0X52,0X75,0XAD,0XBE,0XF7,
+  82          0XBA,0XD6,0X4D,0X6B,0XC7,0X39,0XC7,0X39,0X86,0X31,0X45,0X29,0XC3,0X18,0X41,0X08,
+  83          0XCF,0X7B,0X7C,0XE7,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+  84          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XBA,0XD6,
+  85          0X08,0X42,0X82,0X10,0XC7,0X39,0X08,0X42,0X49,0X4A,0X49,0X4A,0X8E,0X73,0XFB,0XDE,
+  86          0XFF,0XFF,0XBE,0XF7,0XBA,0XD6,0X8E,0X73,0X08,0X42,0X30,0X84,0X3C,0XE7,0X7D,0XEF,
+  87          0XFF,0XFF,0XB6,0XB5,0X49,0X4A,0XC7,0X39,0X86,0X31,0X45,0X29,0X04,0X21,0X41,0X08,
+  88          0X45,0X29,0XB6,0XB5,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+  89          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XBE,0XF7,0X71,0X8C,
+  90          0X41,0X08,0X45,0X29,0X08,0X42,0X49,0X4A,0X49,0X4A,0X4A,0X52,0XB2,0X94,0XBE,0XF7,
+  91          0XBE,0XF7,0XB2,0X94,0XCF,0X7B,0XCF,0X7B,0X49,0X4A,0XB6,0XB5,0XF3,0X9C,0X0C,0X63,
+  92          0X38,0XC6,0XBA,0XD6,0X0C,0X63,0X87,0X39,0XC7,0X39,0X86,0X31,0X45,0X29,0XC3,0X18,
+  93          0X41,0X08,0X30,0X84,0X7D,0XEF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+  94          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0X3C,0XE7,0XCB,0X5A,
+  95          0X41,0X08,0XC7,0X39,0X08,0X42,0X49,0X4A,0X4A,0X52,0X8A,0X52,0XF3,0X9C,0XFF,0XFF,
+  96          0X7D,0XEF,0XC7,0X39,0XC3,0X18,0X0C,0X63,0XCB,0X5A,0XB6,0XB5,0XB2,0X94,0XCB,0X5A,
+  97          0X75,0XAD,0XFA,0XD6,0X4D,0X6B,0X87,0X39,0XC7,0X39,0X86,0X31,0X45,0X29,0X04,0X21,
+  98          0X41,0X08,0X8A,0X52,0X79,0XCE,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+  99          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0X38,0XC6,0X86,0X31,
+ 100          0X04,0X21,0XC8,0X41,0X49,0X4A,0X49,0X4A,0X4A,0X52,0X49,0X4A,0XB1,0X8C,0XBE,0XF7,
+ 101          0XBE,0XF7,0XB2,0X94,0XCF,0X7B,0XCF,0X7B,0X49,0X4A,0X74,0XA5,0X7D,0XEF,0X7C,0XE7,
+ 102          0XBE,0XF7,0X79,0XCE,0X0C,0X63,0XC7,0X39,0XC7,0X39,0X86,0X31,0X45,0X29,0X04,0X21,
+ 103          0X82,0X10,0X45,0X29,0X75,0XAD,0XBE,0XF7,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 104          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0X34,0XA5,0X82,0X10,
+ 105          0X86,0X31,0X08,0X42,0X49,0X4A,0X49,0X4A,0X8A,0X52,0X49,0X4A,0X4D,0X6B,0XBA,0XD6,
+ 106          0XFF,0XFF,0XFF,0XFF,0X79,0XCE,0X0D,0X63,0XC7,0X39,0XCF,0X7B,0X7D,0XEF,0XFF,0XFF,
+ 107          0XFF,0XFF,0X75,0XAD,0X08,0X42,0X86,0X31,0XC7,0X39,0X86,0X31,0X45,0X29,0X45,0X29,
+ 108          0XC3,0X18,0XC3,0X18,0XB2,0X94,0X7D,0XEF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 109          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XBE,0XF7,0XB2,0X8C,0X41,0X08,
+ 110          0XC7,0X39,0X08,0X42,0X49,0X4A,0X49,0X4A,0X8A,0X52,0X8A,0X52,0X4A,0X4A,0XD0,0X7B,
+ 111          0X7A,0XC6,0X7B,0XBE,0X90,0X6B,0XC9,0X39,0X88,0X31,0XC9,0X39,0XB3,0X84,0XBB,0XC6,
+ 112          0XF8,0XB5,0XCC,0X5A,0X86,0X31,0XC7,0X39,0XC7,0X39,0X86,0X31,0X45,0X29,0X45,0X29,
+ 113          0XC4,0X20,0X41,0X08,0X30,0X84,0X3C,0XE7,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 114          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0X3C,0XE7,0X8A,0X4A,0XC3,0X10,
+ 115          0XC7,0X39,0X08,0X42,0X49,0X4A,0X49,0X4A,0X4A,0X4A,0X4A,0X42,0X09,0X3A,0X08,0X4A,
+ 116          0X09,0X6B,0X49,0X7B,0XC6,0X7A,0X05,0X83,0X46,0X83,0XC5,0X7A,0XC6,0X72,0X09,0X7B,
+C51 COMPILER V7.06   LCD                                                                   03/22/2012 18:07:49 PAGE 3   
+
+ 117          0X48,0X5A,0X87,0X31,0X88,0X21,0X88,0X29,0X86,0X31,0X86,0X31,0X45,0X29,0X45,0X29,
+ 118          0X04,0X21,0X41,0X08,0X4A,0X4A,0XBA,0XD6,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 119          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XF7,0XC5,0X82,0X50,0X05,0X41,
+ 120          0XC7,0X29,0X08,0X42,0X49,0X4A,0X4A,0X42,0X49,0X4A,0X09,0X7B,0X88,0X9B,0XC6,0XB3,
+ 121          0X21,0XD4,0XA0,0XDC,0XE1,0XE4,0X61,0XED,0X61,0XED,0X21,0XED,0XA0,0XE4,0X20,0XDC,
+ 122          0X80,0XCB,0X43,0XAB,0XC4,0X82,0X06,0X5A,0X47,0X21,0X46,0X29,0X45,0X29,0X04,0X29,
+ 123          0X04,0X19,0X82,0X10,0X82,0X18,0XF3,0X9C,0X7D,0XEF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 124          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0X7D,0XEF,0X4D,0X93,0X00,0XA0,0X82,0XB8,
+ 125          0XC7,0X31,0X09,0X32,0X49,0X4A,0X86,0X7A,0X43,0XC3,0X6B,0XED,0XF4,0XF6,0XEB,0XFD,
+ 126          0X20,0XFD,0X20,0XFD,0X60,0XFD,0XA0,0XFD,0XA0,0XFD,0X60,0XFD,0X60,0XFD,0X20,0XFD,
+ 127          0XE0,0XFC,0XA0,0XFC,0X60,0XF4,0XC1,0XDB,0X83,0X9A,0XC5,0X49,0X45,0X29,0X04,0X19,
+ 128          0XC4,0X20,0X82,0X38,0X00,0X50,0XCB,0X6A,0XBA,0XD6,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 129          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFB,0XEE,0X04,0XA1,0X00,0XC0,0X00,0XF0,
+ 130          0XC3,0XA0,0XC8,0X41,0X49,0X42,0X05,0X9B,0X20,0XFC,0XA4,0XFC,0X69,0XFD,0XE8,0XFD,
+ 131          0X63,0XFD,0X20,0XFD,0X60,0XFD,0X60,0XFD,0X60,0XFD,0X20,0XFD,0X20,0XFD,0XE0,0XFC,
+ 132          0XE0,0XFC,0XA0,0XFC,0X60,0XFC,0X20,0XFC,0X41,0XD3,0XC5,0X49,0X45,0X19,0XC4,0X38,
+ 133          0X82,0X68,0X41,0X88,0X00,0X70,0X49,0X5A,0X79,0XCE,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 134          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFB,0XF6,0X82,0XC0,0X00,0XD0,0X86,0XC1,
+ 135          0X46,0XF1,0X41,0XC8,0X45,0X79,0X89,0X52,0X88,0X62,0X86,0X6A,0XC6,0X7A,0XC4,0XBB,
+ 136          0XE1,0XFC,0X60,0XFD,0X60,0XFD,0XA0,0XFD,0XA0,0XFD,0X60,0XFD,0X60,0XFD,0XE0,0XFC,
+ 137          0X60,0XE4,0X03,0X93,0X84,0X72,0X44,0X6A,0XC5,0X41,0X45,0X29,0XC3,0X58,0X41,0XA8,
+ 138          0X40,0X98,0X00,0XB0,0X00,0X60,0X0C,0X6B,0X79,0XCE,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 139          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0X7D,0XEF,0XCE,0X83,0X82,0X88,0X00,0XF8,0XC4,0XD8,
+ 140          0X0C,0XF3,0X8A,0XFA,0X82,0XE8,0X82,0XB0,0X45,0X69,0XC7,0X51,0X08,0X42,0X08,0X3A,
+ 141          0X86,0X5A,0X83,0X9B,0XA2,0XBC,0X22,0XCD,0X21,0XCD,0XA1,0XC4,0X22,0XB4,0XC4,0X7A,
+ 142          0X06,0X3A,0X86,0X29,0X45,0X29,0X05,0X31,0XC4,0X50,0X41,0X90,0X00,0XC0,0X00,0XA8,
+ 143          0X00,0XA0,0X00,0XA8,0X00,0X30,0X4A,0X4A,0XBA,0XD6,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 144          0XFF,0XFF,0XFF,0XFF,0X7D,0XEF,0X8E,0X73,0XC3,0X18,0X05,0X39,0X82,0XA8,0X00,0XF8,
+ 145          0XC3,0XF8,0X4D,0XFB,0X4D,0XFB,0XC7,0XF9,0XC3,0XF0,0X82,0XD8,0XC3,0XB0,0X04,0X81,
+ 146          0X45,0X61,0X46,0X51,0X86,0X49,0X86,0X49,0X46,0X41,0X45,0X41,0X45,0X41,0X45,0X41,
+ 147          0X05,0X49,0X04,0X61,0X82,0X90,0X41,0XB0,0X00,0XD0,0X00,0XC8,0X00,0XA8,0X00,0XA8,
+ 148          0X00,0XB8,0X41,0X58,0X82,0X10,0X82,0X10,0XB2,0X94,0XBE,0XF7,0XFF,0XFF,0XFF,0XFF,
+ 149          0XFF,0XFF,0XBE,0XF7,0XCF,0X7B,0X82,0X10,0X04,0X21,0X86,0X29,0X86,0X41,0X04,0X99,
+ 150          0X40,0XE8,0X41,0XF8,0X86,0XF9,0XCB,0XFA,0X49,0XFA,0X82,0XF8,0X00,0XF8,0X00,0XF0,
+ 151          0X00,0XE8,0X41,0XD8,0X41,0XD0,0X41,0XC0,0X41,0XC0,0X41,0XC0,0X41,0XC0,0X41,0XC8,
+ 152          0X00,0XD0,0X00,0XE0,0X00,0XE0,0X00,0XD8,0X00,0XD0,0X00,0XB8,0X00,0XA8,0X41,0X88,
+ 153          0X82,0X48,0X82,0X10,0X82,0X10,0X00,0X00,0X45,0X29,0X79,0XCE,0XFF,0XFF,0XFF,0XFF,
+ 154          0XBE,0XF7,0XF3,0X9C,0X82,0X10,0XC3,0X18,0X45,0X29,0X86,0X31,0XC7,0X31,0X30,0X7C,
+ 155          0XF3,0XDC,0X86,0XE1,0X00,0XF0,0X00,0XF8,0X41,0XF8,0X41,0XF8,0X00,0XF8,0X00,0XF8,
+ 156          0X00,0XF8,0X00,0XF8,0X00,0XF8,0X00,0XF8,0X00,0XF8,0X00,0XF8,0X00,0XF8,0X00,0XF8,
+ 157          0X00,0XE8,0X00,0XE0,0X00,0XE0,0X00,0XD8,0X00,0XC8,0X41,0XA0,0X8A,0X9A,0X0C,0X63,
+ 158          0X04,0X11,0X82,0X10,0X82,0X10,0X41,0X08,0X00,0X00,0X4D,0X6B,0X7D,0XEF,0XFF,0XFF,
+ 159          0XFB,0XDE,0X08,0X42,0X42,0X10,0X45,0X29,0X86,0X31,0X86,0X31,0X49,0X4A,0X38,0XBE,
+ 160          0XFF,0XFF,0X38,0XD6,0X86,0XA9,0X00,0XC8,0X00,0XE0,0X00,0XF0,0X00,0XF8,0X00,0XF8,
+ 161          0X00,0XF8,0X00,0XF8,0X00,0XF8,0X00,0XF8,0X00,0XF8,0X00,0XF8,0X00,0XF0,0X00,0XF0,
+ 162          0X00,0XE8,0X00,0XE0,0X00,0XD0,0XC3,0X98,0X8A,0X8A,0XB2,0XA4,0XBA,0XC6,0XF7,0XB5,
+ 163          0X08,0X42,0X41,0X08,0X82,0X10,0X41,0X08,0X00,0X00,0X45,0X29,0XF7,0XBD,0XFF,0XFF,
+ 164          0X71,0X8C,0X41,0X08,0X04,0X21,0X45,0X29,0X86,0X31,0X86,0X31,0X0C,0X63,0X3C,0XE7,
+ 165          0XFF,0XFF,0X79,0XD6,0X46,0XB9,0X00,0XE0,0X42,0XC8,0X82,0XA8,0X82,0XB0,0X41,0XD8,
+ 166          0X82,0XE8,0X82,0XF0,0X41,0XE8,0X41,0XE8,0X41,0XE8,0X41,0XF0,0X41,0XE8,0X41,0XD8,
+ 167          0X04,0XC1,0X08,0X92,0X4D,0X8B,0X34,0XA5,0XFB,0XC6,0XFB,0XD6,0XBA,0XCE,0X3C,0XE7,
+ 168          0X30,0X84,0XC3,0X18,0X41,0X08,0X41,0X08,0X00,0X00,0X41,0X08,0XCF,0X7B,0X7D,0XEF,
+ 169          0X49,0X4A,0X00,0X00,0X04,0X21,0X45,0X29,0X46,0X31,0X86,0X31,0X30,0X84,0XFF,0XFF,
+ 170          0XFF,0XF7,0XF7,0XDD,0X09,0XDA,0X83,0XF8,0X01,0XF0,0X42,0XC0,0X82,0X98,0X49,0X9A,
+ 171          0XF3,0XB4,0XF3,0XCC,0X71,0XBC,0X8E,0XBB,0X8E,0XBB,0X30,0XBC,0X71,0XBC,0XF3,0XBC,
+ 172          0XB6,0XBD,0XFB,0XCE,0XBE,0XE7,0X7D,0XE7,0X3B,0XDF,0XBA,0XD6,0X79,0XCE,0XFB,0XDE,
+ 173          0X75,0XAD,0X86,0X31,0X41,0X08,0X41,0X08,0X00,0X00,0X00,0X00,0X49,0X4A,0XFB,0XDE,
+ 174          0X04,0X21,0X41,0X08,0X04,0X21,0X45,0X29,0X45,0X29,0X87,0X39,0XB2,0X94,0XFF,0XFF,
+ 175          0XBE,0XF7,0X34,0XDD,0X0C,0XEB,0X09,0XFA,0X00,0XF0,0X01,0XD8,0X00,0XD8,0X8B,0XD2,
+ 176          0X7D,0XE7,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 177          0XFF,0XFF,0XBE,0XFF,0X7D,0XEF,0XFB,0XDE,0XFB,0XDE,0XBA,0XD6,0X79,0XCE,0XBA,0XD6,
+ 178          0X78,0XC6,0XC7,0X39,0X00,0X00,0X41,0X08,0X00,0X00,0X00,0X00,0XC7,0X39,0X79,0XCE,
+C51 COMPILER V7.06   LCD                                                                   03/22/2012 18:07:49 PAGE 4   
+
+ 179          0X00,0X00,0X82,0X10,0XC3,0X18,0X04,0X21,0X05,0X29,0X86,0X31,0XB3,0X9C,0XFF,0XFF,
+ 180          0XFF,0XF7,0X75,0XDD,0XC7,0XE9,0XC7,0XF9,0X01,0XF8,0X01,0XF0,0X00,0XE8,0X49,0XE2,
+ 181          0XFB,0XEE,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 182          0XFF,0XFF,0XBE,0XF7,0X7D,0XEF,0XFB,0XDE,0XFB,0XDE,0XBA,0XD6,0X79,0XCE,0XBA,0XD6,
+ 183          0XB9,0XCE,0X08,0X42,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0X00,0XC7,0X39,0X38,0XC6,
+ 184          0X00,0X00,0X82,0X10,0X82,0X10,0X04,0X21,0X04,0X21,0X45,0X29,0X30,0X84,0XFF,0XFF,
+ 185          0XFF,0XFF,0X38,0XDE,0XC4,0XD0,0X00,0XF0,0X01,0XF8,0X00,0XF8,0X00,0XF0,0X08,0XD2,
+ 186          0XFB,0XE6,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 187          0XFF,0XFF,0XBE,0XF7,0X7D,0XEF,0XFB,0XDE,0XBA,0XD6,0X79,0XCE,0X79,0XCE,0XBA,0XD6,
+ 188          0X79,0XCE,0XC7,0X39,0X41,0X08,0X00,0X00,0X00,0X00,0X00,0X00,0X86,0X31,0X38,0XC6,
+ 189          0X00,0X00,0X00,0X00,0XC3,0X18,0XCB,0X5A,0X86,0X31,0XC3,0X18,0XCB,0X5A,0X7D,0XEF,
+ 190          0XFF,0XFF,0X7D,0XEF,0XCF,0XBB,0XC3,0XB0,0X41,0XD0,0X41,0XD0,0X82,0XB8,0X4D,0XB3,
+ 191          0X7D,0XE7,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 192          0XBE,0XF7,0XBE,0XF7,0X3D,0XEF,0XFB,0XDE,0XBA,0XD6,0X79,0XCE,0X79,0XCE,0XFA,0XD6,
+ 193          0XF7,0XBD,0X04,0X21,0X86,0X31,0X04,0X21,0X00,0X00,0X00,0X00,0X86,0X31,0X38,0XC6,
+ 194          0X86,0X31,0XC3,0X18,0XCB,0X5A,0X75,0XAD,0XCF,0X7B,0X41,0X08,0X86,0X31,0XF7,0XBD,
+ 195          0XFF,0XFF,0XFF,0XFF,0XBE,0XEF,0X74,0XB5,0X30,0X9C,0X30,0X9C,0X72,0XA4,0XBB,0XD6,
+ 196          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 197          0XBE,0XF7,0X7D,0XEF,0X3C,0XE7,0XFB,0XDE,0XBA,0XD6,0X79,0XCE,0X79,0XCE,0X3C,0XE7,
+ 198          0X71,0X8C,0X81,0X08,0X0C,0X63,0XCF,0X7B,0X82,0X10,0X00,0X00,0X8A,0X52,0X38,0XC6,
+ 199          0X75,0XAD,0X71,0X8C,0XB6,0XB5,0X3C,0XE7,0XFB,0XDE,0XC7,0X39,0X00,0X00,0XCF,0X73,
+ 200          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 201          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XBE,0XF7,
+ 202          0X7D,0XEF,0X7D,0XEF,0X3B,0XDF,0XFA,0XD6,0X79,0XCE,0X79,0XCE,0XFB,0XDE,0XB9,0XCE,
+ 203          0XC7,0X39,0XC4,0X20,0X71,0X8C,0XBA,0XD6,0X71,0X8C,0XCB,0X5A,0XB2,0X94,0XBA,0XD6,
+ 204          0XFF,0XFF,0X7D,0XEF,0X7D,0XEF,0XFF,0XFF,0XFF,0XFF,0XB6,0XB5,0X46,0X29,0X05,0X19,
+ 205          0X75,0XA5,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 206          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XBE,0XF7,
+ 207          0X7D,0XEF,0X3C,0XE7,0XFB,0XDE,0XBA,0XD6,0X79,0XCE,0XBA,0XD6,0XFC,0XDE,0X4E,0X63,
+ 208          0X42,0X08,0X0C,0X63,0XF7,0XBD,0XBE,0XF7,0XFF,0XFF,0XFB,0XDE,0XFB,0XDE,0XBE,0XF7,
+ 209          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XF4,0X9C,0X04,0X21,
+ 210          0X05,0X21,0XB6,0XA5,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 211          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XBE,0XF7,0XBE,0XF7,0X7D,0XEF,
+ 212          0X3C,0XE7,0XFB,0XDE,0XBA,0XD6,0X79,0XCE,0XFB,0XDE,0XBB,0XD6,0XD1,0X73,0X83,0X18,
+ 213          0X86,0X39,0X34,0X9D,0XBD,0XEF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 214          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XBE,0XFF,0X35,0XD6,0XEB,0XCC,0X43,0XB3,
+ 215          0X40,0X51,0X05,0X19,0XF5,0X8C,0XBE,0XEF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 216          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XBE,0XF7,0XBE,0XF7,0X7D,0XEF,0X7D,0XEF,0X3C,0XE7,
+ 217          0XFB,0XDE,0XBA,0XDE,0XBA,0XD6,0X3C,0XDF,0X3A,0XBE,0X4F,0X63,0X82,0X49,0X40,0XA3,
+ 218          0X23,0XB4,0XCC,0X83,0X3A,0XBE,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 219          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XBF,0XF7,0XB5,0XBD,0X82,0X92,0X20,0XF4,0XA0,0XFC,
+ 220          0X60,0XE4,0X40,0X82,0X84,0X41,0X8F,0X6B,0X77,0XAD,0X3D,0XE7,0XFF,0XFF,0XFF,0XFF,
+ 221          0XFE,0XFF,0XBE,0XF7,0XBE,0XF7,0XBE,0XF7,0X7D,0XEF,0X7D,0XEF,0X3C,0XE7,0XFB,0XDE,
+ 222          0XFB,0XDE,0X3D,0XE7,0XBB,0XCE,0X36,0X9D,0X0B,0X6B,0X41,0X6A,0X60,0XC4,0X20,0XFE,
+ 223          0X60,0XF5,0X00,0X8B,0XC7,0X6A,0X38,0XC6,0XBE,0XF7,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 224          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0X7D,0XEF,0X4B,0X7B,0X80,0XB2,0XA0,0XFC,0XA0,0XFC,
+ 225          0XE0,0XFC,0XE0,0XFC,0XC0,0XCB,0XC1,0X8A,0X45,0X62,0X4D,0X6B,0XB3,0X94,0XF7,0XBD,
+ 226          0X3D,0XDF,0XFF,0XF7,0XFF,0XFF,0XBE,0XF7,0X7D,0XEF,0X7D,0XEF,0X7D,0XE7,0X3D,0XDF,
+ 227          0XBA,0XC6,0X75,0XA5,0X8D,0X7B,0X84,0X7A,0X40,0XB3,0XE0,0XEC,0XE0,0XFD,0XE0,0XFD,
+ 228          0X60,0XF5,0X20,0XE5,0XA0,0XD4,0X0A,0X6B,0XFB,0XDE,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 229          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0X7D,0XEF,0XCC,0X93,0X40,0XEB,0X60,0XFC,0XA0,0XFC,
+ 230          0XE0,0XFC,0X20,0XFD,0X60,0XFD,0X20,0XF5,0XA0,0XD4,0XC0,0XBB,0X42,0X9B,0X45,0X8B,
+ 231          0X6B,0X9C,0XAE,0X9C,0X71,0X8C,0XB3,0X94,0X33,0X9D,0X34,0XA5,0XF2,0XA4,0XF0,0XB4,
+ 232          0XCA,0X9B,0X04,0X9B,0X40,0XBB,0X20,0XE4,0X20,0XFD,0XA0,0XFD,0XA0,0XFD,0XE0,0XFD,
+ 233          0XE0,0XFD,0XE0,0XFD,0X20,0XC4,0X88,0X5A,0X38,0XBE,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 234          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0X78,0XD6,0X46,0XAB,0X40,0XDB,0X20,0XF4,
+ 235          0X60,0XFC,0XA0,0XFC,0XE0,0XFC,0X60,0XFD,0XA0,0XFD,0X60,0XFD,0X20,0XF5,0XA0,0XDC,
+ 236          0XC0,0XB3,0XC0,0X51,0X86,0X29,0X0D,0X63,0X8F,0X7B,0X0D,0X5B,0XC7,0X41,0X01,0X82,
+ 237          0X00,0XC3,0XC0,0XE3,0X60,0XFC,0XA0,0XFC,0XE0,0XFC,0XE0,0XFC,0X60,0XF5,0X60,0XF5,
+ 238          0X20,0XE5,0X80,0X9B,0X86,0X62,0X30,0X84,0X79,0XCE,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 239          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0X38,0XC6,0X2D,0X9C,0X05,0X93,
+ 240          0X43,0XA3,0X82,0XB3,0XC2,0XBB,0XC2,0XBB,0X22,0XB4,0X82,0XA3,0X42,0X93,0XC3,0X7A,
+C51 COMPILER V7.06   LCD                                                                   03/22/2012 18:07:49 PAGE 5   
+
+ 241          0X85,0X62,0X0B,0X63,0X71,0X84,0XB6,0XB5,0X79,0XCE,0X79,0XC6,0XB5,0XAD,0X70,0X94,
+ 242          0X4A,0X8B,0X06,0X83,0X04,0X93,0X04,0X9B,0X43,0X9B,0X43,0X9B,0X43,0X93,0X04,0X83,
+ 243          0X08,0X73,0X8D,0X73,0XB3,0X94,0X79,0XCE,0X7D,0XEF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 244          0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0X3C,0XDF,0X38,0XBE,
+ 245          0X75,0XB5,0X33,0XA5,0X33,0XA5,0XF3,0X9C,0XF3,0X9C,0XF3,0X9C,0XF3,0X94,0XF3,0X9C,
+ 246          0X35,0XA5,0XF8,0XBD,0XFB,0XDE,0XBE,0XF7,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0X7E,0XEF,
+ 247          0XBB,0XD6,0XF8,0XBD,0XB6,0XAD,0X75,0XAD,0X34,0XA5,0X33,0X9D,0X34,0X9D,0X35,0XA5,
+ 248          0XB7,0XAD,0X79,0XC6,0X3C,0XE7,0XBE,0XF7,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
+ 249          };
+ 250          
+ 251          
+ 252          void delay(uint time)
+ 253          {
+ 254   1       uint i,j;
+ 255   1        for(i=0;i<time;i++)
+ 256   1         for(j=0;j<250;j++);
+ 257   1      }
+ 258          
+ 259          
+ 260          void wr_com(unsigned int i,unsigned int j)    
+ 261          {         
+ 262   1        cs=0;
+ 263   1        cs1=0;        
+ 264   1      
+ 265   1      sda=1;scl=0;scl=1;
+ 266   1      bitdata=i;
+ 267   1      
+ 268   1      sda=bit7;scl=0;scl=1;
+ 269   1      sda=bit6;scl=0;scl=1;
+ 270   1      sda=bit5;scl=0;scl=1;
+ 271   1      sda=bit4;scl=0;scl=1;
+ 272   1      sda=bit3;scl=0;scl=1;
+ 273   1      sda=bit2;scl=0;scl=1;
+ 274   1      sda=bit1;scl=0;scl=1;
+ 275   1      sda=bit0;scl=0;scl=1;
+ 276   1      cs=1;  
+ 277   1        cs=0;
+ 278   1      
+ 279   1        cs1=1;
+ 280   1        cs1=0;
+ 281   1      
+ 282   1      sda=1;scl=0;scl=1;
+ 283   1      bitdata=j;
+ 284   1      
+ 285   1      sda=bit7;scl=0;scl=1;
+ 286   1      sda=bit6;scl=0;scl=1;
+ 287   1      sda=bit5;scl=0;scl=1;
+ 288   1      sda=bit4;scl=0;scl=1;
+ 289   1      sda=bit3;scl=0;scl=1;
+ 290   1      sda=bit2;scl=0;scl=1;
+ 291   1      sda=bit1;scl=0;scl=1;
+ 292   1      sda=bit0;scl=0;scl=1;
+ 293   1      cs=1; 
+ 294   1      cs1=0;
+ 295   1       
+ 296   1      }
+ 297          void Reset()
+ 298          {
+ 299   1          reset=0;
+ 300   1          delay(100);
+ 301   1          reset=1;
+ 302   1          delay(100);
+C51 COMPILER V7.06   LCD                                                                   03/22/2012 18:07:49 PAGE 6   
+
+ 303   1      }
+ 304          //////////////////////////////////////////////////////////////////////////////////////////////
+ 305          
+ 306          void lcd_initial()
+ 307          {
+ 308   1      
+ 309   1              // Hardware Reset
+ 310   1              Reset();
+ 311   1      
+ 312   1       
+ 313   1      //------------------------------------------------------------------//  
+ 314   1      //-------------------Software Reset-------------------------------//
+ 315   1      //------------------------------------------------------------------//
+ 316   1      
+ 317   1      
+ 318   1      write_command(0xC1); 
+ 319   1      write_data(0xFF);
+ 320   1       write_data(0x83);
+ 321   1       write_data(0x40); 
+ 322   1      write_command(0x11); 
+ 323   1      delay(100);
+ 324   1      write_command(0xCA); 
+ 325   1      write_data(0x70);
+ 326   1       write_data(0x00);
+ 327   1       write_data(0xD9); 
+ 328   1      write_data(0x01);
+ 329   1       write_data(0x11); 
+ 330   1      
+ 331   1      write_command(0xC9); 
+ 332   1      write_data(0x90);
+ 333   1       write_data(0x49);
+ 334   1       write_data(0x10); 
+ 335   1      write_data(0x28);
+ 336   1       write_data(0x28); 
+ 337   1      write_data(0x10); 
+ 338   1       write_data(0x00); 
+ 339   1      write_data(0x06);
+ 340   1      delay(20);
+ 341   1      write_command(0xC2); 
+ 342   1      write_data(0x60);
+ 343   1       write_data(0x71);
+ 344   1       write_data(0x01); 
+ 345   1      write_data(0x0E);
+ 346   1       write_data(0x05); 
+ 347   1      write_data(0x02); 
+ 348   1      write_data(0x09); 
+ 349   1      write_data(0x31);
+ 350   1       write_data(0x0A);
+ 351   1        
+ 352   1      write_command(0xc3); 
+ 353   1      write_data(0x67);
+ 354   1       write_data(0x30);
+ 355   1       write_data(0x61); 
+ 356   1      write_data(0x17);
+ 357   1       write_data(0x48); 
+ 358   1      write_data(0x07); 
+ 359   1       write_data(0x05); 
+ 360   1      write_data(0x33); 
+ 361   1      delay(10);
+ 362   1      write_command(0xB5); 
+ 363   1      write_data(0x35);
+ 364   1       write_data(0x20);
+C51 COMPILER V7.06   LCD                                                                   03/22/2012 18:07:49 PAGE 7   
+
+ 365   1       write_data(0x45); 
+ 366   1      
+ 367   1      write_command(0xB4); 
+ 368   1      write_data(0x33);
+ 369   1       write_data(0x25);
+ 370   1       write_data(0x4c); 
+ 371   1       delay(10);
+ 372   1      write_command(0x3a); 
+ 373   1      write_data(0x05);
+ 374   1      write_command(0x29); 
+ 375   1      delay(10);
+ 376   1      write_command(0x2a); 
+ 377   1      write_data(0x00);
+ 378   1       write_data(0x00);
+ 379   1       write_data(0x00); 
+ 380   1       write_data(0xaf); 
+ 381   1      write_command(0x2b); 
+ 382   1      write_data(0x00);
+ 383   1       write_data(0x00);
+ 384   1       write_data(0x00); 
+ 385   1       write_data(0xdb); 
+ 386   1      write_command(0x2c); 
+ 387   1      }
+ 388          
+ 389          
+ 390          
+ 391          
+ 392          void dsp_single_colour(DH,DL)
+ 393          {
+ 394   1       uchar i,j;
+ 395   1       //RamAdressSet();
+ 396   1       for (i=0;i<220;i++)
+ 397   1          for (j=0;j<176;j++)
+ 398   1              wr_com(DH,DL);
+ 399   1      
+ 400   1      }
+ 401          static void LCD_SetPos(unsigned int x0,unsigned int y0,unsigned int x1,unsigned int y1)
+ 402          {
+ 403   1             write_command(0x2A);
+ 404   1         write_data(x0>>8);
+ 405   1         write_data(x0);
+ 406   1         write_data(x1>>8);
+ 407   1         write_data(x1);
+ 408   1        
+ 409   1         write_command(0x2B);
+ 410   1         write_data(y0>>8);
+ 411   1         write_data(y0);
+ 412   1         write_data(y1>>8);
+ 413   1         write_data(y1);
+ 414   1              write_command(0x2c); 
+ 415   1      }
+ 416          
+ 417          
+ 418          
+ 419          
+ 420          
+ 421          void dsp_image(void)
+ 422          {
+ 423   1      
+ 424   1              int i,j,k;
+ 425   1      
+ 426   1               write_command(0x2C);
+C51 COMPILER V7.06   LCD                                                                   03/22/2012 18:07:49 PAGE 8   
+
+ 427   1      
+ 428   1          dsp_single_colour(0x00,0x7f);
+ 429   1      
+ 430   1              for(k=0;k<5;k++)
+ 431   1              {
+ 432   2                      for(j=0;j<4;j++)
+ 433   2                      {       
+ 434   3                              LCD_SetPos(40*j,40*k,40*j+39,40*k+39);          //coordinate
+ 435   3                          for(i=0;i<1600;i++)
+ 436   3                               {
+ 437   4                                       LCD_DataWrite(image[i*2+1],image[i*2]);         //????????????8??8?????                                                
+ 438   4                               }
+ 439   3                       }
+ 440   2              }                                                               
+ 441   1      }
+ 442          
+ 443          
+ 444          
+ 445          void LCD_CtrlWrite_IC(uchar c)
+ 446          {
+ 447   1      cs=0;
+ 448   1      cs1=0;
+ 449   1      
+ 450   1      sda=0;scl=0;scl=1;
+ 451   1      bitdata=c;
+ 452   1      
+ 453   1      
+ 454   1      sda=bit7;scl=0;scl=1;
+ 455   1      sda=bit6;scl=0;scl=1;
+ 456   1      sda=bit5;scl=0;scl=1;
+ 457   1      sda=bit4;scl=0;scl=1;
+ 458   1      sda=bit3;scl=0;scl=1;
+ 459   1      sda=bit2;scl=0;scl=1;
+ 460   1      sda=bit1;scl=0;scl=1;
+ 461   1      sda=bit0;scl=0;scl=1;
+ 462   1      cs=1;
+ 463   1      cs1=1;
+ 464   1      
+ 465   1      }
+ 466          void  LCD_DataWrite_IC(uchar d)  
+ 467          {
+ 468   1      cs=0;
+ 469   1      cs1=0;
+ 470   1      
+ 471   1      sda=1;scl=0;scl=1;
+ 472   1      bitdata=d;
+ 473   1      
+ 474   1      sda=bit7;scl=0;scl=1;
+ 475   1      sda=bit6;scl=0;scl=1;
+ 476   1      sda=bit5;scl=0;scl=1;
+ 477   1      sda=bit4;scl=0;scl=1;
+ 478   1      sda=bit3;scl=0;scl=1;
+ 479   1      sda=bit2;scl=0;scl=1;
+ 480   1      sda=bit1;scl=0;scl=1;
+ 481   1      sda=bit0;scl=0;scl=1;
+ 482   1      cs=1;
+ 483   1      cs1=1;
+ 484   1      }
+ 485          
+ 486          void LCD_DataWrite(uchar LCD_DataH,uchar LCD_DataL)
+ 487          {
+ 488   1      LCD_DataWrite_IC(LCD_DataH);
+C51 COMPILER V7.06   LCD                                                                   03/22/2012 18:07:49 PAGE 9   
+
+ 489   1      LCD_DataWrite_IC(LCD_DataL);
+ 490   1      }
+ 491          void wr_dat(unsigned int dat)
+ 492          {
+ 493   1      LCD_DataWrite_IC(dat>>8);
+ 494   1      
+ 495   1      LCD_DataWrite_IC(dat);
+ 496   1      }
+ 497          
+ 498          void  write_command(uchar c)
+ 499          {
+ 500   1      cs=0;
+ 501   1      cs1=0;
+ 502   1      
+ 503   1      
+ 504   1      sda=0;scl=0;scl=1;
+ 505   1      bitdata=c;
+ 506   1      
+ 507   1      sda=bit7;scl=0;scl=1;
+ 508   1      sda=bit6;scl=0;scl=1;
+ 509   1      sda=bit5;scl=0;scl=1;
+ 510   1      sda=bit4;scl=0;scl=1;
+ 511   1      sda=bit3;scl=0;scl=1;
+ 512   1      sda=bit2;scl=0;scl=1;
+ 513   1      sda=bit1;scl=0;scl=1;
+ 514   1      sda=bit0;scl=0;scl=1;
+ 515   1      cs=1;  
+ 516   1      cs1=1;    
+ 517   1      }
+ 518          
+ 519          void  write_data(uchar d)
+ 520          {
+ 521   1      cs=0;
+ 522   1      cs1=0;
+ 523   1      sda=1;scl=0;scl=1;
+ 524   1      bitdata=d;
+ 525   1      sda=bit7;scl=0;scl=1;
+ 526   1      sda=bit6;scl=0;scl=1;
+ 527   1      sda=bit5;scl=0;scl=1;
+ 528   1      sda=bit4;scl=0;scl=1;
+ 529   1      sda=bit3;scl=0;scl=1;
+ 530   1      sda=bit2;scl=0;scl=1;
+ 531   1      sda=bit1;scl=0;scl=1;
+ 532   1      sda=bit0;scl=0;scl=1;
+ 533   1      cs=1;
+ 534   1      cs1=1;
+ 535   1      }
+ 536          
+ 537          /*
+ 538          main_void()
+ 539          {
+ 540           lcd_initial();
+ 541          
+ 542                while(1)
+ 543            {
+ 544          
+ 545            //  Disp_gradscal(); //??
+ 546             // delay(500); 
+ 547                
+ 548          //    dsp_single_colour(0x84,0x10);//??
+ 549          //    delay(500);       
+ 550          
+C51 COMPILER V7.06   LCD                                                                   03/22/2012 18:07:49 PAGE 10  
+
+ 551              dsp_single_colour(0xff,0xff);//White
+ 552              delay(500); 
+ 553                  
+ 554              dsp_single_colour(0x00,0x00);//Black
+ 555              delay(500); 
+ 556                  
+ 557              dsp_single_colour(0xf8,0x00);//Red
+ 558              delay(500); 
+ 559                  
+ 560              dsp_single_colour(0x07,0xe0);//Green
+ 561              delay(500); 
+ 562                  
+ 563              dsp_single_colour(0x00,0x1f);//Blue
+ 564              delay(500); 
+ 565          
+ 566              }
+ 567          
+ 568          
+ 569          }
+ 570          */
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    838    ----
+   CONSTANT SIZE    =   3200    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1      16
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

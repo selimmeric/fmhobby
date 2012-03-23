@@ -1,4 +1,4 @@
-C51 COMPILER V7.06   UTILITY                                                               03/21/2012 23:16:37 PAGE 1   
+C51 COMPILER V7.06   UTILITY                                                               03/22/2012 18:07:49 PAGE 1   
 
 
 C51 COMPILER V7.06, COMPILATION OF MODULE UTILITY
@@ -60,191 +60,191 @@ stmt level    source
   50          */
   51          
   52          
-  53          #if (1)
-  54          //----------------------------------------------------------------------------
-C51 COMPILER V7.06   UTILITY                                                               03/21/2012 23:16:37 PAGE 2   
+  53          #if (0)
+              //----------------------------------------------------------------------------
+C51 COMPILER V7.06   UTILITY                                                               03/22/2012 18:07:49 PAGE 2   
 
-  55          // Function name        : u_delay(int a)
-  56          //    returns           : void
-  57          //    arg1                      : none
-  58          //    arg2                      : none
-  59          // Created by           : Fong Ming
-  60          // Date created         : 2002-03-30
-  61          // Description          : return a Absolute value  
-  62          //
-  63          // 
-  64          // Affected 
-  65          // Global Variable  : none  
-  66          // Modified           
-  67          // Global Variable  : none
-  68          // Function Called  : none
-  69          //                       
-  70          //                       
-  71          // Assumption       : 
-  72          //                    
-  73          // Notes                        :
-  74          //----------------------------------------------------------------------------
-  75          void u_delay(unsigned int iDelay){ 
-  76   1              //delay n 100us 
-  77   1              unsigned int x; 
-  78   1      
-  79   1              while(iDelay--){ 
-  80   2              x=130;          // 8MHz Clock
-  81   2              while(x--); 
-  82   2              } 
-  83   1      } 
-  84          
-  85          
-  86          //----------------------------------------------------------------------------
-  87          // Function name        : int abs(int a)
-  88          //    returns           : int
-  89          //    arg1                      : int
-  90          //    arg2                      : none
-  91          // Created by           : Fong Ming
-  92          // Date created         : 2002-03-30
-  93          // Description          : return a Absolute value  
-  94          //
-  95          // 
-  96          // Affected 
-  97          // Global Variable  : none  
-  98          // Modified           
-  99          // Global Variable  : none
- 100          // Function Called  : none
- 101          //                       
- 102          //                       
- 103          // Assumption       : 
- 104          //                    
- 105          // Notes                        :
- 106          //----------------------------------------------------------------------------
- 107          
- 108          INT16U u_abs(INT16S a)
- 109          {
- 110   1              if(a < 0)
- 111   1                      return -a;
- 112   1              return (INT16U) a;
- 113   1      }
- 114          
- 115          //----------------------------------------------------------------------------
- 116          // Function name        : INT16S sign(INT16S x)
-C51 COMPILER V7.06   UTILITY                                                               03/21/2012 23:16:37 PAGE 3   
+              // Function name        : u_delay(int a)
+              //    returns           : void
+              //    arg1                      : none
+              //    arg2                      : none
+              // Created by           : Fong Ming
+              // Date created         : 2002-03-30
+              // Description          : return a Absolute value  
+              //
+              // 
+              // Affected 
+              // Global Variable  : none  
+              // Modified           
+              // Global Variable  : none
+              // Function Called  : none
+              //                       
+              //                       
+              // Assumption       : 
+              //                    
+              // Notes                        :
+              //----------------------------------------------------------------------------
+              void u_delay(unsigned int iDelay){ 
+                      //delay n 100us 
+                      unsigned int x; 
+              
+                      while(iDelay--){ 
+                      x=130;          // 8MHz Clock
+                      while(x--); 
+                      } 
+              } 
+              
+              
+              //----------------------------------------------------------------------------
+              // Function name        : int abs(int a)
+              //    returns           : int
+              //    arg1                      : int
+              //    arg2                      : none
+              // Created by           : Fong Ming
+              // Date created         : 2002-03-30
+              // Description          : return a Absolute value  
+              //
+              // 
+              // Affected 
+              // Global Variable  : none  
+              // Modified           
+              // Global Variable  : none
+              // Function Called  : none
+              //                       
+              //                       
+              // Assumption       : 
+              //                    
+              // Notes                        :
+              //----------------------------------------------------------------------------
+              
+              INT16U u_abs(INT16S a)
+              {
+                      if(a < 0)
+                              return -a;
+                      return (INT16U) a;
+              }
+              
+              //----------------------------------------------------------------------------
+              // Function name        : INT16S sign(INT16S x)
+C51 COMPILER V7.06   UTILITY                                                               03/22/2012 18:07:49 PAGE 3   
 
- 117          //    returns           : 1 for Pos, -1 for Neg
- 118          //    arg1                      : INT16S
- 119          //    arg2                      : none
- 120          // Created by           : Fong Ming
- 121          // Date created         : 2002-03-30
- 122          // Description          : return Sign of int
- 123          //
- 124          // Affected 
- 125          // Global Variable  : none  
- 126          // Modified           
- 127          // Global Variable  : none
- 128          // Function Called  : none
- 129          //                       
- 130          // Assumption        : 
- 131          //                     
- 132          // Notes                            :
- 133          //----------------------------------------------------------------------------
- 134          
- 135          INT16S u_sign(INT16S x) 
- 136          {
- 137   1              if (x<0) return (-1);
- 138   1              return(1);
- 139   1      }
- 140          
- 141          
- 142          //----------------------------------------------------------------------------
- 143          // Function name                : static INT16U asc2uint(INT8U len, INT8U *sptr)
- 144          //   returns            : A 16 bit unsigned integer
- 145          //    arg1                      : len, number of alphanumeric character
- 146          //                                      : to be converted.
- 147          //    arg2                      : sptr, pointer that points to alphanumeric string
- 148          // Created by           : Derek Tong
- 149          // Date created         : 16 May 2002
- 150          // Description          : Convert alphanumeric string to hex. value
- 151          // Notes                                :
- 152          //----------------------------------------------------------------------------
- 153          INT16U u_asc2uint(INT8U len, INT8U *sptr)
- 154          {
- 155   1              INT8U i;
- 156   1              INT16U temp;
- 157   1      
- 158   1              temp = u_hex2dec(*sptr++);
- 159   1              for(i = 1; i < len; i++)
- 160   1                      temp = temp * 0x10 + u_hex2dec(*sptr++);
- 161   1              return (temp);
- 162   1      }
- 163          
- 164          //----------------------------------------------------------------------------
- 165          // Function name        : INT8U hex2dec(INT8U c) 
- 166          //    returns           : INT8U
- 167          //    arg1                      : INT8U
- 168          //    arg2                      : none
- 169          // Created by           : Fong Ming
- 170          // Date created         : 2002-03-30
- 171          // Description          : Convert hexadecimal ASCII char. to 
- 172          //                    hexadecimal number
- 173          //
- 174          // Affected 
- 175          // Global Variable  : none  
- 176          // Modified           
- 177          // Global Variable  : none
- 178          // Function Called  : none
-C51 COMPILER V7.06   UTILITY                                                               03/21/2012 23:16:37 PAGE 4   
+              //    returns           : 1 for Pos, -1 for Neg
+              //    arg1                      : INT16S
+              //    arg2                      : none
+              // Created by           : Fong Ming
+              // Date created         : 2002-03-30
+              // Description          : return Sign of int
+              //
+              // Affected 
+              // Global Variable  : none  
+              // Modified           
+              // Global Variable  : none
+              // Function Called  : none
+              //                       
+              // Assumption        : 
+              //                     
+              // Notes                            :
+              //----------------------------------------------------------------------------
+              
+              INT16S u_sign(INT16S x) 
+              {
+                      if (x<0) return (-1);
+                      return(1);
+              }
+              
+              
+              //----------------------------------------------------------------------------
+              // Function name                : static INT16U asc2uint(INT8U len, INT8U *sptr)
+              //   returns            : A 16 bit unsigned integer
+              //    arg1                      : len, number of alphanumeric character
+              //                                      : to be converted.
+              //    arg2                      : sptr, pointer that points to alphanumeric string
+              // Created by           : Derek Tong
+              // Date created         : 16 May 2002
+              // Description          : Convert alphanumeric string to hex. value
+              // Notes                                :
+              //----------------------------------------------------------------------------
+              INT16U u_asc2uint(INT8U len, INT8U *sptr)
+              {
+                      INT8U i;
+                      INT16U temp;
+              
+                      temp = u_hex2dec(*sptr++);
+                      for(i = 1; i < len; i++)
+                              temp = temp * 0x10 + u_hex2dec(*sptr++);
+                      return (temp);
+              }
+              
+              //----------------------------------------------------------------------------
+              // Function name        : INT8U hex2dec(INT8U c) 
+              //    returns           : INT8U
+              //    arg1                      : INT8U
+              //    arg2                      : none
+              // Created by           : Fong Ming
+              // Date created         : 2002-03-30
+              // Description          : Convert hexadecimal ASCII char. to 
+              //                    hexadecimal number
+              //
+              // Affected 
+              // Global Variable  : none  
+              // Modified           
+              // Global Variable  : none
+              // Function Called  : none
+C51 COMPILER V7.06   UTILITY                                                               03/22/2012 18:07:49 PAGE 4   
 
- 179          //                       
- 180          // Assumption        : 
- 181          //                     
- 182          // Notes                         :
- 183          //----------------------------------------------------------------------------
- 184          
- 185          INT8U u_hex2dec(INT8U c) 
- 186          {
- 187   1              if ((c>='0') && (c<='9')) 
- 188   1          {
- 189   2                      return (c-0x30);
- 190   2              }else if ((c>='A') && (c<='F')) 
- 191   1          {
- 192   2                      return (c-'A'+10);
- 193   2              }else if ((c>='a') && (c<='f')) 
- 194   1          {
- 195   2                      return (c-'a'+10);
- 196   2              }
- 197   1      
- 198   1              return 0;
- 199   1      }
- 200          
- 201          
- 202          
- 203          //----------------------------------------------------------------------------
- 204          // Function name        : void u_putHexWord(INT16U w)
- 205          //    returns           : none
- 206          //    arg1                      : INT16U 
- 207          //    arg2                      : none
- 208          // Created by           : Fong Ming
- 209          // Date created         : 2002-03-30
- 210          // Description          : Print INT16Ueger number 
- 211          //                     to debug UART port.
- 212          //
- 213          // Affected 
- 214          // Global Variable  : none  
- 215          // Modified           
- 216          // Global Variable  : none
- 217          // Function Called  : u_putHexByte
- 218          //                       
- 219          // Assumption       :
- 220          //                     
- 221          //                     
- 222          // Notes                        :
- 223          //----------------------------------------------------------------------------
- 224          
- 225          void u_putHexWord(INT16U w)
- 226          {       
- 227   1          u_putHexByte((INT8U) (w>>8),0);
- 228   1              u_putHexByte((INT8U) (w & 0xff),0);
- 229   1          u_putch(' ');
- 230   1      }
- 231          #endif
+              //                       
+              // Assumption        : 
+              //                     
+              // Notes                         :
+              //----------------------------------------------------------------------------
+              
+              INT8U u_hex2dec(INT8U c) 
+              {
+                      if ((c>='0') && (c<='9')) 
+                  {
+                              return (c-0x30);
+                      }else if ((c>='A') && (c<='F')) 
+                  {
+                              return (c-'A'+10);
+                      }else if ((c>='a') && (c<='f')) 
+                  {
+                              return (c-'a'+10);
+                      }
+              
+                      return 0;
+              }
+              
+              
+              
+              //----------------------------------------------------------------------------
+              // Function name        : void u_putHexWord(INT16U w)
+              //    returns           : none
+              //    arg1                      : INT16U 
+              //    arg2                      : none
+              // Created by           : Fong Ming
+              // Date created         : 2002-03-30
+              // Description          : Print INT16Ueger number 
+              //                     to debug UART port.
+              //
+              // Affected 
+              // Global Variable  : none  
+              // Modified           
+              // Global Variable  : none
+              // Function Called  : u_putHexByte
+              //                       
+              // Assumption       :
+              //                     
+              //                     
+              // Notes                        :
+              //----------------------------------------------------------------------------
+              
+              void u_putHexWord(INT16U w)
+              {       
+                  u_putHexByte((INT8U) (w>>8),0);
+                      u_putHexByte((INT8U) (w & 0xff),0);
+                  u_putch(' ');
+              }
+              #endif
  232          
  233          #if false
               
@@ -254,7 +254,7 @@ stmt level    source
               //    arg1                      : INT8U pointer
               //    arg2                      : none
               // Created by           : Fong Ming
-C51 COMPILER V7.06   UTILITY                                                               03/21/2012 23:16:37 PAGE 5   
+C51 COMPILER V7.06   UTILITY                                                               03/22/2012 18:07:49 PAGE 5   
 
               // Date created         : 2002-03-30
               // Description          : Print unsigned decimal number 
@@ -318,7 +318,7 @@ stmt level    source
               // Modified           
               // Global Variable  : none
               // Function Called  : u_putch
-C51 COMPILER V7.06   UTILITY                                                               03/21/2012 23:16:37 PAGE 6   
+C51 COMPILER V7.06   UTILITY                                                               03/22/2012 18:07:49 PAGE 6   
 
               //                       
               //                     
@@ -382,7 +382,7 @@ stmt level    source
                   u_putch(num+'0');
               
               
-C51 COMPILER V7.06   UTILITY                                                               03/21/2012 23:16:37 PAGE 7   
+C51 COMPILER V7.06   UTILITY                                                               03/22/2012 18:07:49 PAGE 7   
 
               }
               
@@ -446,7 +446,7 @@ stmt level    source
  424          //      UCSRB |= 0x08; // enable transmitter
  425          //    while (!(UCSRA & 0x20))
  426          //      {
-C51 COMPILER V7.06   UTILITY                                                               03/21/2012 23:16:37 PAGE 8   
+C51 COMPILER V7.06   UTILITY                                                               03/22/2012 18:07:49 PAGE 8   
 
  427          //              // do nothing
  428          //      }
@@ -506,13 +506,13 @@ stmt level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    350    ----
+   CODE SIZE        =     92    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-C51 COMPILER V7.06   UTILITY                                                               03/21/2012 23:16:37 PAGE 9   
+C51 COMPILER V7.06   UTILITY                                                               03/22/2012 18:07:49 PAGE 9   
 
-   DATA SIZE        =     17      14
+   DATA SIZE        =     17       5
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
