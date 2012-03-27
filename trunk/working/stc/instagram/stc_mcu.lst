@@ -1,4 +1,4 @@
-C51 COMPILER V7.06   STC_MCU                                                               03/22/2012 18:07:49 PAGE 1   
+C51 COMPILER V7.06   STC_MCU                                                               03/27/2012 15:25:08 PAGE 1   
 
 
 C51 COMPILER V7.06, COMPILATION OF MODULE STC_MCU
@@ -62,7 +62,7 @@ stmt level    source
   52   2              RI  =   0;
   53   2              tdata   =   SBUF;
   54   2      
-C51 COMPILER V7.06   STC_MCU                                                               03/22/2012 18:07:49 PAGE 2   
+C51 COMPILER V7.06   STC_MCU                                                               03/27/2012 15:25:08 PAGE 2   
 
   55   2                      if ((tdata=='\r') || (tdata=='\n')) 
   56   2                      {
@@ -126,7 +126,7 @@ stmt level    source
  114   1              TR0  = 1;
  115   1              ET0  = 1;
  116   1      
-C51 COMPILER V7.06   STC_MCU                                                               03/22/2012 18:07:49 PAGE 3   
+C51 COMPILER V7.06   STC_MCU                                                               03/27/2012 15:25:08 PAGE 3   
 
  117   1      }
  118          

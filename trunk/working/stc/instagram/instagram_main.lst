@@ -1,4 +1,4 @@
-C51 COMPILER V7.06   INSTAGRAM_MAIN                                                        03/22/2012 18:07:48 PAGE 1   
+C51 COMPILER V7.06   INSTAGRAM_MAIN                                                        03/27/2012 15:25:08 PAGE 1   
 
 
 C51 COMPILER V7.06, COMPILATION OF MODULE INSTAGRAM_MAIN
@@ -61,73 +61,81 @@ stmt level    source
   51   1              u_puts("\r\n");
   52   1      
   53   1              mTMR0_Flag=1;
-  54   1      
-C51 COMPILER V7.06   INSTAGRAM_MAIN                                                        03/22/2012 18:07:48 PAGE 2   
+  54   1              
+C51 COMPILER V7.06   INSTAGRAM_MAIN                                                        03/27/2012 15:25:08 PAGE 2   
 
-  55   1              while(1)
-  56   1              {
-  57   2                      process_uart();
-  58   2                      process_timer();
-  59   2              }
-  60   1      
-  61   1      }
-  62          
-  63          // 
-  64          // Function start here
-  65          //
-  66          
-  67          void process_timer(void)
-  68          {
-  69   1              static unsigned char tCnt=0;
-  70   1              static unsigned char tDebugCnt=0;
-  71   1      
-  72   1              if (mTMR0_Flag)         // @ 100mS
-  73   1              {
-  74   2                      mTMR0_Flag = 0;
-  75   2                      tCnt ++;
-  76   2                      if (tCnt >=10)
-  77   2                      {
-  78   3                              task_1s();
-  79   3                              tCnt = 0;
-  80   3                              tDebugCnt++;
-  81   3      //                      u_putHexByte(tDebugCnt,0x00);
-  82   3      //                      u_puts("\r\n");
-  83   3                      }
-  84   2              
-  85   2              }
-  86   1      
-  87   1      
-  88   1      }
-  89          
-  90          #define test_bl 
-  91          //#define test_rgb 
-  92          
-  93          void task_led_test(void)
-  94          {
+  55   1              dsp_single_colour_ex(0xff,0xf8,0x00);   //Red
+  56   1              dsp_image_ex(0x00,0x01);        // Image 1                      
+  57   1              dsp_image_ex(0x01,0x02);        // Image 1                      
+  58   1              dsp_image_ex(0x02,0x03);        // Image 1                      
+  59   1              dsp_image_ex(0x03,0x04);        // Image 1                      
+  60   1              dsp_image_ex(0x04,0x05);        // Image 1                      
+  61   1      
+  62   1      
+  63   1              while(1)
+  64   1              {
+  65   2                      process_uart();
+  66   2                      process_timer();
+  67   2              }
+  68   1      
+  69   1      }
+  70          
+  71          // 
+  72          // Function start here
+  73          //
+  74          
+  75          void process_timer(void)
+  76          {
+  77   1              static unsigned char tCnt=0;
+  78   1              static unsigned char tDebugCnt=0;
+  79   1      
+  80   1              if (mTMR0_Flag)         // @ 100mS
+  81   1              {
+  82   2                      mTMR0_Flag = 0;
+  83   2                      tCnt ++;
+  84   2                      if (tCnt >=20)
+  85   2                      {
+  86   3                              task_1s();
+  87   3                              tCnt = 0;
+  88   3                              tDebugCnt++;
+  89   3      //                      u_putHexByte(tDebugCnt,0x00);
+  90   3      //                      u_puts("\r\n");
+  91   3                      }
+  92   2              
+  93   2              }
+  94   1      
   95   1      
-  96   1              static unsigned char tCnt=0;
-  97   1      
-  98   1      #ifdef test_bl
-  99   1              tCnt &=0x01;
- 100   1              switch (tCnt)
- 101   1              {
- 102   2                      case 0:
- 103   2                              LED_BL_ON();
- 104   2                              break;
- 105   2                      case 1:
- 106   2                              LED_BL_OFF();
- 107   2                              break;                  
- 108   2              }
- 109   1      #endif
- 110   1      
- 111   1      #ifdef test_rbb
+  96   1      }
+  97          
+  98          #define test_bl 
+  99          //#define test_rgb 
+ 100          
+ 101          void task_led_test(void)
+ 102          {
+ 103   1      
+ 104   1              static unsigned char tCnt=0;
+ 105   1      
+ 106   1      #ifdef test_bl
+ 107   1              tCnt &=0x01;
+ 108   1              switch (tCnt)
+ 109   1              {
+ 110   2                      case 0:
+ 111   2                              LED_BL_ON();
+ 112   2                              break;
+ 113   2                      case 1:
+ 114   2                              LED_BL_OFF();
+ 115   2                              break;                  
+ 116   2              }
+C51 COMPILER V7.06   INSTAGRAM_MAIN                                                        03/27/2012 15:25:08 PAGE 3   
+
+ 117   1      #endif
+ 118   1      
+ 119   1      #ifdef test_rbb
               
                       tCnt &=0x07;
                       switch (tCnt)
                       {
                               case 0:
-C51 COMPILER V7.06   INSTAGRAM_MAIN                                                        03/22/2012 18:07:48 PAGE 3   
-
                                       LED_R_ON();
                                       LED_G_OFF();
                                       LED_B_OFF();
@@ -171,70 +179,83 @@ stmt level    source
                                       break;
                       }
               #endif
- 160   1              tCnt++;
- 161   1      
- 162   1      }
- 163          
- 164          void task_lcd_test(void)
- 165          {
- 166   1      
- 167   1              static unsigned char tCnt=0;
- 168   1      
- 169   1              tCnt &= 0x03;
- 170   1              switch (tCnt)
- 171   1              {
- 172   2                      case 0:
- 173   2                              dsp_single_colour(0x00,0x00);   //Black
- 174   2      //                      dsp_image();    //White                 
- 175   2                              break;
- 176   2                      case 1:
- 177   2      //              dsp_single_colour(0x00,0x00);   //Black
- 178   2                      dsp_single_colour(0xf8,0x00);   //Red
-C51 COMPILER V7.06   INSTAGRAM_MAIN                                                        03/22/2012 18:07:48 PAGE 4   
+ 168   1              tCnt++;
+ 169   1      
+ 170   1      }
+ 171          
+ 172          void task_lcd_test(void)
+ 173          {
+ 174   1      
+ 175   1              static unsigned char tCnt=0;
+ 176   1      
+ 177   1              tCnt &= 0x03;
+ 178   1              switch (tCnt)
+C51 COMPILER V7.06   INSTAGRAM_MAIN                                                        03/27/2012 15:25:08 PAGE 4   
 
- 179   2                              break;                  
- 180   2                      case 2:
- 181   2                      dsp_single_colour(0x07,0xe0);   //Green
- 182   2                              break;
- 183   2                      case 3:
- 184   2              dsp_single_colour(0x00,0x1f);           //Blue
- 185   2                              break;                  
- 186   2              }
- 187   1      
- 188   1              tCnt++;
- 189   1      }
- 190          
- 191          void task_1s(void)
- 192          {
- 193   1      
- 194   1              task_led_test();
- 195   1              task_lcd_test();
- 196   1      
- 197   1      
- 198   1      }
- 199          
- 200          void process_uart(void)
- 201          {
- 202   1              unsigned char i;
- 203   1      
- 204   1              if (mCmdQ[0]>0x80)      
- 205   1              {
- 206   2                      for (i=1; i<=(mCmdQ[0] & 0x7f); i++)
- 207   2                      {
- 208   3                              u_putch(mCmdQ[i]);      
- 209   3                      }
- 210   2                      u_puts("\r\n");
- 211   2                      mCmdQ[0] = 0x00;
- 212   2              }
- 213   1      
- 214   1      }
- 215          
- 216          
- 217          
+ 179   1              {
+ 180   2                      case 0:
+ 181   2      //                      dsp_single_colour(0x00,0x00);   //Black
+ 182   2                              dsp_single_colour_ex(0x00,0x00,0x00);   //Black
+ 183   2                              dsp_image_ex(0x01,0x00);        // Image 0                      
+ 184   2                              dsp_single_colour_ex(0x02,0xff,0xff);   //White
+ 185   2                              break;
+ 186   2                      case 1:
+ 187   2      //              dsp_single_colour(0x00,0x00);   //Black
+ 188   2      //              dsp_single_colour(0xf8,0x00);   //Red
+ 189   2                      dsp_single_colour_ex(0x00,0xf8,0x00);   //Red
+ 190   2                              dsp_image_ex(0x01,0x01);        // Image 1                      
+ 191   2                              dsp_single_colour_ex(0x03,0x55,0x55);   //Grey
+ 192   2      
+ 193   2                              break;                  
+ 194   2                      case 2:
+ 195   2      //              dsp_single_colour(0x07,0xe0);   //Green
+ 196   2                      dsp_single_colour_ex(0x00,0x07,0xe0);   //Green
+ 197   2                              dsp_image_ex(0x01,0x02);        // Image 2                      
+ 198   2                              dsp_image_ex(0x04,0x01);        //Grey
+ 199   2                              break;
+ 200   2                      case 3:
+ 201   2      //              dsp_single_colour(0x00,0x1f);           //Blue
+ 202   2                      dsp_single_colour_ex(0x00,0x1f,0xe0);   //Green
+ 203   2                              dsp_image_ex(0x01,0x03);        // Image 3                      
+ 204   2                              break;                  
+ 205   2              }
+ 206   1      
+ 207   1              tCnt++;
+ 208   1      }
+ 209          
+ 210          void task_1s(void)
+ 211          {
+ 212   1      
+ 213   1              task_led_test();
+ 214   1              task_lcd_test();
+ 215   1      
+ 216   1      
+ 217   1      }
+ 218          
+ 219          void process_uart(void)
+ 220          {
+ 221   1              unsigned char i;
+ 222   1      
+ 223   1              if (mCmdQ[0]>0x80)      
+ 224   1              {
+ 225   2                      for (i=1; i<=(mCmdQ[0] & 0x7f); i++)
+ 226   2                      {
+ 227   3                              u_putch(mCmdQ[i]);      
+ 228   3                      }
+ 229   2                      u_puts("\r\n");
+ 230   2                      mCmdQ[0] = 0x00;
+ 231   2              }
+ 232   1      
+ 233   1      }
+ 234          
+ 235          
+ 236          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    253    ----
+   CODE SIZE        =    369    ----
+C51 COMPILER V7.06   INSTAGRAM_MAIN                                                        03/27/2012 15:25:08 PAGE 5   
+
    CONSTANT SIZE    =     49    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
