@@ -1,4 +1,4 @@
-C51 COMPILER V7.06   UTILITY                                                               03/22/2012 18:07:49 PAGE 1   
+C51 COMPILER V7.06   UTILITY                                                               03/27/2012 15:25:09 PAGE 1   
 
 
 C51 COMPILER V7.06, COMPILATION OF MODULE UTILITY
@@ -62,7 +62,7 @@ stmt level    source
   52          
   53          #if (0)
               //----------------------------------------------------------------------------
-C51 COMPILER V7.06   UTILITY                                                               03/22/2012 18:07:49 PAGE 2   
+C51 COMPILER V7.06   UTILITY                                                               03/27/2012 15:25:09 PAGE 2   
 
               // Function name        : u_delay(int a)
               //    returns           : void
@@ -126,7 +126,7 @@ stmt level    source
               
               //----------------------------------------------------------------------------
               // Function name        : INT16S sign(INT16S x)
-C51 COMPILER V7.06   UTILITY                                                               03/22/2012 18:07:49 PAGE 3   
+C51 COMPILER V7.06   UTILITY                                                               03/27/2012 15:25:09 PAGE 3   
 
               //    returns           : 1 for Pos, -1 for Neg
               //    arg1                      : INT16S
@@ -190,7 +190,7 @@ stmt level    source
               // Modified           
               // Global Variable  : none
               // Function Called  : none
-C51 COMPILER V7.06   UTILITY                                                               03/22/2012 18:07:49 PAGE 4   
+C51 COMPILER V7.06   UTILITY                                                               03/27/2012 15:25:09 PAGE 4   
 
               //                       
               // Assumption        : 
@@ -254,7 +254,7 @@ stmt level    source
               //    arg1                      : INT8U pointer
               //    arg2                      : none
               // Created by           : Fong Ming
-C51 COMPILER V7.06   UTILITY                                                               03/22/2012 18:07:49 PAGE 5   
+C51 COMPILER V7.06   UTILITY                                                               03/27/2012 15:25:09 PAGE 5   
 
               // Date created         : 2002-03-30
               // Description          : Print unsigned decimal number 
@@ -318,7 +318,7 @@ stmt level    source
               // Modified           
               // Global Variable  : none
               // Function Called  : u_putch
-C51 COMPILER V7.06   UTILITY                                                               03/22/2012 18:07:49 PAGE 6   
+C51 COMPILER V7.06   UTILITY                                                               03/27/2012 15:25:09 PAGE 6   
 
               //                       
               //                     
@@ -382,7 +382,7 @@ stmt level    source
                   u_putch(num+'0');
               
               
-C51 COMPILER V7.06   UTILITY                                                               03/22/2012 18:07:49 PAGE 7   
+C51 COMPILER V7.06   UTILITY                                                               03/27/2012 15:25:09 PAGE 7   
 
               }
               
@@ -446,7 +446,7 @@ stmt level    source
  424          //      UCSRB |= 0x08; // enable transmitter
  425          //    while (!(UCSRA & 0x20))
  426          //      {
-C51 COMPILER V7.06   UTILITY                                                               03/22/2012 18:07:49 PAGE 8   
+C51 COMPILER V7.06   UTILITY                                                               03/27/2012 15:25:09 PAGE 8   
 
  427          //              // do nothing
  428          //      }
@@ -510,7 +510,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-C51 COMPILER V7.06   UTILITY                                                               03/22/2012 18:07:49 PAGE 9   
+C51 COMPILER V7.06   UTILITY                                                               03/27/2012 15:25:09 PAGE 9   
 
    DATA SIZE        =     17       5
    IDATA SIZE       =   ----    ----

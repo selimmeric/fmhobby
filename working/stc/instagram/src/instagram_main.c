@@ -51,6 +51,14 @@ main()
 	u_puts("\r\n");
 
 	mTMR0_Flag=1;
+	
+	dsp_single_colour_ex(0xff,0xf8,0x00);	//Red
+	dsp_image_ex(0x00,0x01);	// Image 1			
+	dsp_image_ex(0x01,0x02);	// Image 1			
+	dsp_image_ex(0x02,0x03);	// Image 1			
+	dsp_image_ex(0x03,0x04);	// Image 1			
+	dsp_image_ex(0x04,0x05);	// Image 1			
+
 
 	while(1)
 	{
@@ -73,7 +81,7 @@ void process_timer(void)
 	{
 		mTMR0_Flag = 0;
 		tCnt ++;
-		if (tCnt >=10)
+		if (tCnt >=20)
 		{
 			task_1s();
 			tCnt = 0;
@@ -170,18 +178,29 @@ void task_lcd_test(void)
 	switch (tCnt)
 	{
 		case 0:
-	   		dsp_single_colour(0x00,0x00);	//Black
-//			dsp_image();	//White			
+//	   		dsp_single_colour(0x00,0x00);	//Black
+	   		dsp_single_colour_ex(0x00,0x00,0x00);	//Black
+			dsp_image_ex(0x01,0x00);	// Image 0			
+	   		dsp_single_colour_ex(0x02,0xff,0xff);	//White
 			break;
 		case 1:
 //    		dsp_single_colour(0x00,0x00);	//Black
-    		dsp_single_colour(0xf8,0x00);	//Red
+//    		dsp_single_colour(0xf8,0x00);	//Red
+    		dsp_single_colour_ex(0x00,0xf8,0x00);	//Red
+			dsp_image_ex(0x01,0x01);	// Image 1			
+	   		dsp_single_colour_ex(0x03,0x55,0x55);	//Grey
+
 			break;			
 		case 2:
-    		dsp_single_colour(0x07,0xe0);	//Green
+//    		dsp_single_colour(0x07,0xe0);	//Green
+    		dsp_single_colour_ex(0x00,0x07,0xe0);	//Green
+			dsp_image_ex(0x01,0x02);	// Image 2			
+	   		dsp_image_ex(0x04,0x01);	//Grey
 			break;
 		case 3:
-    	dsp_single_colour(0x00,0x1f);		//Blue
+//    		dsp_single_colour(0x00,0x1f);		//Blue
+    		dsp_single_colour_ex(0x00,0x1f,0xe0);	//Green
+			dsp_image_ex(0x01,0x03);	// Image 3			
 			break;			
 	}
 
