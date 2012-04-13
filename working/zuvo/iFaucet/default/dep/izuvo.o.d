@@ -10,7 +10,9 @@ izuvo.o: ../izuvo.c ../izuvo.h \
   c:/winavr-20100110/lib/gcc/../../avr/include/avr/fuse.h \
   c:/winavr-20100110/lib/gcc/../../avr/include/avr/lock.h \
   c:/winavr-20100110/lib/gcc/../../avr/include/avr/interrupt.h \
-  ../avr_types.h ../izuvo_mcu.h ../utility.h
+  ../avr_types.h ../izuvo_mcu.h ../utility.h \
+  c:/winavr-20100110/lib/gcc/../../avr/include/avr/eeprom.h \
+  c:\winavr-20100110\bin\../lib/gcc/avr/4.3.3/include/stddef.h
 
 ../izuvo.h:
 
@@ -41,3 +43,7 @@ c:/winavr-20100110/lib/gcc/../../avr/include/avr/interrupt.h:
 ../izuvo_mcu.h:
 
 ../utility.h:
+
+c:/winavr-20100110/lib/gcc/../../avr/include/avr/eeprom.h:
+
+c:\winavr-20100110\bin\../lib/gcc/avr/4.3.3/include/stddef.h:
