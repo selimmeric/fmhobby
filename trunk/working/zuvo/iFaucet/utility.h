@@ -12,4 +12,4 @@ void    u_putHexWord(INT16U w);
 void    u_putDecByte(INT8U num);
 void    u_putDecWord(INT16U num); 
 void    u_Lputch(INT8U abyte);
-void    u_Delay(INT16U iDelay);
+void    u_delay(unsigned int iDelay);

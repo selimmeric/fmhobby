@@ -2,9 +2,10 @@
 #include "izuvo.h"
 #include "izuvo_mcu.h"
 #include "utility.h"
+#include <avr/eeprom.h>
 
 
-unsigned char mCmdQ[128];	 		// mCmdQ[0] = index
+unsigned char mCmdQ[64];	 		// mCmdQ[0] = index
 unsigned char mCmdQFlag=0;	 		// Cmd flag
 volatile char mpUART;				// Store previous Uart data
 
@@ -18,7 +19,7 @@ const char T_PRONTO_CODE[] = "~RS0 ff 0001 006C 03 22 015500AB 00150015 00150040
 volatile unsigned char 	mLinuxMode=0xff;
 volatile unsigned int 	mCmdCnt=0;
 volatile unsigned char 	mTimer0_Flag=0;
-volatile unsigned char 	mTimer0_Cnt=0;
+volatile unsigned int 	mTimer0_Cnt=0;
 
 volatile unsigned char  mFunctionMode=0;	// 0 = Idle
 											// 1 - Send Pulse Function
@@ -29,12 +30,25 @@ volatile unsigned int 	mPulseT[3]={0,0,0};
 volatile unsigned char  mPulseIndex=0;
 
 volatile unsigned int  mLED[4];
+volatile unsigned char mLED_Brightness[4];
+volatile unsigned char mLED_Cnt[4];
+volatile unsigned char mLED_Fade[4];
 
 extern volatile unsigned char  mZuvoAuto;
+volatile unsigned char mTestMode=0;
+volatile unsigned char mZuVoMode=0;
+
 
 void process_cmd_izuvo(char *sptr, unsigned char len);
+void process_cmd_ifaucet(char *sptr, unsigned char len);
 void process_cmd_izuvo_led(char *sptr);
-void task_led(void);
+void process_cmd_izuvo_mode(unsigned char iMode);
+void izuvo_test_mode(unsigned char iMode);
+
+void led_task(void);
+void led_driver(void);
+
+#define LED_PWM 32
 
 // Define Interrupt
 
@@ -76,19 +90,20 @@ void ISR_UART_RECV(void)
 	 		mCmdQ[0] = 0x00;	
 			mCmdQFlag = 0x00;
 		}
-		else if ((mpUART != '~') | (mCmdQ[1] != '~'))		// Ignor message not started with and terminated by "~"
+/*		else if ((mpUART != '~') | (mCmdQ[1] != '~'))		// Ignor message not started with and terminated by "~"
 		{
 	 		mCmdQ[0] = 0x00;	
 			mCmdQFlag = 0x00;
 		}
+*/
 	 }
 	 else if (mCmdQ[0] < ((sizeof(mCmdQ))-1))	 
 	 {
-		 if ((mLinuxMode<=0x01) && (mpUART == ':') && data==' ')
-		 {
+//		 if ((mLinuxMode<=0x01) && (mpUART == ':') && data==' ')
+//		 {
 //			mCmdQ[0] |= 0x80;
-			mCmdQFlag = 1;
-		 }
+//			mCmdQFlag = 1;
+//		 }
 	 	 mCmdQ[0]++;
 		 mCmdQ[mCmdQ[0]]=data;
 	 }	
@@ -98,7 +113,7 @@ void ISR_UART_RECV(void)
 
 
 }
-
+/*
 void POLL_UART_RECV(void)
 {
 
@@ -152,7 +167,7 @@ void POLL_UART_RECV(void)
 	 mpUART = data;
 
 }
-
+*/
 
 // uses timer0 for base timer
 // Interrupt for every 21.845333mS
@@ -163,15 +178,21 @@ SIGNAL (TIMER0_OVF_vect)
 
 void ISR_TIMER0_OVR (void)
 {
-	task_led();
+//	TCNT0=0x4E;
+//	TCNT0=0x58;
+	TCNT0=0xAC;
+	
+	led_driver();
 	mTimer0_Cnt++;
-	if (mTimer0_Cnt>=9)	// 21.84533ms * 9 = 196.6ms
+//	if (mTimer0_Cnt>=9)	// 21.84533ms * 9 = 196.6ms
+//	if (mTimer0_Cnt>=200)	// 1ms * 200 = 196.6ms
+	if (mTimer0_Cnt>=200)	// 1ms * 200 = 196.6ms
 	{
 		mTimer0_Flag = 1;
 		mTimer0_Cnt =0;
 	}
 }
-
+/*
 void POLL_TIMER0_OVR(void)
 {
 
@@ -183,8 +204,9 @@ void POLL_TIMER0_OVR(void)
 		mTimer0_Cnt =0;
 	}
 }
+*/
 
-
+/*
 SIGNAL (SIG_OUTPUT_COMPARE1A)
 {
 
@@ -241,7 +263,7 @@ SIGNAL (SIG_INPUT_CAPTURE1)
 }
 
 
-
+*/
 void init_hardware(void)
 {
 
@@ -257,8 +279,9 @@ void init_hardware(void)
 	// Timer/Counter 0 initialization
 	// Clock source: System Clock
 	// Clock value: 125.000 kHz
-	TCCR0=0x05;		// Clk/1024 = 12000000/1024 = 11718.75Hz
-	TCNT0=0x00;
+//	TCCR0=0x05;		// Clk/1024 = 12000000/1024 = 11718.75Hz
+	TCCR0=0x03;		// Clk/1024 = 12000000/1024 = 11718.75Hz
+	TCNT0=0x4E;
 	TIMSK |= 0x01;	// Turn ON Timer0 Interrup
 
 
@@ -276,6 +299,11 @@ void init_hardware(void)
 	DDRC = 0x07; 
 //	DDRB = _BV(1);	// PB1 
 	DDRB = 0x3B;
+	DDRD = 0x02;
+	PORTD = 0x00;
+
+//	UCSRB = 0x98; // Enable Rx Interrupt, Rx/Tx PIN	
+	UCSRB = 0x90; // Enable Rx Interrupt, Rx PIN	
 
 }
 
@@ -290,7 +318,7 @@ void init_system(void)
 	mCmdQ[0] = sizeof(T_PRONTO_CODE)-1;
 	mCmdQFlag = 1;
 //	process_cmd();
-
+/*
 	for (i=0; i<=100; i++)
 	{
 		mCapturePulse[i]=0x00;		
@@ -303,20 +331,32 @@ void init_system(void)
 	mCapturePulse[i]=0x0013; i++;
 	mCapturePulse[i]=0x0013; i++;
 	mCapturePulse[i]=0x0013; i++;
-
+*/
 //	mCaptureIndex=100;
 
 //	i = izuvo_search_header();
 
-	mZuvoAuto = 1;
+//	mZuvoAuto = 1;
 //	izuvo_init_capture_pulse();
+
+	i=eeprom_read_byte(0x00);	
+	mTestMode = (i+1) & 0x03;
+	eeprom_write_byte(0x00,mTestMode);
+
+	izuvo_test_mode	(mTestMode);
+
+	u_puts(VERSION);
+	u_putHexByte(mTestMode,' ');
+	u_puts("\r\n");
+
 }
 
 
 void process_tmr(void)
 {
-	static unsigned int tCnt=0;
+//	static unsigned int tCnt=0;
 	static unsigned char tSecCnt=0;	
+//	static unsigned char tLED=0;
 
 	if (mTimer0_Flag==1)	// @ very 196.6ms
 	{
@@ -330,25 +370,53 @@ void process_tmr(void)
 //				u_puts(EXIT);
 		}
 
-		tCnt ++	;
+		led_task();
+
+/*		tCnt ++	;
 
 
-		if ((tCnt & 0x0f)>=10)		
+		tLED++;
+		if (tLED>=(LED_PWM<<1))
 		{
-			tCnt&=0xf0;
-			if (tCnt == 0)
+			tLED = 0x00;
+		}
+
+		if (tLED<LED_PWM)
+		{
+			mLED[2] = tLED;
+		}
+		else
+		{
+			mLED[2] = (tLED ^ 0xff) & 0x1f;
+		}
+
+		if (mLED[2]&0x0f >=LED_PWM)
+		{
+			mLED[2]&=0xf0;
+		}
+		else
+		{
+			mLED[2]++;
+		}
+
+		if ((tCnt)>=10)		
+		{
+			tCnt=0;
+			if (mLED[3]==0x00)
 			{
-				tCnt = 0x80;
-				mLED[2]=0x00;
+				mLED[3]=0xff;
 			}
 			else
 			{
-				mLED[2]=0xff;
+				mLED[3]=0x00;
 			}
 
+			mLED[0]=mLED[3];
+			mLED[1]=mLED[0] ^ 0xff;
 
-//			PORTC ^= (1 << LED1);
 		}
+
+
 		switch (mFunctionMode)
 		{
 			case 0:
@@ -366,7 +434,7 @@ void process_tmr(void)
 				break;
 		}
 
-
+*/
 
 	}
 
@@ -384,7 +452,7 @@ void process_cmd(void)
 //		PORTC ^=(1 << LED1);
 
 		// Valid message neeed to have at least FOUR character
-		if (index>=3) 
+/*		if (index>=3) 
 		{
 			if (mLinuxMode<=0x01)
 				process_cmd_linux(mLinuxMode);
@@ -392,11 +460,14 @@ void process_cmd(void)
 				process_cmd_hal(&mCmdQ[2],index-2);
 
 		}
+*/
+
+		process_cmd_hal(&mCmdQ[2],index-2);
 		mCmdQ[0]=0;		
 		mCmdQFlag=0;
 	}
 }
-
+/*
 void process_cmd_linux(unsigned char iMode)
 {
 	switch (iMode)
@@ -418,7 +489,7 @@ void process_cmd_linux(unsigned char iMode)
 	}
 
 }
-
+*/
 void process_cmd_hal(unsigned char *sptr, unsigned char len)
 {
 
@@ -438,7 +509,7 @@ void process_cmd_hal(unsigned char *sptr, unsigned char len)
 			}
 			u_puts("\r\n");
 			break;
-
+/*
 		case 'L':	// Login information
 			for (i=1; i<len; i++)
 			{
@@ -479,29 +550,34 @@ void process_cmd_hal(unsigned char *sptr, unsigned char len)
 			u_putHexWord(mCmdCnt);u_puts(":");
 			u_puts("\r\n");
 			break;
-
+*/
 		case 'V':	// Version
 			u_puts(LinuxCmd);
 			u_puts("'V' ");
 			u_puts(VERSION);
+			u_puts(" |");
+			u_putHexByte(mTestMode,'|');
+			u_putHexByte(mZuVoMode,'|');
 			u_puts("'\r\n");
 			break;
 
 		case 'R': 	// Remote command
-			process_remote_command((char*) (sptr));
+//			process_remote_command((char*) (sptr));
 			break;
 
-		case 'Z': 	// ZuVo Command
-			mZuvoAuto ^= 0x01;
+		case 'Z': 	// iFaucet
+//			mZuvoAuto ^= 0x01;
 //			izuvo_init_capture_pulse();
-			u_puts("ZuVo ");
-			u_putHexByte(mZuvoAuto,' ');
-			u_puts("\r\n");
+//			u_puts("ZuVo ");
+//			u_putHexByte(mZuvoAuto,' ');
+//			u_puts("\r\n");
+			process_cmd_ifaucet((char*)sptr, len);
 			break;
 
 		case 'E': 	// iZuVo echo command
 			process_cmd_izuvo((char*)sptr, len);
 			break;
+
 
 		case 'T': 	// Test Command
 			u_puts("Test :");
@@ -516,6 +592,120 @@ void process_cmd_hal(unsigned char *sptr, unsigned char len)
 
 	}
 }
+
+void izuvo_test_mode(unsigned char iMode)
+{
+
+	switch (iMode)
+	{
+		case 0:
+			//1F301F301F301F30  : all fade
+			mLED[0]=0x1F30;
+			mLED[1]=0x1F30;
+			mLED[2]=0x1F30;
+			mLED[3]=0x1F30;
+			break;
+		case 1:
+			//1F301F251F2A1F2F : Fade, Blink , Blink, Blink
+			mLED[0]=0x1F30;
+			mLED[1]=0x1F25;
+			mLED[2]=0x1F2A;
+			mLED[3]=0x1F2F;
+			break;
+		case 2:
+			//1F101F151F1A1F1F : ON, ON , ON, ON
+			mLED[0]=0x1F10;
+			mLED[1]=0x1F10;
+			mLED[2]=0x1F10;
+			mLED[3]=0x1F10;
+			break;
+		default:
+			//EF1F101F251F4A1F6F : ON, Blink-InVBlink, Blink
+			mLED[0]=0x1F10;
+			mLED[1]=0x1F25;
+			mLED[2]=0x1F4A;
+			mLED[3]=0x1F6F;
+			break;	
+	}
+
+
+
+
+
+}
+
+void process_cmd_izuvo_mode(unsigned char iMode)
+{
+
+	mZuVoMode = iMode;
+/*
+	u_puts("Mode = ");	
+	u_putHexByte(tMode,' ');
+	u_delay(10);
+	u_puts("\r\n");	
+*/
+	u_putHexByte(mZuVoMode,' ');
+	u_delay(10);
+	u_puts("\r\n");	
+
+	switch (mZuVoMode)
+	{
+		case State_Filter_Need_Flush_On:
+			break;
+		case State_Filter_Need_Flush_Off:
+			break;
+		case State_Filter_Normal_On:
+			break;
+		case State_Filter_Normal_Off:
+			break;
+		case State_Filter_Replace_Soon_On :
+			break;
+		case State_Filter_Replace_Soon_Off :
+			break;
+		case State_Filter_Replace_Now_On :
+			break;
+		case State_Filter_Replace_Now_Off :
+			break;
+		case State_FlowTimeToLong :
+			break;
+		default:
+			break;
+	}
+
+
+}
+
+
+//izuvo_update.sh ZFFFF000000000012001D0
+
+void process_cmd_ifaucet(char *sptr, unsigned char len)
+{
+	unsigned char i;
+	unsigned int tmp;
+
+
+	if (len == 0x24)
+	{
+//		u_puts("Valid command length\r\n");	
+		tmp = u_asc2uint(2,	sptr + 30);
+		process_cmd_izuvo_mode(tmp & 0xff);
+	}
+	else
+	{
+		u_puts("iFaucet command 0x");	
+		u_putHexByte(len, ' ');
+		u_puts("/0x24 \r\n");
+
+		u_puts("Invalid Length ");	
+		for (i=1; i<len; i++)
+		{
+			tmp = *(sptr+i);
+			u_putch(tmp);
+		}
+		u_puts("\r\n");
+	}
+}
+
 
 //ELZ384E120005014D01001
 
@@ -574,11 +764,6 @@ void process_cmd_izuvo(char *sptr, unsigned char len)
 }
 
 
-//
-//
-//
-//
-
 void process_cmd_izuvo_led(char *sptr)
 {
 
@@ -587,49 +772,298 @@ void process_cmd_izuvo_led(char *sptr)
 		mLED[2]=u_asc2uint(4,sptr+8);
 		mLED[3]=u_asc2uint(4,sptr+12);
 
-		
-//		u_puts("\r\n");
 
 }
 
-void task_led(void)
+void led_task(void)
 {
 
-	if (mLED[0]==0x00)
+// @ very 200ms
+
+	unsigned char i=0;
+	unsigned char mode=0;
+	unsigned char period=0;
+	unsigned char brightness=0;
+
+	for (i=0; i<=3; i++)
 	{
-		LED1_ON();
+		brightness = (mLED[i] >> 8) & 0xff;
+		mode = (mLED[i] >> 4) & 0x000f;
+		period = (mLED[i] & 0x000f)+1;
+
+		mLED_Cnt[i]++;
+		if (mLED_Cnt[i]>(period<<1))
+		{
+			mLED_Cnt[i] = 0x00;
+		}
+		
+		switch (mode)
+		{
+			case 0:			// OFF
+				mLED_Brightness[i]=0x00;
+				break;
+			case 1:			// ON
+				mLED_Brightness[i]=brightness;
+				break;
+			case 2:			// Blink
+				if (mLED_Cnt[i]<period)
+				{	
+					mLED_Brightness[i]=brightness;
+				}
+				else
+				{
+					mLED_Brightness[i]=0x00;
+				}
+				break;
+			case 3:			// Fade
+
+				if ((mLED_Cnt[i] == 0) || (mLED_Cnt[i] == period))
+				{
+					mLED_Fade[i] ++;
+					if (mLED_Fade[i] >= (brightness<<1))
+					{
+						mLED_Fade[i]=0x00;
+					}
+
+					if (mLED_Fade[i]<brightness)
+					{
+						mLED_Brightness[i] = mLED_Fade[i];
+					}
+					else
+					{
+						mLED_Brightness[i] = (brightness<<1) - mLED_Fade[i];
+					}
+				}
+				break;
+			case 4:			// Inv
+				if (i==1)	// Y Inv_B
+				{
+					if (mLED_Brightness[2]==0)
+					{
+						mLED_Brightness[1]=brightness;
+					}
+					else
+					{
+						mLED_Brightness[1]=0;
+					}
+				}
+				if (i==2)	// B Inv_Y
+				{
+					if (mLED_Brightness[1]==0)
+					{
+						mLED_Brightness[2]=brightness;
+					}
+					else
+					{
+						mLED_Brightness[2]=0;
+					}
+
+				}
+				if (i==3)	// R Inv_Y
+				{
+					if (mLED_Brightness[1]==0)
+					{
+						mLED_Brightness[3]=brightness;
+					}
+					else
+					{
+						mLED_Brightness[3]=0;
+					}
+				}
+				break;
+			case 5:			// Inv
+				if (i==1)	// Y Inv_R
+				{
+					if (mLED_Brightness[3]==0)
+					{
+						mLED_Brightness[1]=brightness;
+					}
+					else
+					{
+						mLED_Brightness[1]=0;
+					}
+				}
+				if (i==2)	// B Inv_R
+				{
+					if (mLED_Brightness[3]==0)
+					{
+						mLED_Brightness[2]=brightness;
+					}
+					else
+					{
+						mLED_Brightness[2]=0;
+					}
+
+				}
+				if (i==3)	// R Inv_B
+				{
+					if (mLED_Brightness[2]==0)
+					{
+						mLED_Brightness[3]=brightness;
+					}
+					else
+					{
+						mLED_Brightness[3]=0;
+					}
+				}
+				break;
+			case 6:			// Sync
+				if (i==1)	// Y_B
+				{
+					if (mLED_Brightness[2]==0)
+					{
+						mLED_Brightness[1]=0;
+					}
+					else
+					{
+						mLED_Brightness[1]=brightness;
+					}
+				}
+				if (i==2)	// B_Y
+				{
+					if (mLED_Brightness[1]==0)
+					{
+						mLED_Brightness[2]=0;
+					}
+					else
+					{
+						mLED_Brightness[2]=brightness;
+					}
+
+				}
+				if (i==3)	// R_Y
+				{
+					if (mLED_Brightness[1]==0)
+					{
+						mLED_Brightness[3]=0;
+					}
+					else
+					{
+						mLED_Brightness[3]=brightness;
+					}
+				}
+				break;
+			case 7:			// Sync
+				if (i==1)	// Y_R
+				{
+					if (mLED_Brightness[3]==0)
+					{
+						mLED_Brightness[1]=brightness;
+					}
+					else
+					{
+						mLED_Brightness[1]=0;
+					}
+				}
+				if (i==2)	// B_R
+				{
+					if (mLED_Brightness[3]==0)
+					{
+						mLED_Brightness[2]=0;
+					}
+					else
+					{
+						mLED_Brightness[2]=brightness;
+					}
+
+				}
+				if (i==3)	// R_B
+				{
+					if (mLED_Brightness[2]==0)
+					{
+						mLED_Brightness[3]=0;
+					}
+					else
+					{
+						mLED_Brightness[3]=brightness;
+					}
+				}
+				break;
+
+
+		}	
+
+
+	}
+
+
+}
+
+void led_driver(void)
+{
+
+	static unsigned char tCnt=0;
+	unsigned char tLED=0;
+
+	tCnt++;
+	if (tCnt>LED_PWM)
+	{
+		tCnt=0;
+	}
+
+	tLED = mLED_Brightness[0];
+	if (tLED==0)
+	{
+		LED_L_OFF();
+	}
+	else if (tLED>tCnt)
+	{
+		LED_L_ON();
 	}
 	else
 	{
-		LED1_OFF();
+		LED_L_OFF();
 	}
 
-	if (mLED[1]==0x00)
+	tLED = mLED_Brightness[1];
+	if (tLED==0)
 	{
-		LED2_ON();
+		LED_Y_OFF();
+		LED_YY_OFF();
+	}
+	else if (tLED>tCnt)
+	{
+//		LED_Y_ON();
+		LED_YY_ON();
 	}
 	else
 	{
-		LED2_OFF();
+		LED_Y_OFF();
+		LED_YY_OFF();
 	}
 
-
-	if (mLED[2]==0x00)
+	tLED = mLED_Brightness[2];
+	if (tLED==0)
 	{
-		LED3_ON();
+		LED_B_OFF();
+		LED_BB_OFF();
+	}
+	else if (tLED>tCnt)
+	{
+//		LED_B_ON();
+		LED_BB_ON();
 	}
 	else
 	{
-		LED3_OFF();
+		LED_B_OFF();
+		LED_BB_OFF();
 	}
 
-	if (mLED[3]==0x00)
+	tLED = mLED_Brightness[3];
+	if (tLED==0)
 	{
-		LED4_ON();
+		LED_R_OFF();
+		LED_RR_OFF();
+	}
+	else if (tLED>tCnt)
+	{
+//		LED_R_ON();
+		LED_RR_ON();
 	}
 	else
 	{
-		LED4_OFF();
+		LED_R_OFF();
+		LED_RR_OFF();
 	}
 
 

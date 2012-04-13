@@ -422,7 +422,7 @@ void u_putHexByte(INT8U c, INT8U t)
 void u_putch(INT8U abyte) 
 {
 
-	UCSRB |= 0x08; // enable transmitter
+//	UCSRB |= 0x08; // enable transmitter
 
     while (!(UCSRA & 0x20))
 	{

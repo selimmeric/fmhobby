@@ -35,7 +35,7 @@ volatile unsigned int   mZuvoUartByte=0;
 volatile unsigned char  mZuvoAuto=0;
 
 extern unsigned char 	mLinuxMode;
-
+/*
 
 void process_remote_command(char *input)
 {
@@ -77,8 +77,8 @@ void process_remote_command(char *input)
 	}
 
 }
-
-
+*/
+/*
 void ir_wait_tx(void)
 {
 	unsigned int x=0;
@@ -107,6 +107,7 @@ void ir_wait_tx(void)
 
 }
 
+*/
 #if (0)
 
 void ir_init_capture_pulse(char *input)
